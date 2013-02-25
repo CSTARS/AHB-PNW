@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>
+      Google Visualization API Sample
+    </title>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1', {packages: ['corechart']});
+    </script>
+    <script type="text/javascript">
+      function drawVisualization() {
+        // Some raw data (not necessarily accurate)
+        var data = google.visualization.arrayToDataTable([
+          ['Month', 'Tmax', 'Tmin', 'Precip', 'Water bal', 'Rad'],
+          ['Jan',   25,      19,     100,      -20,         14],
+          ['Mar',   24,      17,     115,      30,          19],
+          ['May',   20,      15,     110,      100,         10],
+          ['Jul',   18,      13,     125,      50,          16],
+          ['Sep',   21,      16,     90,       10,          22],
+          ['Nov',  24,      20,     100,      -25,         20]
+        ]);
+
+        var options = {
+          title : 'Temperate, broad-level evergreen',
+          vAxes: [ 
+		{title: "Radiation (MJ/day); Temperature (^C)",
+		 minValue : -10,
+		 maxValue : 30
+		},
+		{title: "Precipitation; Water balance (mm)",
+		 minValue : -100,
+		 maxValue : 300
+		}
+	  ],
+          hAxis: {title: ""},
+          seriesType: "bars",
+          series: {
+		0: {type: "line", targetAxisIndex:0},
+		1: {type: "line", targetAxisIndex:0},
+		2: {type: "line", targetAxisIndex:1},
+		3: {type: "area", targetAxisIndex:1},
+		4: {targetAxisIndex:0}
+	  }
+        };
+
+        var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+      google.setOnLoadCallback(drawVisualization);
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 800px; height: 800px;"></div>
+  </body>
+</html>
+
