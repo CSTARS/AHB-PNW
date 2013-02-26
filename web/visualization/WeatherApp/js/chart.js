@@ -10,12 +10,12 @@ var ahbChart = (function() {
     	title : 'Temperate, broad-level evergreen',
     	vAxes: [{
     		title: "Radiation (MJ/day); Temperature (^C)",
-    	    minValue : -10,
-    	    maxValue : 45
+    	    minValue : -5,
+    	    maxValue : 35
   		},{
   			title: "Precipitation; Water balance (mm)",
-  			minValue : -100,
-  			maxValue : 450
+  			minValue : -50,
+  			maxValue : 350
   		}],
   		hAxis: {title: ""},
   		seriesType: "bars",
