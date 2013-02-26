@@ -11,11 +11,11 @@ var ahbChart = (function() {
     	vAxes: [{
     		title: "Radiation (MJ/day); Temperature (^C)",
     	    minValue : -10,
-    	    maxValue : 30
+    	    maxValue : 45
   		},{
   			title: "Precipitation; Water balance (mm)",
   			minValue : -100,
-  			maxValue : 300
+  			maxValue : 450
   		}],
   		hAxis: {title: ""},
   		seriesType: "bars",
@@ -49,7 +49,7 @@ var ahbChart = (function() {
 	}
 	
 	function _query(latLng) {
-		var query = new google.visualization.Query(vizSourceUrl+'?view=pointToPrismAvgs('+latLng.lng()+','+latLng.lat()+',8192)');
+		var query = new google.visualization.Query(vizSourceUrl+'?view=pointToWeather('+latLng.lng()+','+latLng.lat()+',8192)');
 
 	    // Apply query language statement.
 	    query.setQuery('SELECT *');
