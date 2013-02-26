@@ -1,0 +1,22 @@
+.outer-map-panel {
+	border: 1px solid #ccc;
+	
+	box-shadow: 0 0 10px #ccc;
+	-moz-box-shadow: 0 0 10px #ccc;
+	-webkit-box-shadow: 0 0 10px #ccc;	
+}
+
+#chart-panel {
+	margin-top: 20px;
+	border: 1px solid #ccc;
+	
+	box-shadow: 0 0 10px #ccc;
+	-moz-box-shadow: 0 0 10px #ccc;
+	-webkit-box-shadow: 0 0 10px #ccc;
+}
+
+/* bootstrap img css breaks to map
+   this fixes */
+#map img {
+	max-width: inherit;
+}
