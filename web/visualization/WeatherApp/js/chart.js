@@ -1,15 +1,16 @@
-var ahbChart = (function() {
+ahb.chart = (function() {
 	
 	var vizSourceUrl = "http://alder.bioenergy.casil.ucdavis.edu:8080/vizsource/rest";
 	
 	var datatable = null;
 	var chart = null;
+	var latLng = null;
 	
 	// chart options
-    var options = {
-    	title : 'Temperate, broad-level evergreen',
+    var optionsWeather = {
+    	title : 'Climate Chart',
     	vAxes: [{
-    		title: "Radiation (MJ/day); Temperature (^C)",
+    		title: "Radiation (MJ/day); Temperature (^C); Due Point (^C)",
     	    minValue : -5,
     	    maxValue : 35
   		},{
@@ -28,28 +29,53 @@ var ahbChart = (function() {
   	  },
   	  animation:{
   		  duration: 1000,
-  		  easing: 'out',
+  		  easing: 'out'
   	  },
    };
+    
+    var optionsPrice = {
+		  title : 'Poplar Adoption',
+		  legend : {
+			  position : 'bottom'
+		  },
+		  vAxis: {title: "Acres"},
+		  hAxis: {title: "Price for Poplar ($/bdt)"},
+	  	  animation : {
+	  		  duration: 1000,
+	  		  easing: 'out'
+	  	  }
+    }
 	
 	function init() {
 		google.setOnLoadCallback(onApiLoad);
 	}
 	
 	function onApiLoad() {
-		_remake();
+
 		
 		$(window).resize(function() {
 			_remake();
 		});
 		
-		$(window).on('query-map-event', function(e, latlng){
-			_query(latlng);
+		$(window).on('query-map-event', function(e, latlng, id){
+			_query(latlng, id);
 		});
+		
+		$(window).on('change-type-event', function(){
+			$('#chart-panel').html("");
+			chart = null;
+		});
+		
+		$('#chart-panel').html("");
 	}
 	
-	function _query(latLng) {
-		var query = new google.visualization.Query(vizSourceUrl+'?view=pointToWeather('+latLng.lng()+','+latLng.lat()+',8192)');
+	function _query(latLng, id) {
+		var queryUrl;
+		
+		if( ahb.type == 'weather' ) queryUrl = vizSourceUrl+'?view=pointToWeather('+latLng.lng()+','+latLng.lat()+',8192)';
+		else queryUrl = vizSourceUrl+"?view=bcam_commodity_predictions('"+id+"')";
+			
+		var query = new google.visualization.Query(queryUrl);
 
 	    // Apply query language statement.
 	    query.setQuery('SELECT *');
@@ -67,7 +93,9 @@ var ahbChart = (function() {
 	    }
 
 	    datatable = response.getDataTable();
-	    _redraw();
+	    
+	    if( chart == null ) _remake();
+	    else _redraw();
 	 }
 	
 	// remake the chart
@@ -82,12 +110,19 @@ var ahbChart = (function() {
 		$('#chart-panel').height(w);
 
 
-        chart = new google.visualization.ComboChart($('#chart-panel')[0]);
+        if( ahb.type == 'weather' ) chart = new google.visualization.ComboChart($('#chart-panel')[0]);
+        else chart = new google.visualization.LineChart($('#chart-panel')[0]);
+        
         _redraw();
 	}
 	
 	function _redraw() {
 		if( datatable == null ) return;
+		
+		var options;
+		if( ahb.type == 'weather' ) options = optionsWeather;
+		else options = optionsPrice;
+		
         chart.draw(datatable, options);
 	}
 	

@@ -6,12 +6,13 @@ var INIT_MAP_OPTIONS = {
 
 var KML_GRID_URL = "";
 
-var ahbMap = (function() {
+ahb.map = (function() {
 	
 	var gmap = null;
 	var marker = null;
 	
 	var chartMarker = null;
+	var fusionLayer = null;
 	
 	function init() {
 		
@@ -22,28 +23,6 @@ var ahbMap = (function() {
 		
 		gmap = new google.maps.Map($("#map")[0], INIT_MAP_OPTIONS);
 		
-		// add kml overlay
-		var fusionLayer = new google.maps.FusionTablesLayer({
-			  query: {
-			    select: 'boundary',
-			    from: '1hV9vQG3Sc0JLPduFpWJztfLK-ex6ccyMg_ptE_s'
-			  },
-			  clickable : false
-			});
-		fusionLayer.opacity = .8;
-		fusionLayer.setMap(gmap);
-		
-		google.maps.event.addListener(gmap, 'click', function(e) {
-			if( chartMarker != null ) chartMarker.setMap(null);
-			
-			chartMarker = new google.maps.Marker({
-				map: gmap,
-				position: e.latLng
-			});
-			
-			$(window).trigger('query-map-event', [e.latLng]);
-		});
-		
 		
 		$(window).resize(function(){
 			_resize()
@@ -53,7 +32,54 @@ var ahbMap = (function() {
 			_setCenterMarker(latlng);
 		});
 		
+		$(window).on('change-type-event', function(){
+			_updateLayer();
+			if( chartMarker != null ) chartMarker.setMap(null);
+		});
+		
+		_updateLayer();
 		_resize();
+	}
+	
+	function _updateLayer() {
+		if( fusionLayer != null ) fusionLayer.setMap(null);
+		
+		if( ahb.type == 'weather' ) {
+			fusionLayer = new google.maps.FusionTablesLayer({
+				  query: {
+				    select: 'boundary',
+				    from: '1hV9vQG3Sc0JLPduFpWJztfLK-ex6ccyMg_ptE_s'
+				  },
+				  suppressInfoWindows : true
+				});
+		} else {
+			fusionLayer = new google.maps.FusionTablesLayer({
+				  query: {
+				    select: 'Boundary',
+				    from: '1aYDFxFdD6xXIyS6ZAxGXjz85ENqeya9Uh4sYVQ8'
+				  },
+				  suppressInfoWindows : true
+			 });
+		}
+		
+		fusionLayer.opacity = .8;
+		fusionLayer.setMap(gmap);
+		
+		google.maps.event.addListener(fusionLayer, 'click', function(e) {
+			if( chartMarker != null ) chartMarker.setMap(null);
+			
+			var id = "";
+			if( e.row.economy ) id = e.row.economy.value;
+			
+			chartMarker = new google.maps.Marker({
+				map: gmap,
+				position: e.latLng
+			});
+			
+			$(window).trigger('query-map-event', [e.latLng, id]);
+		});
+		
+		
 	}
 	
 	

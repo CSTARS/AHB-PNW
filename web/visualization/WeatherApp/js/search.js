@@ -1,4 +1,4 @@
-var mapSearch = (function(){
+ahb.search = (function(){
 	
 	var geocoder = null;
 	var geocodeResults = null;

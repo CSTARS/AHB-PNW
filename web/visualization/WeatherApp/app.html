@@ -10,23 +10,36 @@
 
 	<!-- Libraries -->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="jslib/bootstrap.min.js"></script>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script type="text/javascript">
       google.load('visualization', '1', {packages: ['corechart']});
     </script>
 	
-	<script type="text/javascript" src="js/map.js"></script>
-	<script type="text/javascript" src="js/search.js"></script>
-	<script type="text/javascript" src="js/chart.js"></script>
+
 	
-	<script type="text/javascript">       
+	<script type="text/javascript">
+		var ahb = {
+			type : "weather"
+		};
 	      $(window).ready(function(){
-	    	 ahbMap.init();
-	    	 mapSearch.init();
-	    	 ahbChart.init();
+	    	 $("#type-selector button").on('click',function(e){
+	    		 if( $(e.target).html().toLowerCase() == ahb.type ) return;
+	    		 ahb.type = $(e.target).html().toLowerCase();
+	    		 $(window).trigger('change-type-event',[]);
+	    	 });
+	    	 $('#type-selector').button();
+	    	 
+	    	 ahb.map.init();
+	    	 ahb.search.init();
+	    	 ahb.chart.init();
 	      });
     </script>
+    <script type="text/javascript" src="js/map.js"></script>
+	<script type="text/javascript" src="js/search.js"></script>
+	<script type="text/javascript" src="js/chart.js"></script>
+    
 </head>
 <body>
 	
@@ -48,11 +61,17 @@
 
 <div class="row-fluid" style="padding:15px">
 	<div class="span5">
-		<div id="search-panel">
+		<div id="search-panel" style="position:relative">
 			<div class="form-search">
-			  <input type="text" id="search-text" class="input-medium search-query" placeholder="Find Location" style='width: 250px'>
+			  <input type="text" id="search-text" class="input-medium search-query" placeholder="Find Location" style='width: 150px'>
 			  <button id="search-button" class="btn">Search</button>
 			</div>
+			
+			<div id="type-selector" class="btn-group" style="position:absolute;right:0;top:0" data-toggle="buttons-radio">
+			  <button type="button" class="btn btn-primary active">Weather</button>
+			  <button type="button" class="btn btn-primary">Price</button>
+			</div>
+			
 			<div class="well" id="search-results" style="display:none;margin-top:20px"></div>
 		</div>
 		<div id="chart-panel" style="margin-top:20px;height:400px"></div>
