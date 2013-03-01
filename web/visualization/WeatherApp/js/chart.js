@@ -2,9 +2,11 @@ ahb.chart = (function() {
 	
 	var vizSourceUrl = "http://alder.bioenergy.casil.ucdavis.edu:8080/vizsource/rest";
 	
+	var cUrl = "";
+	var cId = "";
 	var datatable = null;
 	var chart = null;
-	var latLng = null;
+	var cll = null;
 	
 	// chart options
     var optionsWeather = {
@@ -63,6 +65,7 @@ ahb.chart = (function() {
 		
 		$(window).on('change-type-event', function(){
 			$('#chart-panel').html("");
+			$("#download-panel").html("");
 			chart = null;
 		});
 		
@@ -80,8 +83,19 @@ ahb.chart = (function() {
 	    // Apply query language statement.
 	    query.setQuery('SELECT *');
 	    
+	    cUrl = queryUrl;
+	    cId = id;
+	    cll = latLng;
+	    
 	    // Send the query with a callback function.
 	    query.send(handleQueryResponse);
+	}
+	
+	function _createDownload(url, id) {
+		$("#download-panel").html("");
+		
+		$("#download-panel").append($('<a class="btn pull-left" href="'+url+'&tq=select *&tqx=out:csv;outFileName:'+id+'"><i class="icon-download-alt"></i>&nbspDownload CSV</a>'));
+		$("#download-panel").append($('<a class="btn pull-right" href="'+url+'&tq=select *" target="_blank"><i class="icon-link"></i>&nbspVisualization Source</a>'));
 	}
 	
 	function handleQueryResponse(response) {
@@ -94,9 +108,25 @@ ahb.chart = (function() {
 
 	    datatable = response.getDataTable();
 	    
+	    // create download url 
+	    if( ahb.type == 'weather' ) {
+	    	var id = _formatLL(cll.lng())+'__'+_formatLL(cll.lat());
+	    	_createDownload(cUrl, id);
+	    } else {
+	    	_createDownload(cUrl, cId);
+	    }
+	    
 	    if( chart == null ) _remake();
 	    else _redraw();
-	 }
+	}
+	
+	function _formatLL(val) {
+		val = val+"";
+		var parts = val.split(".");
+		if( parts[1] && parts[1] > 3 ) parts[1] = parts[1].substring(0,3);
+		val = parts[0]+"_"+parts[1];
+		return val.replace(/-/g, 'n');
+	}
 	
 	// remake the chart
 	function _remake() {

@@ -6,6 +6,7 @@
 	
 	<link href="css/bootstrap.css" rel="stylesheet">
 	<link href="css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="css/font-awesome.css" rel="stylesheet">
 	<link href="css/style.css" rel="stylesheet">
 
 	<!-- Libraries -->
@@ -25,8 +26,9 @@
 		};
 	      $(window).ready(function(){
 	    	 $("#type-selector button").on('click',function(e){
-	    		 if( $(e.target).html().toLowerCase() == ahb.type ) return;
-	    		 ahb.type = $(e.target).html().toLowerCase();
+	    		 var id = this.id.replace(/type-/, '');
+	    		 if( id == ahb.type ) return;
+	    		 ahb.type = id;
 	    		 $(window).trigger('change-type-event',[]);
 	    	 });
 	    	 $('#type-selector').button();
@@ -68,13 +70,14 @@
 			</div>
 			
 			<div id="type-selector" class="btn-group" style="position:absolute;right:0;top:0" data-toggle="buttons-radio">
-			  <button type="button" class="btn btn-primary active">Weather</button>
-			  <button type="button" class="btn btn-primary">Price</button>
+			  <button id="type-weather" type="button" class="btn btn-primary active"><i class="icon-cloud"></i>&nbsp;Weather</button>
+			  <button id="type-price" type="button" class="btn btn-primary"><i class="icon-money"></i>&nbsp;Price</button>
 			</div>
 			
 			<div class="well" id="search-results" style="display:none;margin-top:20px"></div>
 		</div>
-		<div id="chart-panel" style="margin-top:20px;height:400px"></div>
+		<div id="chart-panel" style="margin-top:20px;margin-bottom:10px;height:400px"></div>
+		<div id="download-panel"></div>
 	</div>
 	
 	<div class="span7">
