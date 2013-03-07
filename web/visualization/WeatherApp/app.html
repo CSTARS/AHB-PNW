@@ -22,16 +22,35 @@
 	
 	<script type="text/javascript">
 		var ahb = {
-			type : "weather"
+			type : "weather",
+			irType : "Irrigated"
 		};
 	      $(window).ready(function(){
 	    	 $("#type-selector button").on('click',function(e){
 	    		 var id = this.id.replace(/type-/, '');
 	    		 if( id == ahb.type ) return;
 	    		 ahb.type = id;
+	    		 
+	    		 if( id != "weather" ) {
+	    			 $("#outer-poplar-chart-panel").hide();
+	    			 $("#outer-chart-panel").removeClass("span4").addClass("span8");
+	    			 $("#poplar-selector").hide();
+	    		 } else {
+	    			 $("#outer-poplar-chart-panel").show();
+	    			 $("#outer-chart-panel").removeClass("span8").addClass("span4");
+	    			 $("#poplar-selector").show();
+	    		 }
+	    		 
 	    		 $(window).trigger('change-type-event',[]);
+	    		 $(window).trigger('resize',[]);
+	    		 
 	    	 });
-	    	 $('#type-selector').button();
+	    	 $("#poplar-selector button").on('click',function(e){
+	    		ahb.irType = $(this).html();
+	    		$(window).trigger('change-irtype-event',[]);
+	    	 });
+	    	 
+	    	 //$('#type-selector').button();
 	    	 
 	    	 ahb.map.init();
 	    	 ahb.search.init();
@@ -60,33 +79,46 @@
 </div>
 <!-- END TITLE BAR -->
 
-
-<div class="row-fluid" style="padding:15px">
-	<div class="span5">
-		<div id="search-panel" style="position:relative">
-			<div class="form-search">
-			  <input type="text" id="search-text" class="input-medium search-query" placeholder="Find Location" style='width: 150px'>
-			  <button id="search-button" class="btn">Search</button>
+<div>
+	<div id="search-panel" style="position:relative;padding:10px">
+		<div class="row-fluid">
+			<div class="span6">
+				<div class="form-search">
+				  <input type="text" id="search-text" class="input-medium search-query" placeholder="Find Location" style='width: 200px'>&nbsp;&nbsp;
+				  <button id="search-button" class="btn">Search</button>&nbsp;&nbsp;
+				  <button id="locate-button" class="btn">Locate Me</button>
+				</div>
+				<div class="well" id="search-results" style="display:none;margin-top:20px"></div>
 			</div>
-			
-			<div id="type-selector" class="btn-group" style="position:absolute;right:0;top:0" data-toggle="buttons-radio">
-			  <button id="type-weather" type="button" class="btn btn-primary active"><i class="icon-cloud"></i>&nbsp;Weather</button>
-			  <button id="type-price" type="button" class="btn btn-primary"><i class="icon-money"></i>&nbsp;Price</button>
+			<div class="span6">
+				<div id="type-selector" class="btn-group pull-right"  data-toggle="buttons-radio" style="margin-top:5px">
+				  <button id="type-weather" type="button" class="btn btn-primary active"><i class="icon-cloud"></i>&nbsp;Weather</button>
+				  <button id="type-price" type="button" class="btn btn-primary"><i class="icon-money"></i>&nbsp;Price</button>
+				</div>
+				<div id="poplar-selector" class="btn-group pull-right"  data-toggle="buttons-radio" style="margin-top:5px;margin-right:10px">
+				  <button id="poplar-irrigated" type="button" class="btn btn-primary active">Irrigated</button>
+				  <button id="poplar-nonirriagated" type="button" class="btn btn-primary">Nonirrigated</button>
+				</div>
 			</div>
-			
-			<div class="well" id="search-results" style="display:none;margin-top:20px"></div>
-		</div>
-		<div id="chart-panel" style="margin-top:20px;margin-bottom:10px;height:400px"></div>
-		<div id="download-panel"></div>
-	</div>
-	
-	<div class="span7">
-		<div>
-			<div id="map" class="outer-map-panel" style="height:600px;width:500px;"></div>
 		</div>
 	</div>
 </div>
 
+<div style="padding:5px">
+	<div class="row-fluid" >
+		<div class="span4" id="map-outer">
+			<div id="map" class="outer-map-panel" style="height:400px;width:400px;margin-bottom:5px"></div>
+		</div>
+		<div class="span4" id="outer-chart-panel">
+			<div id="chart-panel" class="chart-panel" style="margin-bottom:10px;height:400px"></div>
+			<div id="download-panel" style="height:40px;"></div>		
+		</div>
+		<div class="span4" id="outer-poplar-chart-panel">
+			<div id="poplar-chart-panel" class="chart-panel" style="margin-bottom:10px;height:400px"></div>
+			<div id="poplar-download-panel" style="display:none"></div>
+		</div>
+	</div>
+</div>
 
 </body>
 </html>

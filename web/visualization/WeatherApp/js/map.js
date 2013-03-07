@@ -28,6 +28,11 @@ ahb.map = (function() {
 			_resize()
 		});
 		
+		$(window).on('centerzoom-map-event', function(e, latlng){
+			gmap.setZoom(10);
+			_setCenterMarker(latlng);
+		});
+		
 		$(window).on('center-map-event', function(e, latlng){
 			_setCenterMarker(latlng);
 		});
@@ -38,7 +43,10 @@ ahb.map = (function() {
 		});
 		
 		_updateLayer();
-		_resize();
+		setTimeout(function(){
+			_resize();
+		}, 1000);
+		
 	}
 	
 	function _updateLayer() {
@@ -67,9 +75,9 @@ ahb.map = (function() {
 		
 		google.maps.event.addListener(fusionLayer, 'click', function(e) {
 			if( chartMarker != null ) chartMarker.setMap(null);
-			
+						
 			var id = "";
-			if( e.row.economy ) id = e.row.economy.value;
+			if( e.row && e.row.economy ) id = e.row.economy.value;
 			
 			chartMarker = new google.maps.Marker({
 				map: gmap,
@@ -86,7 +94,7 @@ ahb.map = (function() {
 	function _setCenterMarker(latlng){
 		if( marker != null ) marker.setMap(null);
 		
-		gmap.setCenter(latlng);
+		gmap.panTo(latlng);
 		
 		marker = new google.maps.Marker({
 			map: gmap,
@@ -97,8 +105,12 @@ ahb.map = (function() {
 	function _resize() {
 		var map = $("#map");
 		var div = $("#search-panel");
-		map.height($(window).height()-100);
-		map.width(_getRatio(div.parent().width())-40);
+		
+		var w = map.parent().width();
+		map.width(w);
+		if( w < 250 ) w = 250;
+		map.height(w);
+		
 		google.maps.event.trigger(gmap, "resize");
 	}
 	

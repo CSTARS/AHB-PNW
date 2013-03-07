@@ -14,7 +14,22 @@ ahb.search = (function(){
 		$("#search-text").on('keyup', function(e){
 			if(e.which == 13) _search();
 		});
+		$("#locate-button").on('click', _getLocation);
 	}
+	
+	function _getLocation() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(showPosition);
+			$("#locate-button").addClass("btn-warning");
+		} else{
+			window.alert("Geolocation is not supported by this browser.");
+		}
+		function showPosition(position) { 
+			$("#locate-button").removeClass("btn-warn").addClass("btn-success");
+			$(window).trigger('centerzoom-map-event', [new google.maps.LatLng(position.coords.latitude, position.coords.longitude)]);
+		}
+	}
+
 	
 	function _search() {
 		geocoder.geocode({
