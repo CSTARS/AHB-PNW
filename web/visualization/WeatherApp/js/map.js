@@ -108,7 +108,7 @@ ahb.map = (function() {
 		
 		var w = map.parent().width();
 		map.width(w);
-		if( w < 250 ) w = 250;
+		if( $(window).width() < 765 ) w = w / 2;
 		map.height(w);
 		
 		google.maps.event.trigger(gmap, "resize");

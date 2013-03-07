@@ -114,12 +114,16 @@ ahb.chart = (function() {
 		});
 		
 		$(window).on('change-type-event', function(){
+			
+			
+			
 			$('#chart-panel').html("");
 			$('#poplar-chart-panel').html("");
 			$("#download-panel").html("");
 			$("#poplar-download-panel").html("");
 			chart = null;
 			chart2 = null;
+			_resize();
 		});
 		
 		$('#chart-panel').html("");
@@ -243,8 +247,7 @@ ahb.chart = (function() {
 		// make sure the width is correct
 		var w = $('#chart-panel').parent().width();
 		$('#chart-panel').width(w);
-		if( w < 250 ) w = 250;
-		if( ahb.type != "weather" ) w = w / 2;
+		if( ahb.type != "weather" || $(window).width() < 765   ) w = w / 2;
 		$('#chart-panel').height(w);
 
 
@@ -261,12 +264,11 @@ ahb.chart = (function() {
 		// make sure the width is correct
 		var w = $('#poplar-chart-panel').parent().width();
 		$('#poplar-chart-panel').width(w);
-		if( w < 250 ) w = 250;
+		if( ahb.type != "weather" || $(window).width() < 765  ) w = w / 2;
 		$('#poplar-chart-panel').height(w);
 
 
-        if( ahb.type == 'weather' ) chart2 = new google.visualization.ComboChart($('#poplar-chart-panel')[0]);
-        else chart2 = new google.visualization.LineChart($('#poplar-chart-panel')[0]);
+        chart2 = new google.visualization.ComboChart($('#poplar-chart-panel')[0]);
         
         _redraw2();
 	}

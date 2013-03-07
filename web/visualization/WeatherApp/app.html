@@ -36,13 +36,18 @@
 	    			 $("#outer-chart-panel").removeClass("span4").addClass("span8");
 	    			 $("#poplar-selector").hide();
 	    		 } else {
+	    			 $("#poplar-chart-panel").show();
 	    			 $("#outer-poplar-chart-panel").show();
 	    			 $("#outer-chart-panel").removeClass("span8").addClass("span4");
 	    			 $("#poplar-selector").show();
 	    		 }
 	    		 
 	    		 $(window).trigger('change-type-event',[]);
-	    		 $(window).trigger('resize',[]);
+	    		 
+	    		 setTimeout(function(){
+	    			 $(window).trigger('resize',[]);
+	    		 },300);
+	    		
 	    		 
 	    	 });
 	    	 $("#poplar-selector button").on('click',function(e){
@@ -50,11 +55,22 @@
 	    		$(window).trigger('change-irtype-event',[]);
 	    	 });
 	    	 
-	    	 //$('#type-selector').button();
+	    	 $(window).resize(_resize());
+	    	 _resize();
 	    	 
 	    	 ahb.map.init();
 	    	 ahb.search.init();
 	    	 ahb.chart.init();
+	    	 
+	    	 function _resize() {
+	    		 if($(window).width() < 765) {
+	    			 $(".search-big").hide();
+	    			 $(".search-small").show();
+	    		 } else {
+	    			 $(".search-big").show();
+	    			 $(".search-small").hide();
+	    		 }
+	    	 }
 	      });
     </script>
     <script type="text/javascript" src="js/map.js"></script>
@@ -84,9 +100,11 @@
 		<div class="row-fluid">
 			<div class="span6">
 				<div class="form-search">
-				  <input type="text" id="search-text" class="input-medium search-query" placeholder="Find Location" style='width: 200px'>&nbsp;&nbsp;
-				  <button id="search-button" class="btn">Search</button>&nbsp;&nbsp;
-				  <button id="locate-button" class="btn">Locate Me</button>
+				  <input type="text" id="search-text" class="input-medium search-query" placeholder="Find Location" style='width: 150px'>&nbsp;&nbsp;
+				  <button id="search-button" class="btn search-big"><i class="icon-search"></i>&nbsp;Search</button>&nbsp;&nbsp;
+				  <button id="locate-button" class="btn search-big"><i class="icon-screenshot"></i>&nbsp;Locate Me</button>
+				  <a id="search-button-small" class="btn btn-small search-small"><i class="icon-search"></i></a>&nbsp;&nbsp;
+				  <a id="locate-button-small" class="btn btn-small search-small"><i class="icon-screenshot"></i></a>
 				</div>
 				<div class="well" id="search-results" style="display:none;margin-top:20px"></div>
 			</div>
