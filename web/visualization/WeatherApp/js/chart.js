@@ -104,6 +104,18 @@ ahb.chart = (function() {
 	
 	function init() {
 		google.setOnLoadCallback(onApiLoad);
+		
+		$("#weather-export-btn").on('click', function(){
+			if( !datatable.weather ) return;
+
+			var key = $("#spreadsheet-key").html();
+			
+			if( key.length == 0 ) {
+				return alert("You must provide a spreadsheet url");
+			}
+			
+			$(window).trigger("weather-export-event",[datatable.weather, key]);
+		});
 	}
 	
 	function onApiLoad() {
@@ -291,8 +303,6 @@ ahb.chart = (function() {
 		} else {
 			chart[type].draw(datatable[type], options[type]);
 		}
-
-       
 	}
 	
 	return {

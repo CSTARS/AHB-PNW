@@ -1,8 +1,99 @@
 var express = require('express');
 var app = express();
+var Spreadsheet = require('./spreadsheets');
 
+var inputs = ['tmin','tmax','tdmean','ppt','rad'];
+
+app.use(express.bodyParser());
+app.use(express.cookieParser());
 app.use(express.static(__dirname + '/'));
+
+app.get('/rest/getSsName', function(req, res) {
+	
+	if( !req.query.key ) return res.send({error:true});
+	
+	 Spreadsheet.create({
+		 	//auth
+		 	oauth         : true,
+		    access_token  : req.cookies.access_token,
+		    token_type    : req.cookies.token_type,
+		    spreadsheetId : req.query.key,
+		    //summary tab
+		    worksheetId: 'ocr',
+		    callback: function(err, spreadsheet) {
+		    	if( err ) return res.send({error:true,message:err});
+		    	spreadsheet.getName(function(err, name){
+		    		if( err ) return res.send({error:true,message:err});
+		    		res.send({success:true,name:name});
+		    	});
+		    }
+    });
+
+});
+
+app.post('/rest/updateModel', function(req, res) {
+
+  var data = req.body;
+ 
+  if( !data ) return res.send({error:true});
+
+  if( !data.spreadsheetId || !data.table ) {
+	return res.send({error:true});
+  }
+
+  Spreadsheet.create({
+	//auth
+ 	oauth        : true,
+    access_token : req.cookies.access_token,
+    token_type   : req.cookies.token_type,
+    spreadsheetId: data.spreadsheetId,
+    //summary tab
+    worksheetId: 'ocr',
+    callback: function(err, spreadsheet) {
+        if( err ) return res.send({error:true,message:err});
+        sheetReady(spreadsheet);
+    }
+  });
+
+  function sheetReady(spreadsheet) {
+	var ss = dtToSs(data.table);
+
+    spreadsheet.add(ss);
+
+    spreadsheet.send(function(err) {
+      if(err) return res.send({error:true,message:err});
+      res.send({success:true});
+    });
+  };
+});
+
+// convert the datatable format to the spreadsheet format
+function dtToSs(dt) {
+	var dt = JSON.parse(dt), cols = {}, ss = {1:{}};
+	
+	// map columns
+	for( var i = 0; i < inputs.length; i++ ) {
+		ss[1][i+1] = inputs[i];
+		cols[inputs[i]] = 0;
+	}
+	for( var i = 0; i < dt.cols.length; i++ ) {
+		if( cols[dt.cols[i].id] != null) {
+			cols[dt.cols[i].id] = i;
+		}
+	}
+
+	for( var i = 0; i < dt.rows.length; i++ ) {
+		ss[i+2] = {};
+		for( var j = 0; j < inputs.length; j++ ) {
+			ss[i+2][j+1] = dt.rows[i].c[cols[inputs[j]]].v;
+		}
+	}
+	
+	return ss;
+}
+
 
 app.listen(3000);
 
-console.log("WeatherApp server up at http://localhost:3000");
+console.log("3PG Model server up at http://localhost:3000");
+

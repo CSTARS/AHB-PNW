@@ -12,10 +12,22 @@
 	<!-- Libraries -->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript" src="jslib/bootstrap.min.js"></script>
+	<script type="text/javascript" src="jslib/jquery.cookie.js"></script>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script src="https://apis.google.com/js/client.js?onload=initapi"></script>
 	<script type="text/javascript">
       google.load('visualization', '1', {packages: ['corechart','table']});
+      google.load('gdata', '1.x');  
+      google.setOnLoadCallback(onApisLoad); 
+      
+      var apiCount = 2;
+      function onApisLoad() {
+    	  apiCount--;
+    	  if( apiCount == 0 ) {
+    		  
+    	  }
+      }
     </script>
 	
 
@@ -25,6 +37,7 @@
 			type : "weather",
 			irType : "Irrigated"
 		};
+		
 	      $(window).ready(function(){
 	    	 $("#type-selector button").on('click',function(e){
 	    		 var id = this.id.replace(/type-/, '');
@@ -63,6 +76,7 @@
 	    	 ahb.map.init();
 	    	 ahb.search.init();
 	    	 ahb.chart.init();
+	    	 ahb.modelExport.init();
 	    	 
 	    	 function _resize() {
 	    		 if($(window).width() < 765) {
@@ -78,6 +92,7 @@
     <script type="text/javascript" src="js/map.js"></script>
 	<script type="text/javascript" src="js/search.js"></script>
 	<script type="text/javascript" src="js/chart.js"></script>
+	<script type="text/javascript" src="js/export.js"></script>
     
 </head>
 <body>
@@ -138,6 +153,7 @@
 		<div class="span6" id="outer-weather-chart-panel">
 			<div id="weather-chart-panel" class="chart-panel" style="margin-bottom:10px;height:400px"></div>
 			<div id="weather-download-panel" ></div>
+			<div id="weather-export-panel"><a class="btn" id="weather-export-modal-btn" style="margin-left:10px"><i class="icon-external-link"></i>&nbsp;Send to 3PG Model</a></div>
 		</div>
 		<div class="span6" id="outer-soil-chart-panel">
 			<div class="chart-panel" style="margin-bottom:10px">
@@ -148,6 +164,51 @@
 		</div>
 	</div>
 </div>
+
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Export to 3PG Model Spreadsheet</h3>
+  </div>
+  <div class="modal-body">
+  	<div class='alert alert-block'><b>Demo.</b>  This is just a demo right now.  Feel free to play around and
+  	try it out.  The real version should be launching in the next couple weeks.</div>
+  	<div id="login-here">First, <a id="login-btn" style="cursor:pointer">login to your google account</a></div>
+  	<table cellpadding="5">
+  		<tr>
+  			<td>Spreadsheet Url: </td>
+  			<td><input type="text" id="spreadsheet-url-input"  style="width:300px"/></td>
+  		</tr><tr>
+  			<td>Key: </td>
+  			<td id="spreadsheet-key"></td>
+  		</tr><tr id="spreadsheet-name-row" style="display:none">
+  			<td>Name: </td>
+  			<td id="spreadsheet-name"></td>
+  		</tr>
+  	</table>
+  	<a class='btn btn-link' id='modal-help-link'>Help Creating Spreadsheet</a>
+  	<br />
+  	<div id='modal-help' class="well" style="display:none">
+  		<H4>How to create the 3PG Model SpreadSheet</H4>
+  		<ul>
+  			<li>Go to the master spreadsheet <a href='https://docs.google.com/spreadsheet/ccc?key=0Av7cUV-o2QQYdElVa2dqeE45Y1VndDNab0FsTTNLNGc' target='_blank' >here</a></li>
+  			<li>From the master sheet menu, click <b>File</b> -> <b>Make a copy</b></li>
+  			<li>Title your 3PG Model spreadsheet, then click <b>OK</b></li>
+  			<li>Copy the spreadsheet url and paste into the box above</li>
+  		</ul>
+  		<div>Once the spreadsheet is created paste in the new spreadsheet url above and click <b>Export</b>.  
+  		If you navigate to the <b>Weather Inputs</b> worksheet in the new 3PG spreadsheet you will see your
+  		inputs change</div>
+  	</div>
+    <div id="modal-msg"></div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    <button class="btn btn-primary" id="weather-export-btn" >Export</button>
+  </div>
+</div>
+
 
 </body>
 </html>
