@@ -33,12 +33,31 @@ ahb.chart = (function() {
 	
 	var cll = null;
 	
+	// map id's to nice labels
+	var attrMap = {
+		tmin     : "Min Temp",
+		tmax     : "Max Temp",
+		tdmean   : "Mean Dewpoint Temp",
+		ppt      : "Precipitation",
+		rad      : "Radiation",
+		daylight : "Daylight",
+		asw      : "Available Soil Water",
+		irrig    : "Required Irrigation",
+		trans    : "Canopy Monthly Transpiration",
+		wf       : "Foliage Biomass",
+		wr       : "Root Biomass",
+		ws       : "Stem Biomass",
+		maxaws   : "Max Available Soil Water (maxaws)",
+		swpower  : "Power of Moisture Ratio Deficit (swpower)",
+		swconst  : "Moisture Ratio Deficit (swconst)"
+	}
+	
 	// chart options
     var options = {
     	weather : {
 	    	title : 'Climate Chart',
 	    	vAxes: [{
-	    		title: "Radiation (MJ/day); Temperature (^C); Due Point (^C)",
+	    		title: "Radiation (MJ/day); Temperature (^C); Due Point (^C); Daylight (h)",
 	    	    minValue : -5,
 	    	    maxValue : 35
 	  		},{
@@ -46,7 +65,7 @@ ahb.chart = (function() {
 	  			minValue : -50,
 	  			maxValue : 350
 	  		}],
-	  		hAxis: {title: ""},
+	  		hAxis: {title: "Month"},
 	  		seriesType: "bars",
 	  		series: {
 	  			0: {type: "line", targetAxisIndex:0},
@@ -242,7 +261,7 @@ ahb.chart = (function() {
 	      return;
 	    }
 
-	    datatable[type] = response.getDataTable();
+	    datatable[type] = _setLabels(response.getDataTable());
 	    
 	    // create download url 
 	    var id = cId;
@@ -254,6 +273,15 @@ ahb.chart = (function() {
 	    
 	    if( chart[type] == null ) _remake(type);
 	    else _redraw(type);
+	}
+	
+	function _setLabels(dt) {
+		for( var i = 0; i < dt.getNumberOfColumns(); i++ ) {
+			if( attrMap[dt.getColumnId(i)] ) {
+				dt.setColumnLabel(i, attrMap[dt.getColumnId(i)]);
+			}
+		}
+		return dt;
 	}
 
 	function _formatLL(val) {

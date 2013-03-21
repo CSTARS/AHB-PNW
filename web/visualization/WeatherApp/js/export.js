@@ -24,15 +24,28 @@ ahb.modelExport = (function(){
 	}
 	
 	function init() {
+		// see if the user is already logged into google
+		// if so grab a token.  Otherwise, we will show the login button
+		// when the popup shows
+    	gapi.client.load('oauth2', 'v2', function(){
+    		oauthConfig.immediate = true;
+        	gapi.auth.authorize(oauthConfig, function(){
+        		gapi.client.oauth2.userinfo.get().execute(function(resp) {
+            		if (!resp.code) {
+            			oauthToken = gapi.auth.getToken();
+            			$.cookie('access_token', oauthToken.access_token);
+            			$.cookie('token_type', oauthToken.token_type);
+            			$("#login-here").hide();
+            		}
+            	});
+        	});
+    	});
+		
 		$("#weather-export-modal-btn").on('click', function(){
-			if( oauthToken == null ) {
-				_login();
-			} else {
-				_resetBtn();
-				$('#modal-msg').html("");
-				$('#myModal').modal('show');
-				_getName(key);
-			}
+			_resetBtn();
+			$('#modal-msg').html("");
+			$('#myModal').modal('show');
+			_getName(key);
 		});
 
 		$("#login-btn").on('click', function(){
@@ -67,12 +80,7 @@ ahb.modelExport = (function(){
 			
 			if( cKey != key ) {
 				cKey = key;
-				if( oauthToken == null ) {
-					stage = 2;
-					_login();
-				} else {
-					_getName(key);
-				}
+				_getName(key);
 			}
 		});
 		
@@ -93,8 +101,13 @@ ahb.modelExport = (function(){
 	}
 	
 	function _getName(key) {
+		if( oauthToken == null ) {
+			$('#modal-msg').html("<div class='alert alert-error' style='text-align:center'>You are not logged in.</div>");
+			return;
+		}
+		
 		$.ajax({
-			url  : '/rest/getSsName?key='+key,
+			url  : 'rest/getSsName?key='+key,
 			type : 'GET',
 			success : function(resp){
 				if( resp.success ) {
@@ -118,11 +131,16 @@ ahb.modelExport = (function(){
 	}
 	
 	function _onWeatherExport(dt, key) {
+		if( oauthToken == null ) {
+			$('#modal-msg').html("<div class='alert alert-error' style='text-align:center'>You are not logged in.</div>");
+			return;
+		}
+		
 		if( $("#weather-export-btn").hasClass("disabled") ) return;
 		$("#weather-export-btn").addClass("disabled").html("Exporting..");
 		
 		$.ajax({
-			url  : '/rest/updateModel',
+			url  : 'rest/updateModel',
 			type : 'POST',
 			data : { 
 				spreadsheetId : key, 
@@ -148,9 +166,7 @@ ahb.modelExport = (function(){
 	
 
     function _login() {
-    	gapi.client.load('oauth2', 'v2', function(){
-    		_signin(true, _userAuthed);
-    	});
+    	_signin(true, _userAuthed);
     }
 	
 
