@@ -19,3 +19,7 @@
 #map img {
 	max-width: inherit;
 }
+
+.modal-body {
+	max-height: 300px !important;
+}

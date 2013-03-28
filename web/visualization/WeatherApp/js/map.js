@@ -58,6 +58,14 @@ ahb.map = (function() {
 				    select: 'boundary',
 				    from: '1hV9vQG3Sc0JLPduFpWJztfLK-ex6ccyMg_ptE_s'
 				  },
+				  styles: [{
+			         polygonOptions: {
+			           strokeColor   : "#0000FF",
+			           strokeOpacity : 0.5,
+			           fillColor     : '#FEFEFE',
+			           fillOpacity   : 0.2
+			         }
+			      }],
 				  suppressInfoWindows : true
 				});
 		} else {

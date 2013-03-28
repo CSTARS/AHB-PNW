@@ -102,7 +102,7 @@ ahb.modelExport = (function(){
 	
 	function _getName(key) {
 		if( oauthToken == null ) {
-			$('#modal-msg').html("<div class='alert alert-error' style='text-align:center'>You are not logged in.</div>");
+			_showError("You are not logged in.");
 			return;
 		}
 		
@@ -112,16 +112,19 @@ ahb.modelExport = (function(){
 			success : function(resp){
 				if( resp.success ) {
 					$("#spreadsheet-name-row").show();
+					$("#spreadsheet-date-row").show();
 					$("#spreadsheet-name").html(resp.name);
 					$('#modal-msg').html("");
 				} else {
 					$("#spreadsheet-name-row").hide();
-					$('#modal-msg').html("<div class='alert alert-error' style='text-align:center'>Invalid Key<br />Make sure you have access to the spreadsheet.</div>");
+					$("#spreadsheet-date-row").hide();
+					_showError("Invalid Key<br />Make sure you have access to the spreadsheet.");
 				}
 			}, 
 			error : function(resp) {
 				$("#spreadsheet-name-row").hide();
-				$('#modal-msg').html("<div class='alert alert-error' style='text-align:center'>Invalid Key<br />Make sure you have access to the spreadsheet.</div>");
+				$("#spreadsheet-date-row").hide();
+				_showError("Invalid Key<br />Make sure you have access to the spreadsheet.");
 			}
 		});
 	}
@@ -132,10 +135,16 @@ ahb.modelExport = (function(){
 	
 	function _onWeatherExport(dt, key) {
 		if( oauthToken == null ) {
-			$('#modal-msg').html("<div class='alert alert-error' style='text-align:center'>You are not logged in.</div>");
+			_showError("You are not logged in.");
 			return;
 		}
 		
+		var date = $("#spreadsheet-date").val();
+		if( date == null || date == "" ) {
+			_showError("Please provide a planted date");
+			return;
+		}
+
 		if( $("#weather-export-btn").hasClass("disabled") ) return;
 		$("#weather-export-btn").addClass("disabled").html("Exporting..");
 		
@@ -144,26 +153,36 @@ ahb.modelExport = (function(){
 			type : 'POST',
 			data : { 
 				spreadsheetId : key, 
-				table : dt.toJSON()
+				table : dt.toJSON(),
+				date  : date
 			},
 			success : function(resp){
 				if( resp.success ) {
-					$('#modal-msg').html("<div class='alert alert-success' style='text-align:center'>Update Success!</div>");
+					_showSuccess("Update Success!");
 					setTimeout(function(){
 						$('#myModal').modal('hide');
 					},1000);
 				} else {
-					$('#modal-msg').html("<div class='alert alert-error' style='text-align:center'>Update Failed<br />Make sure you have access to the spreadsheet.</div>");
+					_showError("Update Failed<br />Make sure <b>Make sure you have access to the spreadsheet.");
 				}
 				_resetBtn();
 			}, 
 			error : function(resp) {
-				$('#modal-msg').html("<div class='alert alert-error' style='text-align:center'>Update Failed<br />Make sure <b>Make sure you have access to the spreadsheet.</div>");
+				_showError("Update Failed<br />Make sure <b>Make sure you have access to the spreadsheet.");
 				_resetBtn();
 			}
 		});
 	}
 	
+	function _showSuccess(msg) {
+		$("#modal-help").hide('slow');
+		$('#modal-msg').html("<div class='alert alert-success' style='text-align:center'>"+msg+"</div>");
+	}
+	
+	function _showError(msg) {
+		$("#modal-help").hide('slow');
+		$('#modal-msg').html("<div class='alert alert-error' style='text-align:center'>"+msg+"</div>");
+	}
 
     function _login() {
     	_signin(true, _userAuthed);

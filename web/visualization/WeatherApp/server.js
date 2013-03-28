@@ -57,7 +57,13 @@ app.post('/rest/updateModel', function(req, res) {
 
   function sheetReady(spreadsheet) {
 	var ss = dtToSs(data.table);
-
+	
+	// add planted date to input sheet
+	var dateRow = JSON.parse(data.table).rows.length+4;
+	ss[dateRow+""] = {};
+	ss[dateRow+""]["1"] = "Planted Date:";
+	ss[dateRow+""]["2"] = data.date;
+	
     spreadsheet.add(ss);
 
     spreadsheet.send(function(err) {
