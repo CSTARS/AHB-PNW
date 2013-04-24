@@ -4,6 +4,10 @@ var Spreadsheet = require('./spreadsheets');
 
 var inputs = ['tmin','tmax','tdmean','ppt','rad'];
 
+// you get this from the gdata feed
+// https://spreadsheets.google.com/feeds/worksheets/[key]/private/full
+var worksheetId = "oci";
+
 app.use(express.bodyParser());
 app.use(express.cookieParser());
 app.use(express.static(__dirname + '/'));
@@ -48,7 +52,7 @@ app.post('/rest/updateModel', function(req, res) {
     token_type   : req.cookies.token_type,
     spreadsheetId: data.spreadsheetId,
     //summary tab
-    worksheetId: 'ocr',
+    worksheetId: worksheetId,
     callback: function(err, spreadsheet) {
         if( err ) return res.send({error:true,message:err});
         sheetReady(spreadsheet);

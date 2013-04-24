@@ -11,6 +11,8 @@
 
 	<!-- Libraries -->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script> 
+	<script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/canvg.js"></script> 
 	<script type="text/javascript" src="jslib/bootstrap.min.js"></script>
 	<script type="text/javascript" src="jslib/jquery.cookie.js"></script>
 	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
@@ -87,7 +89,20 @@
 	    			 $(".search-small").hide();
 	    		 }
 	    	 }
+	    	 
+	    	 $("#test").on('click', function(){
+	    		var canvas = $("<canvas />");
+	    		var chart = $("#weather-chart-panel svg");
+	    		canvas.height(chart.height()).width(chart.width());
+	    		
+	    		var tmp = (new window.XMLSerializer()).serializeToString(chart[0]);
+	    		$("#testRoot").html("").append(canvas);
+	    		 canvg(canvas[0],(new window.XMLSerializer()).serializeToString(chart[0]),{ ignoreMouse: true, ignoreAnimation: true });
+	    		 
+	    	 });
+	    	 
 	      });
+	     
     </script>
     <script type="text/javascript" src="js/map.js"></script>
 	<script type="text/javascript" src="js/search.js"></script>
@@ -154,7 +169,9 @@
 		<div class="span6" id="outer-weather-chart-panel">
 			<div id="weather-chart-panel" class="chart-panel" style="margin-bottom:10px;height:400px"></div>
 			<div id="weather-download-panel" ></div>
-			<div id="weather-export-panel"><a class="btn" id="weather-export-modal-btn" style="margin-left:10px"><i class="icon-external-link"></i>&nbsp;Send to 3PG Model</a></div>
+			<div id="weather-export-panel">
+				<a class="btn" id="weather-export-modal-btn" style="margin-left:10px"><i class="icon-external-link"></i>&nbsp;Send to 3PG Model</a>
+			</div>
 		</div>
 		<div class="span6" id="outer-soil-chart-panel">
 			<div class="chart-panel" style="margin-bottom:10px">
@@ -173,8 +190,7 @@
     <h3 id="myModalLabel">Export to 3PG Model Spreadsheet</h3>
   </div>
   <div class="modal-body">
-  	<div class='alert alert-block'><b>Demo.</b>  This is just a demo right now.  Feel free to play around and
-  	try it out.  The real version should be launching in the next couple weeks.</div>
+  	<div class='alert alert-block'>Enter a Google Spreadsheet url below or click 'Help Creating Spreadsheet' for more information.</div>
   	<div id="login-here">First, <a id="login-btn" style="cursor:pointer">login to your google account</a></div>
   	<table cellpadding="5">
   		<tr>
@@ -196,7 +212,7 @@
   	<div id='modal-help' class="well" style="display:none">
   		<H4>How to create the 3PG Model SpreadSheet</H4>
   		<ul>
-  			<li>Go to the master spreadsheet <a href='https://docs.google.com/spreadsheet/ccc?key=0Av7cUV-o2QQYdElVa2dqeE45Y1VndDNab0FsTTNLNGc' target='_blank' >here</a></li>
+  			<li>Go to the master spreadsheet <a href='https://docs.google.com/spreadsheet/ccc?key=0AmgH34NLQLU-dHA0QkViSnE2WV9tZGdXX2JRVC1ISEE' target='_blank' >here</a></li>
   			<li>From the master sheet menu, click <b>File</b> -> <b>Make a copy</b></li>
   			<li>Title your 3PG Model spreadsheet, then click <b>OK</b></li>
   			<li>Copy the spreadsheet url and paste into the box above</li>
@@ -213,6 +229,8 @@
   </div>
 </div>
 
+<a class="btn" id="test">Test</a>
+<div id="testRoot"></div>
 
 </body>
 </html>
