@@ -10,8 +10,8 @@ ahb.modelExport = (function(){
 	var oauthToken = null;
 	var stage = 1;
 	
-	$(window).bind('weather-export-event', function(e, dt, key){
-		_onWeatherExport(dt, key);
+	$(window).bind('weather-export-event', function(e, wdt, sdt, key){
+		_onWeatherExport(wdt, sdt, key);
 	});
 	
 	function _onLoginComplete(stage, key) {
@@ -133,7 +133,7 @@ ahb.modelExport = (function(){
 		$("#weather-export-btn").removeClass("disabled").html("Export");
 	}
 	
-	function _onWeatherExport(dt, key) {
+	function _onWeatherExport(wdt, sdt, key) {
 		if( oauthToken == null ) {
 			_showError("You are not logged in.");
 			return;
@@ -153,8 +153,9 @@ ahb.modelExport = (function(){
 			type : 'POST',
 			data : { 
 				spreadsheetId : key, 
-				table : dt.toJSON(),
-				date  : date
+				table : wdt.toJSON(),
+				date  : date,
+				soil  : sdt.toJSON()
 			},
 			success : function(resp){
 				if( resp.success ) {

@@ -133,7 +133,7 @@ ahb.chart = (function() {
 				return alert("You must provide a spreadsheet url");
 			}
 			
-			$(window).trigger("weather-export-event",[datatable.weather, key]);
+			$(window).trigger("weather-export-event",[datatable.weather, datatable.soil, key]);
 		});
 	}
 	

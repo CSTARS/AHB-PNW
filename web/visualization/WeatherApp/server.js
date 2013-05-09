@@ -68,6 +68,15 @@ app.post('/rest/updateModel', function(req, res) {
 	ss[dateRow+""]["1"] = "Planted Date:";
 	ss[dateRow+""]["2"] = data.date;
 	
+	// add soil data
+	dateRow++;
+	var soil = JSON.parse(data.soil);
+	ss[dateRow+""] = {};
+	ss[dateRow+""]["1"] = "Soil Data:";
+	ss[dateRow+""]["2"] = soil.rows[0].c[0].v;
+	ss[dateRow+""]["3"] = soil.rows[0].c[1].v;
+	ss[dateRow+""]["4"] = soil.rows[0].c[2].v;
+	
     spreadsheet.add(ss);
 
     spreadsheet.send(function(err) {
