@@ -78,7 +78,7 @@ if (typeof module !== 'undefined' && module.exports) {
 		var fList = ["readWeather", "readAllConstants", "defaultOrUser", "log"];
 		
 		for( var i = 0; i < fList.length; i++ ) {
-			funcitons += eval('('+fList[i]+'.toString())');
+			functions += eval('('+fList[i]+'.toString())');
 		}
 		return functions;
 	}

@@ -213,7 +213,7 @@ if (typeof module !== 'undefined' && module.exports) {
 		             "testArray", "prevMonthVal", "curMonthVal", "avgMonthVal"];
 		
 		for( var i = 0; i < fList.length; i++ ) {
-			funcitons += eval('('+fList[i]+'.toString())');
+			functions += eval('('+fList[i]+'.toString())');
 		}
 		return functions;
 	}
