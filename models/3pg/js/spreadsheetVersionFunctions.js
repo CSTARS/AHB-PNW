@@ -106,7 +106,6 @@ function CumIrrig(prev_CumIrrig, cur_Irrig){
 Cumulative Required Irrigation at the time of planting
 */
 function init_CumIrrig(){
-  Logger.log("somethig");
   return 0; 
 }
 
@@ -230,7 +229,6 @@ TODO: WHAT IS IT SUPPOSED TO BE?
 function init_litterfall(gammaFx, gammaF0, cur_StandAge, tgammaF){
   
   var result = gammaFx * gammaF0 / (gammaF0 + (gammaFx - gammaF0) *  Math.exp(-12 * Math.log(1 + gammaFx / gammaF0) * cur_StandAge / tgammaF) );
-  Logger.log("DEBUGGING: " + result);
   return result;
 }
 
@@ -353,12 +351,19 @@ function xPP(y, cur_PAR, gDM_mol){
 
 
 
-
-
-
 // NODE EXPORT HOOK
-if( exports ) {
-	
-	var fArr = ["Intcptn", "init_Intcptn", "ASW", "init_ASW", "VPD", "fVPD", "fFrost", "fT"];	
-	
+if (typeof module !== 'undefined' && module.exports) {
+	exports.dump = function() {
+		var functions = "";
+		var fList = ["Intcptn", "init_Intcptn", "ASW", "init_ASW", "VPD", "fVPD", "fFrost", "fT", "Irrig",
+		             "CumIrrig", "init_CumIrrig", "fAge", "init_fAge", "fSW", "init_fSW", "fNutr", "PhysMod",
+		             "LAI", "init_LAI", "CanCond", "Transp", "NPP", "init_NPP", "litterfall", "init_litterfall",
+		             "pS", "init_pS", "pR", "WF", "init_WF", "WR", "init_WR", "WS", "init_WS", "W", "StandAge",
+		             "init_StandAge", "PAR", "xPP"];
+		
+		for( var i = 0; i < fList.length; i++ ) {
+			funcitons += eval('('+fList[i]+'.toString())');
+		}
+		return functions;
+	}
 }

@@ -1,4 +1,6 @@
-var env = plv8 ? "plv8" : "ss";
+function getEnv() {
+	return plv8 ? "plv8" : "ss";
+}
 
 
 /**
@@ -199,6 +201,20 @@ function avgMonthVal(array, index, Offset){
 
 
 function log(msg) {
-	if( Logger ) log(msg);
+	if( Logger ) Logger.log(msg);
 	if( plv8 ) plv8.elog(NOTICE, msg);
+}
+
+//NODE EXPORT HOOK
+if (typeof module !== 'undefined' && module.exports) {
+	exports.dump = function() {
+		var functions = "";
+		var fList = ["log", "runModel", "writeRowsToSheet", "initializeModel","singleStep",
+		             "testArray", "prevMonthVal", "curMonthVal", "avgMonthVal"];
+		
+		for( var i = 0; i < fList.length; i++ ) {
+			funcitons += eval('('+fList[i]+'.toString())');
+		}
+		return functions;
+	}
 }

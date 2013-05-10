@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var Spreadsheet = require('./spreadsheets');
 
-var inputs = ['tmin','tmax','tdmean','ppt','rad'];
+var inputs = ['tmin','tmax','tdmean','ppt','rad','daylight'];
 
 // you get this from the gdata feed
 // https://spreadsheets.google.com/feeds/worksheets/[key]/private/full
@@ -69,6 +69,13 @@ app.post('/rest/updateModel', function(req, res) {
 	ss[dateRow+""]["2"] = data.date;
 	
 	// add soil data
+	dateRow += 3;
+	ss[dateRow+""] = {};
+	ss[dateRow+""]["1"] = "";
+	ss[dateRow+""]["2"] = "maxaws";
+	ss[dateRow+""]["3"] = "swpower";
+	ss[dateRow+""]["4"] = "swconst";
+	
 	dateRow++;
 	var soil = JSON.parse(data.soil);
 	ss[dateRow+""] = {};
@@ -104,7 +111,12 @@ function dtToSs(dt) {
 	for( var i = 0; i < dt.rows.length; i++ ) {
 		ss[i+2] = {};
 		for( var j = 0; j < inputs.length; j++ ) {
-			ss[i+2][j+1] = dt.rows[i].c[cols[inputs[j]]].v;
+			if( dt.rows[i].c[cols[inputs[j]]] != null ) {
+				ss[i+2][j+1] = dt.rows[i].c[cols[inputs[j]]].v;
+			} else {
+				ss[i+2][j+1] = "";
+			}
+				
 		}
 	}
 	

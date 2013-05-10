@@ -1,4 +1,6 @@
-var env = plv8 ? "plv8" : "ss";
+function getEnv() {
+	return plv8 ? "plv8" : "ss";
+}
 
 /** this function with use default value when user value not provided. Otherwhise NA? */
 function defaultOrUser(defaultVal, userVal) {
@@ -63,7 +65,21 @@ function readWeather(){
     return keyValMap;
 }
 
+// cross env logger
 function log(msg) {
-	if( Logger ) log(msg);
+	if( Logger ) Logger.log(msg);
 	if( plv8 ) plv8.elog(NOTICE, msg);
+}
+
+//NODE EXPORT HOOK
+if (typeof module !== 'undefined' && module.exports) {
+	exports.dump = function() {
+		var functions = "";
+		var fList = ["readWeather", "readAllConstants", "defaultOrUser", "log"];
+		
+		for( var i = 0; i < fList.length; i++ ) {
+			funcitons += eval('('+fList[i]+'.toString())');
+		}
+		return functions;
+	}
 }
