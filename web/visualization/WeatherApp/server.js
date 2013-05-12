@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var Spreadsheet = require('./spreadsheets');
 
-var inputs = ['tmin','tmax','tdmean','ppt','rad','daylight'];
+var inputs = ['month','tmin','tmax','tdmean','ppt','rad','daylight'];
 
 // you get this from the gdata feed
 // https://spreadsheets.google.com/feeds/worksheets/[key]/private/full
