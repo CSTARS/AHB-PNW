@@ -1,6 +1,6 @@
-var basics = require('./modelFunctionsBasic.js');
-var inputs = require('./modelInputFunctions.js');
-var spreadsheet = require('./spreadsheetVersionFunctions.js');
+var basics = require('./Model3PG.js');
+var inputs = require('./InputOutput.js');
+var spreadsheet = require('./SingleRunFunctions.js');
 var fs = require('fs');
 
 // set header

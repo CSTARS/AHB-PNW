@@ -410,8 +410,8 @@ if (typeof module !== 'undefined' && module.exports) {
 		var fList = ["Intcptn", "init_Intcptn", "ASW", "init_ASW", "VPD", "fVPD", "fFrost", "fT", "Irrig",
 		             "CumIrrig", "init_CumIrrig", "fAge", "init_fAge", "fSW", "init_fSW", "fNutr", "PhysMod",
 		             "LAI", "init_LAI", "CanCond", "Transp", "NPP", "init_NPP", "litterfall", "init_litterfall",
-		             "pS", "init_pS", "pR", "WF", "init_WF", "WR", "init_WR", "WS", "init_WS", "W", "StandAge",
-		             "init_StandAge", "PAR", "xPP"];
+		             "pS", "init_pS", "pR", "pF", "WF", "init_WF", "WR", "init_WR", "WS", "init_WS", "W", "StandAge",
+		             "init_StandAge", "PAR", "xPP", "coppice_WR", "coppice_NPP", "coppice_RootPP", "coppice_pF", "coppice_pS", "coppice_pfs"];
 		
 		for( var i = 0; i < fList.length; i++ ) {
 			functions += eval('('+fList[i]+'.toString())');
