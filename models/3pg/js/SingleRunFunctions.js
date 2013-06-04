@@ -1,10 +1,11 @@
 
+var _3PGFunc = {};
 
 /**Intcptn
 units='unitless' 
 description='Canopy Rainfall interception'
 */
-function Intcptn(MaxIntcptn, cur_LAI, LAImaxIntcptn){
+_3PGFunc.Intcptn = function(MaxIntcptn, cur_LAI, LAImaxIntcptn){
   if (LAImaxIntcptn<=0){
     return MaxIntcptn;    
   }else {
@@ -15,7 +16,7 @@ function Intcptn(MaxIntcptn, cur_LAI, LAImaxIntcptn){
 /**init_Intcptn
 Canopy Rainfall Interception at time of planting
 */
-function init_Intcptn(MaxIntcptn, cur_LAI, LAImaxIntcptn){
+_3PGFunc.init_Intcptn = function(MaxIntcptn, cur_LAI, LAImaxIntcptn){
   if(LAImaxIntcptn <= 0){
      return MaxIntcptn;
   } else {
@@ -27,14 +28,14 @@ function init_Intcptn(MaxIntcptn, cur_LAI, LAImaxIntcptn){
 units='mm' 
 description='Available Soil Water'
 */
-function ASW(maxASW, prev_ASW, date_ppt, cur_Transp, cur_Intcptn, cur_Irrig){
+_3PGFunc.ASW = function(maxASW, prev_ASW, date_ppt, cur_Transp, cur_Intcptn, cur_Irrig){
   return Math.min(maxASW*10, Math.max(prev_ASW + date_ppt - (cur_Transp + cur_Intcptn * date_ppt) + cur_Irrig, 0));
 }
 
 /**init_ASW
 Available soil water at planting time
 */
-function init_ASW(maxAWS){
+_3PGFunc.init_ASW = function(maxAWS){
   return 0.8 * 10 * maxAWS;
 }
 
@@ -45,7 +46,7 @@ function init_ASW(maxAWS){
 units='kPA'
 description='Mean vapor pressure deficit'
 */
-function VPD(date_tmin, date_tmax, date_tdmean){
+_3PGFunc.VPD = function(date_tmin, date_tmax, date_tdmean){
   return (0.6108 / 2 * (Math.exp(date_tmin * 17.27 / (date_tmin + 237.3) ) + Math.exp(date_tmax * 17.27 / (date_tmax + 237.3) ) ) ) - (0.6108 * Math.exp(date_tdmean * 17.27 / (date_tdmean + 237.3) ) );
 }
 
@@ -54,7 +55,7 @@ function VPD(date_tmin, date_tmax, date_tdmean){
 units = unitless
 description='Vapor Pressure Deficit Modifier (Poplar)'
 */
-function fVPD(kG, cur_VPD){
+_3PGFunc.fVPD = function(kG, cur_VPD){
   return Math.exp(-1 * kG * cur_VPD); 
 }
 
@@ -64,7 +65,7 @@ function fVPD(kG, cur_VPD){
 units = unitless
 description = 'Number of Freeze Days Modifier'
 */
-function fFrost(date_tmin) {
+_3PGFunc.fFrost = function(date_tmin) {
   var tempVar = -1.0;
   if (date_tmin >= 0){
     tempVar = 1.0;
@@ -78,7 +79,7 @@ function fFrost(date_tmin) {
 units=unitless
 description='Temperature modifier'
 */
-function fT(date_tmin, date_tmax, Tmin, Tmax, Topt){
+_3PGFunc.fT = function(date_tmin, date_tmax, Tmin, Tmax, Topt){
   var tavg = (date_tmin + date_tmax) / 2;
   if (tavg <= Tmin || tavg >= Tmax){
      return 0;
@@ -91,7 +92,7 @@ function fT(date_tmin, date_tmax, Tmin, Tmax, Topt){
 units='mm/mon'
 description='Required Irrigation'
 */
-function Irrig(irrigFrac, cur_Transp, cur_Intcptn, date_ppt){
+_3PGFunc.Irrig = function(irrigFrac, cur_Transp, cur_Intcptn, date_ppt){
    return Math.max(0 , irrigFrac * (cur_Transp - (1 - cur_Intcptn) * date_ppt) );
 }
 
@@ -100,14 +101,14 @@ function Irrig(irrigFrac, cur_Transp, cur_Intcptn, date_ppt){
 units='mm' 
 description='Cumulative Required Irrigation'
 */
-function CumIrrig(prev_CumIrrig, cur_Irrig){
+_3PGFunc.CumIrrig = function(prev_CumIrrig, cur_Irrig){
    return prev_CumIrrig + cur_Irrig;
 }
 
 /**init_CumIrrig
 Cumulative Required Irrigation at the time of planting
 */
-function init_CumIrrig(){
+_3PGFunc.init_CumIrrig = function(){
   return 0; 
 }
 
@@ -117,7 +118,7 @@ TODO: set nage=0 as a param in the model setup (like a checkbox)
 units='unitless'
 description='age modifier'
 */
-function fAge(prev_StandAge, maxAge, rAge, nAge){
+_3PGFunc.fAge = function(prev_StandAge, maxAge, rAge, nAge){
   if (nAge==0){
     return 1;
   } else{
@@ -128,7 +129,7 @@ function fAge(prev_StandAge, maxAge, rAge, nAge){
 /**
 TODO: WHAT IS INIT_FAGE? where in makefile??
 */
-function init_fAge(cur_StandAge, maxAge, rAge, nAge){
+_3PGFunc.init_fAge = function(cur_StandAge, maxAge, rAge, nAge){
   if (nAge==0){
     return 1;
   } else{
@@ -146,7 +147,7 @@ function fSW(prev_ASW, maxAWS, swconst, swpower){
 /**
 TODO: WHAT IS INIT_FSW? where in makefile??
 */
-function init_fSW(cur_ASW, maxAWS, swconst, swpower){
+_3PGFunc.init_fSW = function(cur_ASW, maxAWS, swconst, swpower){
   return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (cur_ASW / 10 / maxAWS) ) / swconst) ) , swpower) );
 }
 
@@ -154,7 +155,7 @@ function init_fSW(cur_ASW, maxAWS, swconst, swpower){
 units='unitless' 
 description='Nutritional Fraction, might be based on soil and fertilizer at some point'
 */
-function fNutr(fN0, FR){
+_3PGFunc.fNutr = function(fN0, FR){
   return fN0 + (1 - fN0) * FR;
 }
 
@@ -163,7 +164,7 @@ TODO: why $3 in makefile - ask about it
 units=unitless 
 description='Physiological Modifier to conductance and APARu'
 */
-function PhysMod(cur_fVPD, cur_fSW, cur_fAge){
+_3PGFunc.PhysMod = function(cur_fVPD, cur_fSW, cur_fAge){
    return Math.min(cur_fVPD , cur_fSW) * cur_fAge;
 }
 
@@ -171,14 +172,14 @@ function PhysMod(cur_fVPD, cur_fSW, cur_fAge){
 units='m2/m2' 
 description='Leaf Area Index'
 */
-function LAI(prev_WF, SLA1, SLA0, prev_StandAge, tSLA){
+_3PGFunc.LAI = function(prev_WF, SLA1, SLA0, prev_StandAge, tSLA){
    return prev_WF * 0.1 * (SLA1 + (SLA0 - SLA1) * Math.exp(-0.693147180559945 * Math.pow( (prev_StandAge / tSLA) , 2) ) );
 }
 
 /**init_LAI
 Leaf Area INdex at the time of planting
 */
-function init_LAI(cur_WF, SLA1, SLA0, cur_StandAge, tSLA){
+_3PGFunc.init_LAI = function(cur_WF, SLA1, SLA0, cur_StandAge, tSLA){
   return cur_WF * 0.1 * (SLA1 + (SLA0 - SLA1) * Math.exp(-0.693147180559945 * Math.pow( (cur_StandAge / tSLA) , 2) ) ); 
 }
 
@@ -186,7 +187,7 @@ function init_LAI(cur_WF, SLA1, SLA0, cur_StandAge, tSLA){
 units='gc,m/s' 
 description='Canopy Conductance'
 */
-function CanCond(MaxCond, cur_PhysMod, cur_LAI, LAIgcx){
+_3PGFunc.CanCond = function(MaxCond, cur_PhysMod, cur_LAI, LAIgcx){
    return Math.max(0.0001 , MaxCond * cur_PhysMod * Math.min(1 , cur_LAI / LAIgcx) );
 }
 
@@ -194,7 +195,7 @@ function CanCond(MaxCond, cur_PhysMod, cur_LAI, LAIgcx){
 units='mm/mon' 
 description='Canopy Monthly Transpiration'
 */
-function Transp(days_per_mon, e20, Qa, Qb, date_nrel, date_daylight, rhoAir, lambda, VPDconv, cur_VPD, BLcond, cur_CanCond){
+_3PGFunc.Transp = function(days_per_mon, e20, Qa, Qb, date_nrel, date_daylight, rhoAir, lambda, VPDconv, cur_VPD, BLcond, cur_CanCond){
    return days_per_mon * ( (e20 * (Qa + Qb * (date_nrel / date_daylight) ) + (rhoAir * lambda * VPDconv * cur_VPD * BLcond) ) / (1 + e20 + BLcond / cur_CanCond) ) * date_daylight * 3600 / lambda;
 }
 
@@ -203,7 +204,7 @@ units='metric tons Dry Matter/ha'
 description - ? 
 TODO: add description
 */
-function NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost){
+_3PGFunc.NPP = function(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost){
   var CanCover = 1;
   if (prev_StandAge < fullCanAge){
     CanCover = prev_StandAge / fullCanAge;
@@ -214,14 +215,14 @@ function NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW,
 /**init_NPP
 TODO: WHAT IS IT?
 */
-function init_NPP(cur_StandAge, fullCanAge, cur_xPP, k, cur_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost){
+_3PGFunc.init_NPP = function(cur_StandAge, fullCanAge, cur_xPP, k, cur_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost){
  return 0;
 }
 
 /**litterfall
 TODO: untis + definition
 */
-function litterfall(gammaFx, gammaF0, prev_StandAge, tgammaF, prev_lastCoppiceAge){
+_3PGFunc.litterfall = function(gammaFx, gammaF0, prev_StandAge, tgammaF, prev_lastCoppiceAge){
   var prev_realStandAge = prev_StandAge - prev_lastCoppiceAge;
   Logger.log("DEBUGGING COPPICE: prev_StandAge=" + prev_StandAge +"; prev_realStandAge=" + prev_realStandAge);
   return gammaFx * gammaF0 / (gammaF0 + (gammaFx - gammaF0) *  Math.exp(-12 * Math.log(1 + gammaFx / gammaF0) * prev_realStandAge / tgammaF) );
@@ -230,7 +231,7 @@ function litterfall(gammaFx, gammaF0, prev_StandAge, tgammaF, prev_lastCoppiceAg
 /**init_litterfall
 TODO: WHAT IS IT SUPPOSED TO BE?
 */
-function init_litterfall(gammaFx, gammaF0, cur_StandAge, tgammaF){
+_3PGFunc.init_litterfall = function(gammaFx, gammaF0, cur_StandAge, tgammaF){
   
   var result = gammaFx * gammaF0 / (gammaF0 + (gammaFx - gammaF0) *  Math.exp(-12 * Math.log(1 + gammaFx / gammaF0) * cur_StandAge / tgammaF) );
   //Logger.log("DEBUGGING: " + result);
@@ -240,7 +241,7 @@ function init_litterfall(gammaFx, gammaF0, cur_StandAge, tgammaF){
 /**pS
 TODO: units and description
 */
-function pS(prev_WS, StockingDensity, StemConst, StemPower, cur_pR, pfsConst, pfsPower){
+_3PGFunc.pS = function(prev_WS, StockingDensity, StemConst, StemPower, cur_pR, pfsConst, pfsPower){
   var avDBH = Math.pow( ( (prev_WS * 1000 / StockingDensity) / StemConst) , (1 / StemPower) );
   return (1 - cur_pR) / (1 + ( pfsConst * Math.pow(avDBH , pfsPower) ) );
 }
@@ -248,7 +249,7 @@ function pS(prev_WS, StockingDensity, StemConst, StemPower, cur_pR, pfsConst, pf
 /**init_pS
 TODO: WHAT IS IT SUPPOSED TO BE???
 */
-function init_pS(cur_WS, StockingDensity, StemConst, StemPower, cur_pR, pfsConst, pfsPower){
+_3PGFunc.init_pS = function(cur_WS, StockingDensity, StemConst, StemPower, cur_pR, pfsConst, pfsPower){
   var avDBH = Math.pow( ( (cur_WS * 1000 / StockingDensity) / StemConst) , (1 / StemPower) );
   return (1 - cur_pR) / (1 + ( pfsConst * Math.pow(avDBH , pfsPower) ) );
 }
@@ -256,14 +257,14 @@ function init_pS(cur_WS, StockingDensity, StemConst, StemPower, cur_pR, pfsConst
 /**pR
 TODO: units and description
 */
-function pR(pRx, pRn, cur_PhysMod, m0, FR){
+_3PGFunc.pR = function(pRx, pRn, cur_PhysMod, m0, FR){
   return (pRx * pRn) / (pRn + (pRx - pRn) * cur_PhysMod * (m0 + (1 - m0) * FR) );
 }
 
 /**pF
 TODO: units and description
 */
-function pF(cur_pR, cur_pS){
+_3PGFunc.pF = function(cur_pR, cur_pS){
   return 1 - cur_pR - cur_pS;
 }
 
@@ -271,14 +272,14 @@ function pF(cur_pR, cur_pS){
 units='t/ha' 
 description='Foliage Biomass'
 */
-function WF(cur_pF, prev_WF, cur_NPP, cur_litterfall){
+_3PGFunc.WF = function(cur_pF, prev_WF, cur_NPP, cur_litterfall){
    return prev_WF + cur_NPP * cur_pF - cur_litterfall * prev_WF;
 }
 
 /**init_WF
 Foliage Biomass at planting time
 */
-function init_WF(StockingDensity, SeedlingMass){
+_3PGFunc.init_WF = function(StockingDensity, SeedlingMass){
   return 0.5 * StockingDensity * SeedlingMass; 
 }
 
@@ -286,14 +287,14 @@ function init_WF(StockingDensity, SeedlingMass){
 units='t/ha' 
 description='Root Biomass'
 */
-function WR(prev_WR, cur_NPP, cur_pR, Rttover){
+_3PGFunc.WR = function(prev_WR, cur_NPP, cur_pR, Rttover){
    return prev_WR + cur_NPP * cur_pR - Rttover * prev_WR;
 }
 
 /**init_WR
 Root Biomass at planting time
 */
-function init_WR(StockingDensity, SeedlingMass){
+_3PGFunc.init_WR = function(StockingDensity, SeedlingMass){
   return 0.25 * StockingDensity * SeedlingMass; 
 }
 
@@ -301,14 +302,14 @@ function init_WR(StockingDensity, SeedlingMass){
 units='t/ha' 
 description='Stem Biomass'
 */
-function WS(prev_WS, cur_NPP, cur_pS){
+_3PGFunc.WS = function(prev_WS, cur_NPP, cur_pS){
    return prev_WS + cur_NPP * cur_pS;
 } 
 
 /**init_WS
 Root Biomass at planting time
 */
-function init_WS(StockingDensity, SeedlingMass){
+_3PGFunc.init_WS = function(StockingDensity, SeedlingMass){
   return 0.25 * StockingDensity * SeedlingMass; 
 }
 
@@ -316,21 +317,21 @@ function init_WS(StockingDensity, SeedlingMass){
 units='t/ha' 
 description='Tree Biomass'
 */
-function W(cur_WF, cur_WR, cur_WS){
+_3PGFunc.W = function(cur_WF, cur_WR, cur_WS){
   return cur_WF + cur_WR + cur_WS;
 }
 
 /**StandAge
 TODO: units and description
 */
-function StandAge(prev_StandAge){
+_3PGFunc.StandAge = function(prev_StandAge){
   return prev_StandAge + 1.0/12;
 }
 
 /**initStandAge
 StandAge at planting time
 */
-function init_StandAge(){
+_3PGFunc.init_StandAge = function(){
   return 1.0 / 12; 
 }
 
@@ -342,7 +343,7 @@ TODO: mols or mols per m^2?
 units=mols 
 description='Monthly PAR in mols / m^2 month' 
 */
-function PAR(date_rad, molPAR_MJ){
+_3PGFunc.PAR = function(date_rad, molPAR_MJ){
   return date_rad * 30.4 * molPAR_MJ;
 }
 
@@ -351,28 +352,28 @@ units='metric tons Dry Matter/ha'
 description='maximum potential Primary Production [tDM / ha month]
 NOTE: 10000/10^6 [ha/m2][tDm/gDM] 
 */
-function xPP(y, cur_PAR, gDM_mol){
+_3PGFunc.xPP = function(y, cur_PAR, gDM_mol){
   return y * cur_PAR * gDM_mol / 100;
 }
       
 /*** FUNCTIONS FOR COPPICING */
 
 // Coppice Functions are based on Diameter on Stump, NOT DBH.
-function coppice_pfs(prev_WS,StockingDensity, cpStemsPerStump, cpStemConst, cpStemPower, cpPfsConst, cpPfsPower,cpMaxPfs) {
+_3PGFunc.coppice_pfs = function(prev_WS,StockingDensity, cpStemsPerStump, cpStemConst, cpStemPower, cpPfsConst, cpPfsPower,cpMaxPfs) {
   var avDOB = Math.pow( ( (prev_WS * 1000 / StockingDensity / cpStemsPerStump) / cpStemConst) , (1 / cpStemPower) );
   var ppfs= cpPfsConst * Math.pow(avDOB , cpPfsPower);
   return Math.min(cpMaxPfs,ppfs);
 }
 
-function coppice_pS(cur_pR,pfs) {
+_3PGFunc.coppice_pS = function(cur_pR,pfs) {
   return (1 - cur_pR) / (1 + 1/pfs );
 }
 
-function coppice_pF(cur_pR,pfs) {
+_3PGFunc.coppice_pF = function(cur_pR,pfs) {
     return (1 - cur_pR) / (1 + 1/pfs );
 }
 
-function coppice_RootPP(cur_npp, cur_nppTarget, WR,W,pRx,cpRootStoragePct,cpRootLAITarget) {
+_3PGFunc.coppice_RootPP = function(cur_npp, cur_nppTarget, WR,W,pRx,cpRootStoragePct,cpRootLAITarget) {
  // var npp=NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
  // var nppTarget = NPP(prev_StandAge, fullCanAge, cur_xPP, k, cpRootLAITarget, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
  
@@ -387,7 +388,7 @@ function coppice_RootPP(cur_npp, cur_nppTarget, WR,W,pRx,cpRootStoragePct,cpRoot
   return rootPP;
 }
 
-function coppice_NPP(cur_npp,coppice_RootPP) {
+_3PGFunc.coppice_NPP = function(cur_npp,coppice_RootPP) {
   //var npp = NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
 //  var rootPP = coppice_RootPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost,WR,W,pRx,cpRootStoragePct);
   return cur_npp+coppice_RootPP;
@@ -397,7 +398,7 @@ function coppice_NPP(cur_npp,coppice_RootPP) {
 units='t/ha' 
 description='Root Biomass'
 */
-function coppice_WR(prev_WR, cur_NPP, cur_pR, Rttover,coppice_RootPP){
+_3PGFunc.coppice_WR = function(prev_WR, cur_NPP, cur_pR, Rttover,coppice_RootPP){
   //Logger.log("DEBUGGING COPPICE: prev_WR=" + prev_WR + "; cur_NPP=" + cur_NPP + "; cur_pR=" + cur_pR + "; Rttover=" + Rttover+ "; coppice_RootPP=" + coppice_RootPP);
    return prev_WR, prev_WR + cur_NPP * cur_pR - Rttover * prev_WR - coppice_RootPP;
 }
@@ -406,16 +407,50 @@ function coppice_WR(prev_WR, cur_NPP, cur_pR, Rttover,coppice_RootPP){
 // NODE EXPORT HOOK
 if (typeof module !== 'undefined' && module.exports) {
 	exports.dump = function() {
-		var functions = "";
-		var fList = ["Intcptn", "init_Intcptn", "ASW", "init_ASW", "VPD", "fVPD", "fFrost", "fT", "Irrig",
-		             "CumIrrig", "init_CumIrrig", "fAge", "init_fAge", "fSW", "init_fSW", "fNutr", "PhysMod",
-		             "LAI", "init_LAI", "CanCond", "Transp", "NPP", "init_NPP", "litterfall", "init_litterfall",
-		             "pS", "init_pS", "pR", "pF", "WF", "init_WF", "WR", "init_WR", "WS", "init_WS", "W", "StandAge",
-		             "init_StandAge", "PAR", "xPP", "coppice_WR", "coppice_NPP", "coppice_RootPP", "coppice_pF", "coppice_pS", "coppice_pfs"];
-		
-		for( var i = 0; i < fList.length; i++ ) {
-			functions += eval('('+fList[i]+'.toString())');
+		var objStr = "_3PGFunc={";
+		for( var key in _3PGFunc ) {
+			if( typeof _3PGFunc[key] == 'function' ) {
+				objStr += key+":"+_3PGFunc[key].toString()+",";
+			} else {
+				objStr += key+":"+JSON.stringify(_3PGFunc[key])+",";
+			}
 		}
-		return functions;
+		return objStr.replace(/,$/,'')+"};";
+	}
+	
+	exports.testFunctions = function() {
+		var key, args, funcStr, assignments;
+		var ret = "";
+		
+		for( key in _3PGFunc ) {
+			if( typeof _3PGFunc[key] == 'function' ) {
+				funcStr = "\nCREATE OR REPLACE FUNCTION "+key+"(";
+				
+				args = getArguments(_3PGFunc[key]);
+				
+				// hack for variable input names
+				assignments = "";
+				for( var i = 0; i < args.length; i++ ) {
+					funcStr += "arg"+i+" NUMERIC, ";
+					assignments += "var "+args[i].replace(/\s/g,'')+" = arg"+i+";\n";
+				}
+				funcStr = funcStr.replace(/,\s$/,'')+") RETURNS\nNUMERIC AS $$\n";
+				funcStr += assignments;
+				funcStr += getBody(_3PGFunc[key])+"\n";
+				ret += funcStr + "$$ LANGUAGE plv8 IMMUTABLE STRICT;\n";
+			}
+		}
+		return ret;
+	}
+	
+	function getArguments(f) {
+		return f.toString().split("(")[1].split(")")[0].replace(/\s/,'').split(",");
+	}
+	
+	function getBody(f) {
+		var parts = f.toString().split(")");
+		var body = parts[1];
+		parts.splice(0,1);
+		return parts.join(')').replace(/^\s*{/,'').replace(/}[\n\s]*$/,'');
 	}
 }
