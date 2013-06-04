@@ -624,9 +624,8 @@ var cur_Irrig = arg1;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_CumIrrig(arg0 NUMERIC) RETURNS
+CREATE OR REPLACE FUNCTION init_CumIrrig() RETURNS
 NUMERIC AS $$
-var  = arg0;
 
   return 0; 
 
@@ -944,9 +943,8 @@ var prev_StandAge = arg0;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_StandAge(arg0 NUMERIC) RETURNS
+CREATE OR REPLACE FUNCTION init_StandAge() RETURNS
 NUMERIC AS $$
-var  = arg0;
 
   return 1.0 / 12; 
 

@@ -431,8 +431,10 @@ if (typeof module !== 'undefined' && module.exports) {
 				// hack for variable input names
 				assignments = "";
 				for( var i = 0; i < args.length; i++ ) {
-					funcStr += "arg"+i+" NUMERIC, ";
-					assignments += "var "+args[i].replace(/\s/g,'')+" = arg"+i+";\n";
+					if( args[i].replace(/\s/g,'').length > 0 ) {
+						funcStr += "arg"+i+" NUMERIC, ";
+						assignments += "var "+args[i].replace(/\s/g,'')+" = arg"+i+";\n";
+					}
 				}
 				funcStr = funcStr.replace(/,\s$/,'')+") RETURNS\nNUMERIC AS $$\n";
 				funcStr += assignments;
