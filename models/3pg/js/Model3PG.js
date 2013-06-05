@@ -108,7 +108,7 @@ var m3PG = {
 		    
 
 		    d = weatherMap[currentMonth]; //increment the month
-		    nextMonthResults = singleStep(g,currentMonthResults,d,s, isCoppiced);
+		    nextMonthResults = this.singleStep(g,currentMonthResults,d,s, isCoppiced);
 		    nextMonthResults.Date = (currentDate.getMonth()+1)  + "/" + currentDate.getYear();
 		    log("\n Results of the next month: " + nextMonthResults);
 		    var thisRow = [];
