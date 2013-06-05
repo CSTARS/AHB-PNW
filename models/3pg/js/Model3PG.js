@@ -289,7 +289,7 @@ function env() {
 
 function log(msg) {
 	if( env() == "plv8" ) plv8.elog(NOTICE, 'notice', msg);
-	if( env() == "appscript" ) log(NOTICE, 'notice', msg);
+	if( env() == "appscript" ) Logger.log(msg);
 }
 
 //NODE EXPORT HOOK
