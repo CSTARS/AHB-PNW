@@ -33,7 +33,7 @@ var m3PGIO = {
 	_readAllConstantsAppscript : function(keyValMap) {
 		var spreadsheet = SpreadsheetApp.getActiveSpreadsheet(); //Hardcoded 3PG spreadsheet id
 	    //var columns = spreadsheet.getLastColumn();
-	    var sheet = spreadsheet.getSheetByName(ioConfig.constansts); 
+	    var sheet = spreadsheet.getSheetByName(m3PGIO.config.constansts); 
 	    var data = sheet.getDataRange().getValues();
 	    var keys = data[0];  
 
@@ -70,7 +70,7 @@ var m3PGIO = {
 	_readWeatherAppScript : function(weatherMap, soilMap, dateMap) {
 	    var spreadsheet = SpreadsheetApp.getActiveSpreadsheet(); //Hardcoded 3PG spreadsheet id
 	    //var columns = spreadsheet.getLastColumn();
-	    var sheet = spreadsheet.getSheetByName(ioConfig.weather); //weather_Davis
+	    var sheet = spreadsheet.getSheetByName(m3PGIO.config.weather); //weather_Davis
 	    var data = sheet.getDataRange().getValues();
 	    var keys = data[0];  
 	  
@@ -83,16 +83,16 @@ var m3PGIO = {
 	      
 	      var item = {};
 	      for (var column = 0; column < keys.length; column++) {
-	        if ( rowData[0] == ioConfig.spreadsheet.plantedDateHeader ){
+	        if ( rowData[0] == m3PGIO.config.spreadsheet.plantedDateHeader ){
 	          dateMap["datePlanted"] = rowData[1];
 	          break;
-	        } else if ( rowData[0] == ioConfig.spreadsheet.coppiceDateHeader ){
+	        } else if ( rowData[0] == m3PGIO.config.spreadsheet.coppiceDateHeader ){
 	          dateMap["dateCoppiced"] = rowData[1];
 	          break;
-	        } else if (rowData[0]== ioConfig.spreadsheet.coppiceIntervalHeader ){
+	        } else if (rowData[0]== m3PGIO.config.spreadsheet.coppiceIntervalHeader ){
 	          dateMap["yearsPerCoppice"] = rowData[1];
 	          break;
-	        } else if ( rowData[0] == ioConfig.spreadsheet.soilDataHeader ){
+	        } else if ( rowData[0] == m3PGIO.config.spreadsheet.soilDataHeader ){
 	          //NOTICE: Order matters! 
 	          soilMap["maxAWS"] = rowData[1];
 	          soilMap["swpower"] = rowData[2];
@@ -135,7 +135,7 @@ var m3PGIO = {
 	_writeRowsToSheet : function(rows){
 		  var spreadsheet =
 		      SpreadsheetApp.getActiveSpreadsheet();
-		  var resultSheet = spreadsheet.getSheetByName(ioConfig.output); //TODO: decide on where this can be taken out into. Output
+		  var resultSheet = spreadsheet.getSheetByName(m3PGIO.config.output); //TODO: decide on where this can be taken out into. Output
 		  //below start with second row, leave first one untouched
 		  
 		  var range = resultSheet.getRange(1, 1,
@@ -149,11 +149,11 @@ var m3PGIO = {
 if (typeof module !== 'undefined' && module.exports) {
 	exports.dump = function() {
 		var objStr = "m3PGIO={";
-		for( var key in _3PGIO ) {
-			if( typeof _3PGIO[key] == 'function' ) {
-				objStr += key+":"+_3PGIO[key].toString()+",";
+		for( var key in m3PGIO ) {
+			if( typeof m3PGIO[key] == 'function' ) {
+				objStr += key+":"+m3PGIO[key].toString()+",";
 			} else {
-				objStr += key+":"+JSON.stringify(_3PGIO[key])+",";
+				objStr += key+":"+JSON.stringify(m3PGIO[key])+",";
 			}
 		}
 		return objStr.replace(/,$/,'')+"};";
