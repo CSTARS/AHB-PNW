@@ -37,3 +37,19 @@ function defaultOrUser(defaultVal, userVal) {
     return userVal;
   }
 }
+
+
+try {
+  var source = UrlFetchApp.fetch("https://raw.github.com/CSTARS/AHB-PNW/master/models/3pg/js/InputOutput.js").getContentText();
+  eval(source);
+  
+  source = UrlFetchApp.fetch("https://raw.github.com/CSTARS/AHB-PNW/master/models/3pg/js/Model3PG.js").getContentText();
+  eval(source);
+  
+  source = UrlFetchApp.fetch("https://raw.github.com/CSTARS/AHB-PNW/master/models/3pg/js/SingleRunFunctions.js").getContentText();
+  eval(source);
+
+}catch (e){
+  Logger.log(e);
+}
+  
