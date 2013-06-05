@@ -140,7 +140,7 @@ m3PGFunc.init_fAge = function(cur_StandAge, maxAge, rAge, nAge){
 /**fSW
 TODO: get units and description
 */
-function fSW(prev_ASW, maxAWS, swconst, swpower){
+m3PGFunc.fSW = function(prev_ASW, maxAWS, swconst, swpower){
    return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (prev_ASW / 10 / maxAWS) ) / swconst) ) , swpower) );
 }
 
