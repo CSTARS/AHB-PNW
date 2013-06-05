@@ -11,7 +11,7 @@ lengthOfGrowth is in months
 
 var m3PG = {
 	
-	run : function(lenghtOfGrowth) {
+	run : function(lengthOfGrowth) {
 		  //work with offsets and weather data later
 		  
 		  var isCoppiced = false;
