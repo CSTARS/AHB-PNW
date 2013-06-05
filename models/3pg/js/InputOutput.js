@@ -22,8 +22,8 @@ var m3PGIO = {
 	},
 	
 	readAllConstants : function(keyValMap) {
-		if( env() == "appscript" ) return this._readAllConstantsAppscript(keyValMap);
-		else if( env() == "plv8" ) return this._readAllConstantsPlv8(keyValMap);
+		if( env() == "appscript" ) return m3PGIO._readAllConstantsAppscript(keyValMap);
+		else if( env() == "plv8" ) return m3PGIO._readAllConstantsPlv8(keyValMap);
 		
 		// badness
 		log("Error: unknown env in 3PG.io.readAllConstants - "+env());
@@ -59,8 +59,8 @@ var m3PGIO = {
 	},
 	
 	readWeather : function(weatherMap, soilMap, dateMap) {
-		if( env() == "appscript" ) return this._readWeatherAppscript(weatherMap, soilMap, dateMap);
-		else if( env() == "plv8" ) return this._readWeatherPlv8(weatherMap, soilMap, dateMap);
+		if( env() == "appscript" ) return m3PGIO._readWeatherAppScript(weatherMap, soilMap, dateMap);
+		else if( env() == "plv8" ) return m3PGIO._readWeatherPlv8(weatherMap, soilMap, dateMap);
 		
 		// badness
 		log("Error: unknown env in 3PG.io.readWeather - "+env());
@@ -124,8 +124,8 @@ var m3PGIO = {
 	},
 	
 	dump : function(rows) {
-		if( env() == "appscript" ) return this._writeRowsToSheet(rows);
-		else if( env() == "plv8" ) return this._setResponse(rows);
+		if( env() == "appscript" ) return m3PGIO._writeRowsToSheet(rows);
+		else if( env() == "plv8" ) return m3PGIO._setResponse(rows);
 		
 		// badness
 		log("Error: unknown env in 3PG.io.dump - "+env());
