@@ -1,5 +1,8 @@
 /** this is an example of adding a toolbar menu**/
-function onOpen() {
+
+
+
+function go() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var menuEntries;
   menuEntries = [
