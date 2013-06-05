@@ -1,8 +1,8 @@
 /** this is an example of adding a toolbar menu**/
 
-
-
-function go() {
+// this is required to be copied inside spreadsheet
+// ie.. it cannot be side loaded
+function onOpen() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var menuEntries;
   menuEntries = [
