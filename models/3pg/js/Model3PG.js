@@ -25,7 +25,7 @@ var m3PG = {
 		  m3PGIO.readAllConstants(g); //global variables are an array of key-value pairs. INCLUDES SOIL DEPENDENT ONES - Separate?
 		 
 		  //calculate fNutr and add here;
-		  g.fNutr=fNutr(g.fN0, g.FR);
+		  g.fNutr=m3PGFunc.fNutr(g.fN0, g.FR);
 		  
 		  var weatherMap = {};
 		  var s = {}; //soilMap
@@ -55,7 +55,7 @@ var m3PG = {
 		  var keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","pS","litterfall","NPP","WF","WR","WS", "W"];    
 
 		             
-		  var firstMonthResults = _3PG.model.init(g,d,s);
+		  var firstMonthResults = m3PG.init(g,d,s);
 		  firstMonthResults.Date = (currentDate.getMonth()+1) + "/" + currentDate.getYear();
 		  
 		  var rows = []; //these will become rows
