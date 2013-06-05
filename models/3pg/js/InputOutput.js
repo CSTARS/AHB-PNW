@@ -9,7 +9,7 @@ var m3PGIO = {
 		
 		// for the spreadsheet, these are the row headers of the planted, coppice and soil
 		// data input parameters
-		speadsheet : {
+		spreadsheet : {
 			plantedDateHeader     : "Planted Date:",
 			coppiceDateHeader     : "Coppice Date:",
 			coppiceIntervalHeader : "Coppice Interval Years:",
