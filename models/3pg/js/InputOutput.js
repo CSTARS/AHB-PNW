@@ -1,4 +1,4 @@
-var _3PGIO = {
+var m3PGIO = {
 		
 	config : {
 		// spreadsheet or table where the input contstants are stored
@@ -148,7 +148,7 @@ var _3PGIO = {
 //NODE EXPORT HOOK
 if (typeof module !== 'undefined' && module.exports) {
 	exports.dump = function() {
-		var objStr = "_3PGIO={";
+		var objStr = "m3PGIO={";
 		for( var key in _3PGIO ) {
 			if( typeof _3PGIO[key] == 'function' ) {
 				objStr += key+":"+_3PGIO[key].toString()+",";

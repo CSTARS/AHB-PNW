@@ -506,11 +506,8 @@ _3PGModel={run:function (lenghtOfGrowth) {
 runModel(lengthOfGrowth);
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
-CREATE OR REPLACE FUNCTION Intcptn(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC) RETURNS
-NUMERIC AS $$
-var MaxIntcptn = arg0;
-var cur_LAI = arg1;
-var LAImaxIntcptn = arg2;
+CREATE OR REPLACE FUNCTION Intcptn("MaxIntcptn" float, "cur_LAI" float, "LAImaxIntcptn" float) RETURNS
+float AS $$
 
   if (LAImaxIntcptn<=0){
     return MaxIntcptn;    
@@ -520,11 +517,8 @@ var LAImaxIntcptn = arg2;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_Intcptn(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC) RETURNS
-NUMERIC AS $$
-var MaxIntcptn = arg0;
-var cur_LAI = arg1;
-var LAImaxIntcptn = arg2;
+CREATE OR REPLACE FUNCTION init_Intcptn("MaxIntcptn" float, "cur_LAI" float, "LAImaxIntcptn" float) RETURNS
+float AS $$
 
   if(LAImaxIntcptn <= 0){
      return MaxIntcptn;
@@ -534,49 +528,36 @@ var LAImaxIntcptn = arg2;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION ASW(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC, arg5 NUMERIC) RETURNS
-NUMERIC AS $$
-var maxASW = arg0;
-var prev_ASW = arg1;
-var date_ppt = arg2;
-var cur_Transp = arg3;
-var cur_Intcptn = arg4;
-var cur_Irrig = arg5;
+CREATE OR REPLACE FUNCTION ASW("maxASW" float, "prev_ASW" float, "date_ppt" float, "cur_Transp" float, "cur_Intcptn" float, "cur_Irrig" float) RETURNS
+float AS $$
 
   return Math.min(maxASW*10, Math.max(prev_ASW + date_ppt - (cur_Transp + cur_Intcptn * date_ppt) + cur_Irrig, 0));
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_ASW(arg0 NUMERIC) RETURNS
-NUMERIC AS $$
-var maxAWS = arg0;
+CREATE OR REPLACE FUNCTION init_ASW("maxAWS" float) RETURNS
+float AS $$
 
   return 0.8 * 10 * maxAWS;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION VPD(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC) RETURNS
-NUMERIC AS $$
-var date_tmin = arg0;
-var date_tmax = arg1;
-var date_tdmean = arg2;
+CREATE OR REPLACE FUNCTION VPD("date_tmin" float, "date_tmax" float, "date_tdmean" float) RETURNS
+float AS $$
 
   return (0.6108 / 2 * (Math.exp(date_tmin * 17.27 / (date_tmin + 237.3) ) + Math.exp(date_tmax * 17.27 / (date_tmax + 237.3) ) ) ) - (0.6108 * Math.exp(date_tdmean * 17.27 / (date_tdmean + 237.3) ) );
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION fVPD(arg0 NUMERIC, arg1 NUMERIC) RETURNS
-NUMERIC AS $$
-var kG = arg0;
-var cur_VPD = arg1;
+CREATE OR REPLACE FUNCTION fVPD("kG" float, "cur_VPD" float) RETURNS
+float AS $$
 
   return Math.exp(-1 * kG * cur_VPD); 
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION fFrost(arg0 NUMERIC) RETURNS
-NUMERIC AS $$
-var date_tmin = arg0;
+CREATE OR REPLACE FUNCTION fFrost("date_tmin" float) RETURNS
+float AS $$
 
   var tempVar = -1.0;
   if (date_tmin >= 0){
@@ -587,13 +568,8 @@ var date_tmin = arg0;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION fT(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC) RETURNS
-NUMERIC AS $$
-var date_tmin = arg0;
-var date_tmax = arg1;
-var Tmin = arg2;
-var Tmax = arg3;
-var Topt = arg4;
+CREATE OR REPLACE FUNCTION fT("date_tmin" float, "date_tmax" float, "Tmin" float, "Tmax" float, "Topt" float) RETURNS
+float AS $$
 
   var tavg = (date_tmin + date_tmax) / 2;
   if (tavg <= Tmin || tavg >= Tmax){
@@ -604,39 +580,29 @@ var Topt = arg4;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION Irrig(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC) RETURNS
-NUMERIC AS $$
-var irrigFrac = arg0;
-var cur_Transp = arg1;
-var cur_Intcptn = arg2;
-var date_ppt = arg3;
+CREATE OR REPLACE FUNCTION Irrig("irrigFrac" float, "cur_Transp" float, "cur_Intcptn" float, "date_ppt" float) RETURNS
+float AS $$
 
    return Math.max(0 , irrigFrac * (cur_Transp - (1 - cur_Intcptn) * date_ppt) );
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION CumIrrig(arg0 NUMERIC, arg1 NUMERIC) RETURNS
-NUMERIC AS $$
-var prev_CumIrrig = arg0;
-var cur_Irrig = arg1;
+CREATE OR REPLACE FUNCTION CumIrrig("prev_CumIrrig" float, "cur_Irrig" float) RETURNS
+float AS $$
 
    return prev_CumIrrig + cur_Irrig;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
 CREATE OR REPLACE FUNCTION init_CumIrrig() RETURNS
-NUMERIC AS $$
+float AS $$
 
   return 0; 
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION fAge(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC) RETURNS
-NUMERIC AS $$
-var prev_StandAge = arg0;
-var maxAge = arg1;
-var rAge = arg2;
-var nAge = arg3;
+CREATE OR REPLACE FUNCTION fAge("prev_StandAge" float, "maxAge" float, "rAge" float, "nAge" float) RETURNS
+float AS $$
 
   if (nAge==0){
     return 1;
@@ -646,12 +612,8 @@ var nAge = arg3;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_fAge(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_StandAge = arg0;
-var maxAge = arg1;
-var rAge = arg2;
-var nAge = arg3;
+CREATE OR REPLACE FUNCTION init_fAge("cur_StandAge" float, "maxAge" float, "rAge" float, "nAge" float) RETURNS
+float AS $$
 
   if (nAge==0){
     return 1;
@@ -661,104 +623,57 @@ var nAge = arg3;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_fSW(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_ASW = arg0;
-var maxAWS = arg1;
-var swconst = arg2;
-var swpower = arg3;
+CREATE OR REPLACE FUNCTION init_fSW("cur_ASW" float, "maxAWS" float, "swconst" float, "swpower" float) RETURNS
+float AS $$
 
   return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (cur_ASW / 10 / maxAWS) ) / swconst) ) , swpower) );
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION fNutr(arg0 NUMERIC, arg1 NUMERIC) RETURNS
-NUMERIC AS $$
-var fN0 = arg0;
-var FR = arg1;
+CREATE OR REPLACE FUNCTION fNutr("fN0" float, "FR" float) RETURNS
+float AS $$
 
   return fN0 + (1 - fN0) * FR;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION PhysMod(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_fVPD = arg0;
-var cur_fSW = arg1;
-var cur_fAge = arg2;
+CREATE OR REPLACE FUNCTION PhysMod("cur_fVPD" float, "cur_fSW" float, "cur_fAge" float) RETURNS
+float AS $$
 
    return Math.min(cur_fVPD , cur_fSW) * cur_fAge;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION LAI(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC) RETURNS
-NUMERIC AS $$
-var prev_WF = arg0;
-var SLA1 = arg1;
-var SLA0 = arg2;
-var prev_StandAge = arg3;
-var tSLA = arg4;
+CREATE OR REPLACE FUNCTION LAI("prev_WF" float, "SLA1" float, "SLA0" float, "prev_StandAge" float, "tSLA" float) RETURNS
+float AS $$
 
    return prev_WF * 0.1 * (SLA1 + (SLA0 - SLA1) * Math.exp(-0.693147180559945 * Math.pow( (prev_StandAge / tSLA) , 2) ) );
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_LAI(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_WF = arg0;
-var SLA1 = arg1;
-var SLA0 = arg2;
-var cur_StandAge = arg3;
-var tSLA = arg4;
+CREATE OR REPLACE FUNCTION init_LAI("cur_WF" float, "SLA1" float, "SLA0" float, "cur_StandAge" float, "tSLA" float) RETURNS
+float AS $$
 
   return cur_WF * 0.1 * (SLA1 + (SLA0 - SLA1) * Math.exp(-0.693147180559945 * Math.pow( (cur_StandAge / tSLA) , 2) ) ); 
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION CanCond(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC) RETURNS
-NUMERIC AS $$
-var MaxCond = arg0;
-var cur_PhysMod = arg1;
-var cur_LAI = arg2;
-var LAIgcx = arg3;
+CREATE OR REPLACE FUNCTION CanCond("MaxCond" float, "cur_PhysMod" float, "cur_LAI" float, "LAIgcx" float) RETURNS
+float AS $$
 
    return Math.max(0.0001 , MaxCond * cur_PhysMod * Math.min(1 , cur_LAI / LAIgcx) );
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION Transp(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC, arg5 NUMERIC, arg6 NUMERIC, arg7 NUMERIC, arg8 NUMERIC, arg9 NUMERIC, arg10 NUMERIC, arg11 NUMERIC) RETURNS
-NUMERIC AS $$
-var days_per_mon = arg0;
-var e20 = arg1;
-var Qa = arg2;
-var Qb = arg3;
-var date_nrel = arg4;
-var date_daylight = arg5;
-var rhoAir = arg6;
-var lambda = arg7;
-var VPDconv = arg8;
-var cur_VPD = arg9;
-var BLcond = arg10;
-var cur_CanCond = arg11;
+CREATE OR REPLACE FUNCTION Transp("days_per_mon" float, "e20" float, "Qa" float, "Qb" float, "date_nrel" float, "date_daylight" float, "rhoAir" float, "lambda" float, "VPDconv" float, "cur_VPD" float, "BLcond" float, "cur_CanCond" float) RETURNS
+float AS $$
 
    return days_per_mon * ( (e20 * (Qa + Qb * (date_nrel / date_daylight) ) + (rhoAir * lambda * VPDconv * cur_VPD * BLcond) ) / (1 + e20 + BLcond / cur_CanCond) ) * date_daylight * 3600 / lambda;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION NPP(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC, arg5 NUMERIC, arg6 NUMERIC, arg7 NUMERIC, arg8 NUMERIC, arg9 NUMERIC, arg10 NUMERIC, arg11 NUMERIC) RETURNS
-NUMERIC AS $$
-var prev_StandAge = arg0;
-var fullCanAge = arg1;
-var cur_xPP = arg2;
-var k = arg3;
-var prev_LAI = arg4;
-var cur_fVPD = arg5;
-var cur_fSW = arg6;
-var cur_fAge = arg7;
-var alpha = arg8;
-var fNutr = arg9;
-var cur_fT = arg10;
-var cur_fFrost = arg11;
+CREATE OR REPLACE FUNCTION NPP("prev_StandAge" float, "fullCanAge" float, "cur_xPP" float, "k" float, "prev_LAI" float, "cur_fVPD" float, "cur_fSW" float, "cur_fAge" float, "alpha" float, "fNutr" float, "cur_fT" float, "cur_fFrost" float) RETURNS
+float AS $$
 
   var CanCover = 1;
   if (prev_StandAge < fullCanAge){
@@ -768,32 +683,15 @@ var cur_fFrost = arg11;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_NPP(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC, arg5 NUMERIC, arg6 NUMERIC, arg7 NUMERIC, arg8 NUMERIC, arg9 NUMERIC, arg10 NUMERIC, arg11 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_StandAge = arg0;
-var fullCanAge = arg1;
-var cur_xPP = arg2;
-var k = arg3;
-var cur_LAI = arg4;
-var cur_fVPD = arg5;
-var cur_fSW = arg6;
-var cur_fAge = arg7;
-var alpha = arg8;
-var fNutr = arg9;
-var cur_fT = arg10;
-var cur_fFrost = arg11;
+CREATE OR REPLACE FUNCTION init_NPP("cur_StandAge" float, "fullCanAge" float, "cur_xPP" float, "k" float, "cur_LAI" float, "cur_fVPD" float, "cur_fSW" float, "cur_fAge" float, "alpha" float, "fNutr" float, "cur_fT" float, "cur_fFrost" float) RETURNS
+float AS $$
 
  return 0;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION litterfall(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC) RETURNS
-NUMERIC AS $$
-var gammaFx = arg0;
-var gammaF0 = arg1;
-var prev_StandAge = arg2;
-var tgammaF = arg3;
-var prev_lastCoppiceAge = arg4;
+CREATE OR REPLACE FUNCTION litterfall("gammaFx" float, "gammaF0" float, "prev_StandAge" float, "tgammaF" float, "prev_lastCoppiceAge" float) RETURNS
+float AS $$
 
   var prev_realStandAge = prev_StandAge - prev_lastCoppiceAge;
   Logger.log("DEBUGGING COPPICE: prev_StandAge=" + prev_StandAge +"; prev_realStandAge=" + prev_realStandAge);
@@ -801,12 +699,8 @@ var prev_lastCoppiceAge = arg4;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_litterfall(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC) RETURNS
-NUMERIC AS $$
-var gammaFx = arg0;
-var gammaF0 = arg1;
-var cur_StandAge = arg2;
-var tgammaF = arg3;
+CREATE OR REPLACE FUNCTION init_litterfall("gammaFx" float, "gammaF0" float, "cur_StandAge" float, "tgammaF" float) RETURNS
+float AS $$
 
   
   var result = gammaFx * gammaF0 / (gammaF0 + (gammaFx - gammaF0) *  Math.exp(-12 * Math.log(1 + gammaFx / gammaF0) * cur_StandAge / tgammaF) );
@@ -815,170 +709,115 @@ var tgammaF = arg3;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION pS(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC, arg5 NUMERIC, arg6 NUMERIC) RETURNS
-NUMERIC AS $$
-var prev_WS = arg0;
-var StockingDensity = arg1;
-var StemConst = arg2;
-var StemPower = arg3;
-var cur_pR = arg4;
-var pfsConst = arg5;
-var pfsPower = arg6;
+CREATE OR REPLACE FUNCTION pS("prev_WS" float, "StockingDensity" float, "StemConst" float, "StemPower" float, "cur_pR" float, "pfsConst" float, "pfsPower" float) RETURNS
+float AS $$
 
   var avDBH = Math.pow( ( (prev_WS * 1000 / StockingDensity) / StemConst) , (1 / StemPower) );
   return (1 - cur_pR) / (1 + ( pfsConst * Math.pow(avDBH , pfsPower) ) );
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_pS(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC, arg5 NUMERIC, arg6 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_WS = arg0;
-var StockingDensity = arg1;
-var StemConst = arg2;
-var StemPower = arg3;
-var cur_pR = arg4;
-var pfsConst = arg5;
-var pfsPower = arg6;
+CREATE OR REPLACE FUNCTION init_pS("cur_WS" float, "StockingDensity" float, "StemConst" float, "StemPower" float, "cur_pR" float, "pfsConst" float, "pfsPower" float) RETURNS
+float AS $$
 
   var avDBH = Math.pow( ( (cur_WS * 1000 / StockingDensity) / StemConst) , (1 / StemPower) );
   return (1 - cur_pR) / (1 + ( pfsConst * Math.pow(avDBH , pfsPower) ) );
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION pR(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC) RETURNS
-NUMERIC AS $$
-var pRx = arg0;
-var pRn = arg1;
-var cur_PhysMod = arg2;
-var m0 = arg3;
-var FR = arg4;
+CREATE OR REPLACE FUNCTION pR("pRx" float, "pRn" float, "cur_PhysMod" float, "m0" float, "FR" float) RETURNS
+float AS $$
 
   return (pRx * pRn) / (pRn + (pRx - pRn) * cur_PhysMod * (m0 + (1 - m0) * FR) );
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION pF(arg0 NUMERIC, arg1 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_pR = arg0;
-var cur_pS = arg1;
+CREATE OR REPLACE FUNCTION pF("cur_pR" float, "cur_pS" float) RETURNS
+float AS $$
 
   return 1 - cur_pR - cur_pS;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION WF(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_pF = arg0;
-var prev_WF = arg1;
-var cur_NPP = arg2;
-var cur_litterfall = arg3;
+CREATE OR REPLACE FUNCTION WF("cur_pF" float, "prev_WF" float, "cur_NPP" float, "cur_litterfall" float) RETURNS
+float AS $$
 
    return prev_WF + cur_NPP * cur_pF - cur_litterfall * prev_WF;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_WF(arg0 NUMERIC, arg1 NUMERIC) RETURNS
-NUMERIC AS $$
-var StockingDensity = arg0;
-var SeedlingMass = arg1;
+CREATE OR REPLACE FUNCTION init_WF("StockingDensity" float, "SeedlingMass" float) RETURNS
+float AS $$
 
   return 0.5 * StockingDensity * SeedlingMass; 
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION WR(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC) RETURNS
-NUMERIC AS $$
-var prev_WR = arg0;
-var cur_NPP = arg1;
-var cur_pR = arg2;
-var Rttover = arg3;
+CREATE OR REPLACE FUNCTION WR("prev_WR" float, "cur_NPP" float, "cur_pR" float, "Rttover" float) RETURNS
+float AS $$
 
    return prev_WR + cur_NPP * cur_pR - Rttover * prev_WR;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_WR(arg0 NUMERIC, arg1 NUMERIC) RETURNS
-NUMERIC AS $$
-var StockingDensity = arg0;
-var SeedlingMass = arg1;
+CREATE OR REPLACE FUNCTION init_WR("StockingDensity" float, "SeedlingMass" float) RETURNS
+float AS $$
 
   return 0.25 * StockingDensity * SeedlingMass; 
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION WS(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC) RETURNS
-NUMERIC AS $$
-var prev_WS = arg0;
-var cur_NPP = arg1;
-var cur_pS = arg2;
+CREATE OR REPLACE FUNCTION WS("prev_WS" float, "cur_NPP" float, "cur_pS" float) RETURNS
+float AS $$
 
    return prev_WS + cur_NPP * cur_pS;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION init_WS(arg0 NUMERIC, arg1 NUMERIC) RETURNS
-NUMERIC AS $$
-var StockingDensity = arg0;
-var SeedlingMass = arg1;
+CREATE OR REPLACE FUNCTION init_WS("StockingDensity" float, "SeedlingMass" float) RETURNS
+float AS $$
 
   return 0.25 * StockingDensity * SeedlingMass; 
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION W(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_WF = arg0;
-var cur_WR = arg1;
-var cur_WS = arg2;
+CREATE OR REPLACE FUNCTION W("cur_WF" float, "cur_WR" float, "cur_WS" float) RETURNS
+float AS $$
 
   return cur_WF + cur_WR + cur_WS;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION StandAge(arg0 NUMERIC) RETURNS
-NUMERIC AS $$
-var prev_StandAge = arg0;
+CREATE OR REPLACE FUNCTION StandAge("prev_StandAge" float) RETURNS
+float AS $$
 
   return prev_StandAge + 1.0/12;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
 CREATE OR REPLACE FUNCTION init_StandAge() RETURNS
-NUMERIC AS $$
+float AS $$
 
   return 1.0 / 12; 
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION PAR(arg0 NUMERIC, arg1 NUMERIC) RETURNS
-NUMERIC AS $$
-var date_rad = arg0;
-var molPAR_MJ = arg1;
+CREATE OR REPLACE FUNCTION PAR("date_rad" float, "molPAR_MJ" float) RETURNS
+float AS $$
 
   return date_rad * 30.4 * molPAR_MJ;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION xPP(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC) RETURNS
-NUMERIC AS $$
-var y = arg0;
-var cur_PAR = arg1;
-var gDM_mol = arg2;
+CREATE OR REPLACE FUNCTION xPP("y" float, "cur_PAR" float, "gDM_mol" float) RETURNS
+float AS $$
 
   return y * cur_PAR * gDM_mol / 100;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION coppice_pfs(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC, arg5 NUMERIC, arg6 NUMERIC, arg7 NUMERIC) RETURNS
-NUMERIC AS $$
-var prev_WS = arg0;
-var StockingDensity = arg1;
-var cpStemsPerStump = arg2;
-var cpStemConst = arg3;
-var cpStemPower = arg4;
-var cpPfsConst = arg5;
-var cpPfsPower = arg6;
-var cpMaxPfs = arg7;
+CREATE OR REPLACE FUNCTION coppice_pfs("prev_WS" float, "StockingDensity" float, "cpStemsPerStump" float, "cpStemConst" float, "cpStemPower" float, "cpPfsConst" float, "cpPfsPower" float, "cpMaxPfs" float) RETURNS
+float AS $$
 
   var avDOB = Math.pow( ( (prev_WS * 1000 / StockingDensity / cpStemsPerStump) / cpStemConst) , (1 / cpStemPower) );
   var ppfs= cpPfsConst * Math.pow(avDOB , cpPfsPower);
@@ -986,33 +825,22 @@ var cpMaxPfs = arg7;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION coppice_pS(arg0 NUMERIC, arg1 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_pR = arg0;
-var pfs = arg1;
+CREATE OR REPLACE FUNCTION coppice_pS("cur_pR" float, "pfs" float) RETURNS
+float AS $$
 
   return (1 - cur_pR) / (1 + 1/pfs );
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION coppice_pF(arg0 NUMERIC, arg1 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_pR = arg0;
-var pfs = arg1;
+CREATE OR REPLACE FUNCTION coppice_pF("cur_pR" float, "pfs" float) RETURNS
+float AS $$
 
     return (1 - cur_pR) / (1 + 1/pfs );
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION coppice_RootPP(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC, arg5 NUMERIC, arg6 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_npp = arg0;
-var cur_nppTarget = arg1;
-var WR = arg2;
-var W = arg3;
-var pRx = arg4;
-var cpRootStoragePct = arg5;
-var cpRootLAITarget = arg6;
+CREATE OR REPLACE FUNCTION coppice_RootPP("cur_npp" float, "cur_nppTarget" float, "WR" float, "W" float, "pRx" float, "cpRootStoragePct" float, "cpRootLAITarget" float) RETURNS
+float AS $$
 
  // var npp=NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
  // var nppTarget = NPP(prev_StandAge, fullCanAge, cur_xPP, k, cpRootLAITarget, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
@@ -1029,10 +857,8 @@ var cpRootLAITarget = arg6;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION coppice_NPP(arg0 NUMERIC, arg1 NUMERIC) RETURNS
-NUMERIC AS $$
-var cur_npp = arg0;
-var coppice_RootPP = arg1;
+CREATE OR REPLACE FUNCTION coppice_NPP("cur_npp" float, "coppice_RootPP" float) RETURNS
+float AS $$
 
   //var npp = NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
 //  var rootPP = coppice_RootPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost,WR,W,pRx,cpRootStoragePct);
@@ -1040,15 +866,112 @@ var coppice_RootPP = arg1;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION coppice_WR(arg0 NUMERIC, arg1 NUMERIC, arg2 NUMERIC, arg3 NUMERIC, arg4 NUMERIC) RETURNS
-NUMERIC AS $$
-var prev_WR = arg0;
-var cur_NPP = arg1;
-var cur_pR = arg2;
-var Rttover = arg3;
-var coppice_RootPP = arg4;
+CREATE OR REPLACE FUNCTION coppice_WR("prev_WR" float, "cur_NPP" float, "cur_pR" float, "Rttover" float, "coppice_RootPP" float) RETURNS
+float AS $$
 
   //Logger.log("DEBUGGING COPPICE: prev_WR=" + prev_WR + "; cur_NPP=" + cur_NPP + "; cur_pR=" + cur_pR + "; Rttover=" + Rttover+ "; coppice_RootPP=" + coppice_RootPP);
    return prev_WR, prev_WR + cur_NPP * cur_pR - Rttover * prev_WR - coppice_RootPP;
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
+
+
+CREATE TYPE weather as (tmin float,
+tmax float,
+tdmean float,
+ppt float,
+rad float,
+daylight float
+);
+CREATE TYPE soil as (maxaws float,
+swpower float,
+swconst float
+);
+CREATE TYPE plantation_state as (Date float,
+VPD float,
+fVPD float,
+fT float,
+fFrost float,
+PAR float,
+xPP float,
+Intcptn float,
+ASW float,
+CumIrrig float,
+Irrig float,
+StandAge float,
+LAI float,
+CanCond float,
+Transp float,
+fSW float,
+fAge float,
+PhysMod float,
+pR float,
+pS float,
+litterfall float,
+NPP float,
+WF float,
+WR float,
+WS float,
+W float
+);
+CREATE TYPE tree as (gammaFx float,
+gammaF0 float,
+tgammaF float,
+Rttover float,
+k float,
+fullCanAge float,
+kG float,
+alpha float,
+Tmax float,
+Tmin float,
+Topt float,
+BLcond float,
+maxAge float,
+rAge float,
+nAge float,
+fN0 float,
+FR float,
+SLA0 float,
+SLA1 float,
+tSLA float,
+MaxCond float,
+LAIgcx float,
+MaxIntcptn float,
+LAImaxIntcptn float,
+e20 float,
+rhoAir float,
+lambda float,
+VPDconv float,
+days_per_mon float,
+Qa float,
+Qb float,
+m0 float,
+pRx float,
+pRn float,
+pfsPower float,
+pfsConst float,
+pfsMax float,
+StemConst float,
+StemPower float,
+wSx1000 float,
+thinPower float,
+irrigFrac float,
+StockingDensity float,
+SeedlingMass float,
+y float,
+gDM_mol float,
+molPAR_MJ float,
+maxAWS float,
+swpower float,
+swconst float,
+cpStemsPerStump float,
+cpStemConst float,
+cpStemPower float,
+cpMaxPfs float,
+cpPfsPower float,
+cpPfsConst float,
+cpRootStoragePct float,
+cpRootLAITarget float
+);
+DROP TABLE trees;
+CREATE TABLE trees OF tree;
+INSERT INTO trees VALUES (0.03, 0.001, 24, 0.005, 0.5, 0, 0.5, 0.0177, 40, 5, 20, 0.2, 50, 0.95, 4, 1, 0.7, 10.8, 10.8, 1, 0.02, 3.33, 0.15, 0, 2.2, 1.2, 2460000, 0.00622, 30.4, -90, 0.8, 0, 0.8, 0.25, -1.161976, 1.91698, 5, 0.0771, 2.2704, 300, 1.5, 1, 2500, 0.001, 0.47, 24, 2.3, 15.4574230821395, 4.6, 0.48, 4.4, 0.18, 2.4, 5, -1.161976, 1.91698, 0.15, 4);
