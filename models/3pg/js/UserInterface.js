@@ -11,15 +11,15 @@ function onOpen() {
 
 
 function runModel60(){
-  _3PG.model.run(60);
+	m3PG.run(60);
 } 
 
 function runModel120(){
-  _3PG.model.run(120);
+	m3PG.run(120);
 }  
 
 function runModel4(){
-  _3PG.model.run(60);
+	m3PG.run(60);
 }  
   
 /** this function with use default value when user value not provided. Otherwhise NA? */
