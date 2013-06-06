@@ -1,0 +1,16 @@
+csv values:
+
+T Mean temperature (°C)
+TM Maximum temperature (°C)
+Tm Minimum temperature (°C)
+SLP Mean sea level pressure (hPa)
+H Mean humidity (%)
+PP Precipitation amount (mm)
+VV Mean visibility (Km)
+V Mean wind speed (Km/h)
+VM Maximum sustained wind speed (Km/h)
+VG Maximum wind gust (Km/h)
+RA Indicator for occurrence of: Rain or Drizzle
+SN Indicator for occurrence of: Snow or Ice Pellets
+TS Indicator for occurrence of: Thunder
+FG Indicator for occurrence of: Fog

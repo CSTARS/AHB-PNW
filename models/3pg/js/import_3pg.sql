@@ -1,7 +1,7 @@
 CREATE OR REPLACE FUNCTION run3pgModel(lengthOfGrowth integer) RETURNS
 VOID AS $$
 
-_3PGModel={run:function (lenghtOfGrowth) {
+m3PG={run:function (lengthOfGrowth) {
 		  //work with offsets and weather data later
 		  
 		  var isCoppiced = false;
@@ -12,15 +12,15 @@ _3PGModel={run:function (lenghtOfGrowth) {
 		  //Global Variables Array
 		  
 		  var g = {};
-		  _3PGIO.readAllConstants(g); //global variables are an array of key-value pairs. INCLUDES SOIL DEPENDENT ONES - Separate?
+		  m3PGIO.readAllConstants(g); //global variables are an array of key-value pairs. INCLUDES SOIL DEPENDENT ONES - Separate?
 		 
 		  //calculate fNutr and add here;
-		  g.fNutr=fNutr(g.fN0, g.FR);
+		  g.fNutr=m3PGFunc.fNutr(g.fN0, g.FR);
 		  
 		  var weatherMap = {};
 		  var s = {}; //soilMap
 		  var dateMap = {};
-		  _3PGIO.readWeather(weatherMap, s, dateMap);
+		  m3PGIO.readWeather(weatherMap, s, dateMap);
 		  
 		  var currentDate = dateMap["datePlanted"];
 		  
@@ -45,7 +45,7 @@ _3PGModel={run:function (lenghtOfGrowth) {
 		  var keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","pS","litterfall","NPP","WF","WR","WS", "W"];    
 
 		             
-		  var firstMonthResults = _3PG.model.init(g,d,s);
+		  var firstMonthResults = m3PG.init(g,d,s);
 		  firstMonthResults.Date = (currentDate.getMonth()+1) + "/" + currentDate.getYear();
 		  
 		  var rows = []; //these will become rows
@@ -98,7 +98,7 @@ _3PGModel={run:function (lenghtOfGrowth) {
 		    
 
 		    d = weatherMap[currentMonth]; //increment the month
-		    nextMonthResults = singleStep(g,currentMonthResults,d,s, isCoppiced);
+		    nextMonthResults = this.singleStep(g,currentMonthResults,d,s, isCoppiced);
 		    nextMonthResults.Date = (currentDate.getMonth()+1)  + "/" + currentDate.getYear();
 		    log("\n Results of the next month: " + nextMonthResults);
 		    var thisRow = [];
@@ -112,45 +112,45 @@ _3PGModel={run:function (lenghtOfGrowth) {
 		    
 		  }
 		  
-		  _3PGIO.dump(rows)
+		  m3PGIO.dump(rows)
 		  
 		  //init all - will be p,
 		  //then each step returned from singleStep will be p to feed back into
 		  //Weather?
 	},init:function (g,d,s) {
 		  var c = {};
-		  c.StandAge = _3PGFunc.init_StandAge();
+		  c.StandAge = m3PGFunc.init_StandAge();
 		  //note: change in order
-		  c.WF = _3PGFunc.init_WF(g.StockingDensity, g.SeedlingMass);
-		  c.WR = _3PGFunc.init_WR(g.StockingDensity, g.SeedlingMass);
-		  c.WS = _3PGFunc.init_WS(g.StockingDensity, g.SeedlingMass);
+		  c.WF = m3PGFunc.init_WF(g.StockingDensity, g.SeedlingMass);
+		  c.WR = m3PGFunc.init_WR(g.StockingDensity, g.SeedlingMass);
+		  c.WS = m3PGFunc.init_WS(g.StockingDensity, g.SeedlingMass);
 		  
-		  c.LAI = _3PGFunc.init_LAI(c.WF, g.SLA1, g.SLA0, c.StandAge, g.tSLA);
-		  c.VPD = _3PGFunc.VPD(d.tmin, d.tmax, d.tdmean);
-		  c.fVPD = _3PGFunc.fVPD(g.kG, c.VPD);
+		  c.LAI = m3PGFunc.init_LAI(c.WF, g.SLA1, g.SLA0, c.StandAge, g.tSLA);
+		  c.VPD = m3PGFunc.VPD(d.tmin, d.tmax, d.tdmean);
+		  c.fVPD = m3PGFunc.fVPD(g.kG, c.VPD);
 		  
 		  //note: the order of var changes here. ASW calsulated before fsw TODO: double check this behavior
-		  c.ASW = _3PGFunc.init_ASW(s.maxAWS);
-		  c.fSW = _3PGFunc.init_fSW(c.ASW, s.maxAWS, s.swconst, s.swpower);
-		  c.fAge = _3PGFunc.fAge(c.StandAge, g.maxAge, g.rAge, g.nAge);
-		  c.fFrost = _3PGFunc.fFrost(d.tmin);
-		  c.PAR = _3PGFunc.PAR(d.rad, g.molPAR_MJ);
-		  c.xPP = _3PGFunc.xPP(g.y, c.PAR, g.gDM_mol);
-		  c.PhysMod = _3PGFunc.PhysMod(c.fVPD, c.fSW, c.fAge);
-		  c.Intcptn = _3PGFunc.init_Intcptn(g.MaxIntcptn, c.LAI, g.LAImaxIntcptn);
-		  c.CanCond = _3PGFunc.CanCond(g.MaxCond, c.PhysMod, c.LAI, g.LAIgcx);
-		  c.pR = _3PGFunc.pR(g.pRx, g.pRn, c.PhysMod, g.m0, g.FR);
+		  c.ASW = m3PGFunc.init_ASW(s.maxAWS);
+		  c.fSW = m3PGFunc.init_fSW(c.ASW, s.maxAWS, s.swconst, s.swpower);
+		  c.fAge = m3PGFunc.fAge(c.StandAge, g.maxAge, g.rAge, g.nAge);
+		  c.fFrost = m3PGFunc.fFrost(d.tmin);
+		  c.PAR = m3PGFunc.PAR(d.rad, g.molPAR_MJ);
+		  c.xPP = m3PGFunc.xPP(g.y, c.PAR, g.gDM_mol);
+		  c.PhysMod = m3PGFunc.PhysMod(c.fVPD, c.fSW, c.fAge);
+		  c.Intcptn = m3PGFunc.init_Intcptn(g.MaxIntcptn, c.LAI, g.LAImaxIntcptn);
+		  c.CanCond = m3PGFunc.CanCond(g.MaxCond, c.PhysMod, c.LAI, g.LAIgcx);
+		  c.pR = m3PGFunc.pR(g.pRx, g.pRn, c.PhysMod, g.m0, g.FR);
 		  log("DEBUGGIN: tmin= " + d.tmin + "; tmax=" + d.tmax + "; Tmin=" + g.Tmin + "; Tmax=" + g.Tmax + "; Topt= " + g.Topt);
-		  c.fT = _3PGFunc.fT(d.tmin, d.tmax, g.Tmin, g.Tmax, g.Topt);
-		  c.NPP = _3PGFunc.init_NPP(c.StandAge, g.fullCanAge, c.xPP, g.k, c.LAI, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost);
-		  c.litterfall = _3PGFunc.init_litterfall(g.gammaFx, g.gammaF0, c.StandAge, g.tgammaF);
+		  c.fT = m3PGFunc.fT(d.tmin, d.tmax, g.Tmin, g.Tmax, g.Topt);
+		  c.NPP = m3PGFunc.init_NPP(c.StandAge, g.fullCanAge, c.xPP, g.k, c.LAI, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost);
+		  c.litterfall = m3PGFunc.init_litterfall(g.gammaFx, g.gammaF0, c.StandAge, g.tgammaF);
 		  c.Transp = 0; // TODO: is it the correct default value?
 		 
-		  c.pS = _3PGFunc.init_pS(c.WS, g.StockingDensity, g.StemConst, g.StemPower, c.pR, g.pfsConst, g.pfsPower);
-		  c.Irrig = _3PGFunc.Irrig(g.irrigFrac, c.Transp, c.Intcptn, d.ppt);
-		  c.CumIrrig = _3PGFunc.init_CumIrrig();
+		  c.pS = m3PGFunc.init_pS(c.WS, g.StockingDensity, g.StemConst, g.StemPower, c.pR, g.pfsConst, g.pfsPower);
+		  c.Irrig = m3PGFunc.Irrig(g.irrigFrac, c.Transp, c.Intcptn, d.ppt);
+		  c.CumIrrig = m3PGFunc.init_CumIrrig();
 		  
-		  c.W = _3PGFunc.W(c.WF, c.WR, c.WS);
+		  c.W = m3PGFunc.W(c.WF, c.WR, c.WS);
 		  return c;
 		
 	},singleStep:function (g,p,d,s,isCoppiced){
@@ -162,102 +162,102 @@ _3PGModel={run:function (lenghtOfGrowth) {
 		  }
 	},singleStepCoppiced:function (g,p,d,s){
 		  var c = new Object();
-		  c.StandAge = _3PGFunc.StandAge(p.StandAge);
-		  c.LAI = _3PGFunc.LAI(p.WF, g.SLA1, g.SLA0, p.StandAge, g.tSLA);
-		  c.VPD = _3PGFunc.VPD(d.tmin, d.tmax, d.tdmean);
-		  c.fVPD = _3PGFunc.fVPD(g.kG, c.VPD);
+		  c.StandAge = m3PGFunc.StandAge(p.StandAge);
+		  c.LAI = m3PGFunc.LAI(p.WF, g.SLA1, g.SLA0, p.StandAge, g.tSLA);
+		  c.VPD = m3PGFunc.VPD(d.tmin, d.tmax, d.tdmean);
+		  c.fVPD = m3PGFunc.fVPD(g.kG, c.VPD);
 		  
-		  c.fSW = _3PGFunc.fSW(p.ASW, s.maxAWS, s.swconst, s.swpower);
-		  c.fAge = _3PGFunc.fAge(p.StandAge, g.maxAge, g.rAge, g.nAge);
-		  c.fFrost = _3PGFunc.fFrost(d.tmin);
-		  c.PAR = _3PGFunc.PAR(d.rad, g.molPAR_MJ);
-		  c.fT = _3PGFunc.fT(d.tmin, d.tmax, g.Tmin, g.Tmax, g.Topt);
-		  c.xPP = _3PGFunc.xPP(g.y, c.PAR, g.gDM_mol);
+		  c.fSW = m3PGFunc.fSW(p.ASW, s.maxAWS, s.swconst, s.swpower);
+		  c.fAge = m3PGFunc.fAge(p.StandAge, g.maxAge, g.rAge, g.nAge);
+		  c.fFrost = m3PGFunc.fFrost(d.tmin);
+		  c.PAR = m3PGFunc.PAR(d.rad, g.molPAR_MJ);
+		  c.fT = m3PGFunc.fT(d.tmin, d.tmax, g.Tmin, g.Tmax, g.Topt);
+		  c.xPP = m3PGFunc.xPP(g.y, c.PAR, g.gDM_mol);
 		  
 		  
 		 // c.coppice_RootPP = coppice_RootPP(p.StandAge, g.fullCanAge, c.xPP, g.k, p.LAI, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost,p.WR,p.W,g.pRx,g.cpRootStoragePct,g.cpRootLAITarget);
 
-		  c.PhysMod = _3PGFunc.PhysMod(c.fVPD, c.fSW, c.fAge);
+		  c.PhysMod = m3PGFunc.PhysMod(c.fVPD, c.fSW, c.fAge);
 		  
-		  c.NPP_regular = _3PGFunc.NPP(p.StandAge, g.fullCanAge, c.xPP, g.k, p.LAI, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost);
+		  c.NPP_regular = m3PGFunc.NPP(p.StandAge, g.fullCanAge, c.xPP, g.k, p.LAI, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost);
 		   log("c.NPP_regular=" + c.NPP_regular);
-		  c.NPP_target = _3PGFunc.NPP(p.StandAge, g.fullCanAge, c.xPP, g.k, g.cpRootLAITarget, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost);
+		  c.NPP_target = m3PGFunc.NPP(p.StandAge, g.fullCanAge, c.xPP, g.k, g.cpRootLAITarget, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost);
 		   log("c.NPP_target=" + c.NPP_target);
 		  
-		  c.coppice_RootPP = _3PGFunc.coppice_RootPP(c.NPP_regular, c.NPP_target, p.coppice_WR, p.W,g.pRx,g.cpRootStoragePct,g.cpRootLAITarget);
+		  c.coppice_RootPP = m3PGFunc.coppice_RootPP(c.NPP_regular, c.NPP_target, p.coppice_WR, p.W,g.pRx,g.cpRootStoragePct,g.cpRootLAITarget);
 		  log("c.coppice_RootPP=" + c.coppice_RootPP);
-		  c.coppice_pfs = _3PGFunc.coppice_pfs(p.WS,g.StockingDensity, g.cpStemsPerStump, g.cpStemConst, g.cpStemPower, g.cpPfsConst, g.cpPfsPower, g.cpMaxPfs);
-		  c.coppice_NPP = _3PGFunc.coppice_NPP(c.NPP_regular,c.coppice_RootPP);
+		  c.coppice_pfs = m3PGFunc.coppice_pfs(p.WS,g.StockingDensity, g.cpStemsPerStump, g.cpStemConst, g.cpStemPower, g.cpPfsConst, g.cpPfsPower, g.cpMaxPfs);
+		  c.coppice_NPP = m3PGFunc.coppice_NPP(c.NPP_regular,c.coppice_RootPP);
 		  
-		  c.Intcptn = _3PGFunc.Intcptn(g.MaxIntcptn, c.LAI, g.LAImaxIntcptn);
-		  c.CanCond = _3PGFunc.CanCond(g.MaxCond, c.PhysMod, c.LAI, g.LAIgcx);
+		  c.Intcptn = m3PGFunc.Intcptn(g.MaxIntcptn, c.LAI, g.LAImaxIntcptn);
+		  c.CanCond = m3PGFunc.CanCond(g.MaxCond, c.PhysMod, c.LAI, g.LAIgcx);
 		  
-		  c.pR = _3PGFunc.pR(g.pRx, g.pRn, c.PhysMod, g.m0, g.FR);
+		  c.pR = m3PGFunc.pR(g.pRx, g.pRn, c.PhysMod, g.m0, g.FR);
 
-		  c.litterfall = _3PGFunc.litterfall(g.gammaFx, g.gammaF0, p.StandAge, g.tgammaF, p.lastCoppiceAge);
+		  c.litterfall = m3PGFunc.litterfall(g.gammaFx, g.gammaF0, p.StandAge, g.tgammaF, p.lastCoppiceAge);
 		  
 		  //log("g.days_per_mon=" + g.days_per_mon + " g.e20=" + g.e20 + " g.Qa=" + g.Qa + " g.Qb=" + g.Qb + " d.nrel=" + d.nrel + " d.daylight=" + d.daylight + " g.rhoAir=" + g.rhoAir + " g.lambda=" + g.lambda + " g.VPDconv=" + g.VPDconv + " c.VPD=" + c.VPD + " g.BLcond=" + g.BLcond + " c.CanCond=" + c.CanCond);
-		  c.Transp = _3PGFunc.Transp(g.days_per_mon, g.e20, g.Qa, g.Qb, d.nrel, d.daylight, g.rhoAir, g.lambda, g.VPDconv, c.VPD, g.BLcond, c.CanCond);
+		  c.Transp = m3PGFunc.Transp(g.days_per_mon, g.e20, g.Qa, g.Qb, d.nrel, d.daylight, g.rhoAir, g.lambda, g.VPDconv, c.VPD, g.BLcond, c.CanCond);
 		  
-		  c.coppice_pS = _3PGFunc.coppice_pS(c.pR,c.coppice_pfs);
-		  c.coppice_pF = _3PGFunc.coppice_pF(c.pR,c.coppice_pfs);
+		  c.coppice_pS = m3PGFunc.coppice_pS(c.pR,c.coppice_pfs);
+		  c.coppice_pF = m3PGFunc.coppice_pF(c.pR,c.coppice_pfs);
 		  
-		  c.Irrig = _3PGFunc.Irrig(g.irrigFrac, c.Transp, c.Intcptn, d.ppt);
-		  c.CumIrrig = _3PGFunc.CumIrrig(p.CumIrrig, c.Irrig);
+		  c.Irrig = m3PGFunc.Irrig(g.irrigFrac, c.Transp, c.Intcptn, d.ppt);
+		  c.CumIrrig = m3PGFunc.CumIrrig(p.CumIrrig, c.Irrig);
 		  
-		  c.ASW = _3PGFunc.ASW(s.maxAWS, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
+		  c.ASW = m3PGFunc.ASW(s.maxAWS, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
 		  
 		  log("c.pR=" + c.pR + " c.coppice_pS=" + c.coppice_pS + " p.WF=" + p.WF + " c.litterfall=" + c.litterfall);
-		  c.WF = _3PGFunc.WF(c.pR, p.WF, c.coppice_NPP, c.litterfall);
+		  c.WF = m3PGFunc.WF(c.pR, p.WF, c.coppice_NPP, c.litterfall);
 		  
 		  log("p.coppice_WR=" + p.coppice_WR + " c.coppice_NPP=" + c.coppice_NPP + " c.pR=" + c.pR + " g.RttoverP=" + g.Rttover);
-		  c.coppice_WR = _3PGFunc.coppice_WR(p.coppice_WR, c.coppice_NPP, c.pR, g.Rttover, c.coppice_RootPP);
-		  c.WS = _3PGFunc.WS(p.WS, c.coppice_NPP, c.coppice_pS);
-		  c.W = _3PGFunc.W(c.WF, c.coppice_WR, c.WS);
+		  c.coppice_WR = m3PGFunc.coppice_WR(p.coppice_WR, c.coppice_NPP, c.pR, g.Rttover, c.coppice_RootPP);
+		  c.WS = m3PGFunc.WS(p.WS, c.coppice_NPP, c.coppice_pS);
+		  c.W = m3PGFunc.W(c.WF, c.coppice_WR, c.WS);
 		  c.lastCoppiceAge = p.lastCoppiceAge;
 		  return c;
 	},singleStepSincePlanting:function (g,p,d,s){
 		  var c = new Object();
-		  c.StandAge = _3PGFunc.StandAge(p.StandAge);
-		  c.LAI = _3PGFunc.LAI(p.WF, g.SLA1, g.SLA0, p.StandAge, g.tSLA);
-		  c.VPD = _3PGFunc.VPD(d.tmin, d.tmax, d.tdmean);
-		  c.fVPD = _3PGFunc.fVPD(g.kG, c.VPD);
+		  c.StandAge = m3PGFunc.StandAge(p.StandAge);
+		  c.LAI = m3PGFunc.LAI(p.WF, g.SLA1, g.SLA0, p.StandAge, g.tSLA);
+		  c.VPD = m3PGFunc.VPD(d.tmin, d.tmax, d.tdmean);
+		  c.fVPD = m3PGFunc.fVPD(g.kG, c.VPD);
 		  
-		  c.fSW = _3PGFunc.fSW(p.ASW, s.maxAWS, s.swconst, s.swpower);
-		  c.fAge = _3PGFunc.fAge(p.StandAge, g.maxAge, g.rAge, g.nAge);
-		  c.fFrost = _3PGFunc.fFrost(d.tmin);
-		  c.PAR = _3PGFunc.PAR(d.rad, g.molPAR_MJ);
+		  c.fSW = m3PGFunc.fSW(p.ASW, s.maxAWS, s.swconst, s.swpower);
+		  c.fAge = m3PGFunc.fAge(p.StandAge, g.maxAge, g.rAge, g.nAge);
+		  c.fFrost = m3PGFunc.fFrost(d.tmin);
+		  c.PAR = m3PGFunc.PAR(d.rad, g.molPAR_MJ);
 		  
-		  c.xPP = _3PGFunc.xPP(g.y, c.PAR, g.gDM_mol);
-		  c.PhysMod = _3PGFunc.PhysMod(c.fVPD, c.fSW, c.fAge);
-		  c.Intcptn = _3PGFunc.Intcptn(g.MaxIntcptn, c.LAI, g.LAImaxIntcptn);
-		  c.CanCond = _3PGFunc.CanCond(g.MaxCond, c.PhysMod, c.LAI, g.LAIgcx);
+		  c.xPP = m3PGFunc.xPP(g.y, c.PAR, g.gDM_mol);
+		  c.PhysMod = m3PGFunc.PhysMod(c.fVPD, c.fSW, c.fAge);
+		  c.Intcptn = m3PGFunc.Intcptn(g.MaxIntcptn, c.LAI, g.LAImaxIntcptn);
+		  c.CanCond = m3PGFunc.CanCond(g.MaxCond, c.PhysMod, c.LAI, g.LAIgcx);
 		  
-		  c.pR = _3PGFunc.pR(g.pRx, g.pRn, c.PhysMod, g.m0, g.FR);
-		  c.fT = _3PGFunc.fT(d.tmin, d.tmax, g.Tmin, g.Tmax, g.Topt);
-		  c.NPP = _3PGFunc.NPP(p.StandAge, g.fullCanAge, c.xPP, g.k, p.LAI, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost);
-		  c.litterfall = _3PGFunc.litterfall(g.gammaFx, g.gammaF0, p.StandAge, g.tgammaF, p.lastCoppiceAge);
+		  c.pR = m3PGFunc.pR(g.pRx, g.pRn, c.PhysMod, g.m0, g.FR);
+		  c.fT = m3PGFunc.fT(d.tmin, d.tmax, g.Tmin, g.Tmax, g.Topt);
+		  c.NPP = m3PGFunc.NPP(p.StandAge, g.fullCanAge, c.xPP, g.k, p.LAI, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost);
+		  c.litterfall = m3PGFunc.litterfall(g.gammaFx, g.gammaF0, p.StandAge, g.tgammaF, p.lastCoppiceAge);
 		    
 		  log("g.days_per_mon=" + g.days_per_mon + " g.e20=" + g.e20 + " g.Qa=" + g.Qa + " g.Qb=" + g.Qb + " d.nrel=" + d.nrel + " d.daylight=" + d.daylight + " g.rhoAir=" + g.rhoAir + " g.lambda=" + g.lambda + " g.VPDconv=" + g.VPDconv + " c.VPD=" + c.VPD + " g.BLcond=" + g.BLcond + " c.CanCond=" + c.CanCond);
-		  c.Transp = _3PGFunc.Transp(g.days_per_mon, g.e20, g.Qa, g.Qb, d.nrel, d.daylight, g.rhoAir, g.lambda, g.VPDconv, c.VPD, g.BLcond, c.CanCond);
-		  c.pS = _3PGFunc.pS(p.WS, g.StockingDensity, g.StemConst, g.StemPower, c.pR, g.pfsConst, g.pfsPower);
-		  c.pF = _3PGFunc.pF(c.pR, c.pS);
+		  c.Transp = m3PGFunc.Transp(g.days_per_mon, g.e20, g.Qa, g.Qb, d.nrel, d.daylight, g.rhoAir, g.lambda, g.VPDconv, c.VPD, g.BLcond, c.CanCond);
+		  c.pS = m3PGFunc.pS(p.WS, g.StockingDensity, g.StemConst, g.StemPower, c.pR, g.pfsConst, g.pfsPower);
+		  c.pF = m3PGFunc.pF(c.pR, c.pS);
 		  
 		  log("DEBUGGIN: irrigFrac= " + g.irrigFrac + "; Transp=" + c.Transp + "; c.Intcptn=" + c.Intcptn + "; d.ppt=" + d.ppt);
-		  c.Irrig = _3PGFunc.Irrig(g.irrigFrac, c.Transp, c.Intcptn, d.ppt);
-		  c.CumIrrig = _3PGFunc.CumIrrig(p.CumIrrig, c.Irrig);
+		  c.Irrig = m3PGFunc.Irrig(g.irrigFrac, c.Transp, c.Intcptn, d.ppt);
+		  c.CumIrrig = m3PGFunc.CumIrrig(p.CumIrrig, c.Irrig);
 		  
 		  log("DEBUGGIN: maxAWS= " + s.maxAWS + "; ASW=" + p.ASW + "; d.ppt=" + d.ppt + "; c.Transp=" + c.Transp + "; c.Intcptn= " + c.Intcptn + "; c.Irrig= " + c.Irrig);
-		  c.ASW = _3PGFunc.ASW(s.maxAWS, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
-		  c.WF = _3PGFunc.WF(c.pF, p.WF, c.NPP, c.litterfall);
-		  c.WR = _3PGFunc.WR(p.WR, c.NPP, c.pR, g.Rttover);
-		  c.WS = _3PGFunc.WS(p.WS, c.NPP, c.pS);
-		  c.W = _3PGFunc.W(c.WF, c.WR, c.WS);
+		  c.ASW = m3PGFunc.ASW(s.maxAWS, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
+		  c.WF = m3PGFunc.WF(c.pF, p.WF, c.NPP, c.litterfall);
+		  c.WR = m3PGFunc.WR(p.WR, c.NPP, c.pR, g.Rttover);
+		  c.WS = m3PGFunc.WS(p.WS, c.NPP, c.pS);
+		  c.W = m3PGFunc.W(c.WF, c.WR, c.WS);
 		  c.lastCoppiceAge = p.lastCoppiceAge;
 		  return c;
-	}};_3PGIO={config:{"constansts":"input_constants","weather":"Weather","speadsheet":{"plantedDateHeader":"Planted Date:","coppiceDateHeader":"Coppice Date:","coppiceIntervalHeader":"Coppice Interval Years:","soilDataHeader":"Soil Data:"},"output":"Output"},readAllConstants:function (keyValMap) {
-		if( env() == "appscript" ) return this._readAllConstantsAppscript(keyValMap);
-		else if( env() == "plv8" ) return this._readAllConstantsPlv8(keyValMap);
+	}};m3PGIO={config:{"constansts":"input_constants","weather":"Weather","spreadsheet":{"plantedDateHeader":"Planted Date:","coppiceDateHeader":"Coppice Date:","coppiceIntervalHeader":"Coppice Interval Years:","soilDataHeader":"Soil Data:"},"output":"Output"},readAllConstants:function (keyValMap) {
+		if( env() == "appscript" ) return m3PGIO._readAllConstantsAppscript(keyValMap);
+		else if( env() == "plv8" ) return m3PGIO._readAllConstantsPlv8(keyValMap);
 		
 		// badness
 		log("Error: unknown env in 3PG.io.readAllConstants - "+env());
@@ -265,7 +265,7 @@ _3PGModel={run:function (lenghtOfGrowth) {
 	},_readAllConstantsAppscript:function (keyValMap) {
 		var spreadsheet = SpreadsheetApp.getActiveSpreadsheet(); //Hardcoded 3PG spreadsheet id
 	    //var columns = spreadsheet.getLastColumn();
-	    var sheet = spreadsheet.getSheetByName(ioConfig.constansts); 
+	    var sheet = spreadsheet.getSheetByName(m3PGIO.config.constansts); 
 	    var data = sheet.getDataRange().getValues();
 	    var keys = data[0];  
 
@@ -285,8 +285,8 @@ _3PGModel={run:function (lenghtOfGrowth) {
 		  var dateMap = {};
 		  readWeather(weatherMap, soilMap, dateMap);
 	},readWeather:function (weatherMap, soilMap, dateMap) {
-		if( env() == "appscript" ) return this._readWeatherAppscript(weatherMap, soilMap, dateMap);
-		else if( env() == "plv8" ) return this._readWeatherPlv8(weatherMap, soilMap, dateMap);
+		if( env() == "appscript" ) return m3PGIO._readWeatherAppScript(weatherMap, soilMap, dateMap);
+		else if( env() == "plv8" ) return m3PGIO._readWeatherPlv8(weatherMap, soilMap, dateMap);
 		
 		// badness
 		log("Error: unknown env in 3PG.io.readWeather - "+env());
@@ -294,7 +294,7 @@ _3PGModel={run:function (lenghtOfGrowth) {
 	},_readWeatherAppScript:function (weatherMap, soilMap, dateMap) {
 	    var spreadsheet = SpreadsheetApp.getActiveSpreadsheet(); //Hardcoded 3PG spreadsheet id
 	    //var columns = spreadsheet.getLastColumn();
-	    var sheet = spreadsheet.getSheetByName(ioConfig.weather); //weather_Davis
+	    var sheet = spreadsheet.getSheetByName(m3PGIO.config.weather); //weather_Davis
 	    var data = sheet.getDataRange().getValues();
 	    var keys = data[0];  
 	  
@@ -307,16 +307,16 @@ _3PGModel={run:function (lenghtOfGrowth) {
 	      
 	      var item = {};
 	      for (var column = 0; column < keys.length; column++) {
-	        if ( rowData[0] == ioConfig.spreadsheet.plantedDateHeader ){
+	        if ( rowData[0] == m3PGIO.config.spreadsheet.plantedDateHeader ){
 	          dateMap["datePlanted"] = rowData[1];
 	          break;
-	        } else if ( rowData[0] == ioConfig.spreadsheet.coppiceDateHeader ){
+	        } else if ( rowData[0] == m3PGIO.config.spreadsheet.coppiceDateHeader ){
 	          dateMap["dateCoppiced"] = rowData[1];
 	          break;
-	        } else if (rowData[0]== ioConfig.spreadsheet.coppiceIntervalHeader ){
+	        } else if (rowData[0]== m3PGIO.config.spreadsheet.coppiceIntervalHeader ){
 	          dateMap["yearsPerCoppice"] = rowData[1];
 	          break;
-	        } else if ( rowData[0] == ioConfig.spreadsheet.soilDataHeader ){
+	        } else if ( rowData[0] == m3PGIO.config.spreadsheet.soilDataHeader ){
 	          //NOTICE: Order matters! 
 	          soilMap["maxAWS"] = rowData[1];
 	          soilMap["swpower"] = rowData[2];
@@ -344,8 +344,8 @@ _3PGModel={run:function (lenghtOfGrowth) {
 	},_readWeatherPlv8:function () {
 		// TODO
 	},dump:function (rows) {
-		if( env() == "appscript" ) return this._writeRowsToSheet(rows);
-		else if( env() == "plv8" ) return this._setResponse(rows);
+		if( env() == "appscript" ) return m3PGIO._writeRowsToSheet(rows);
+		else if( env() == "plv8" ) return m3PGIO._setResponse(rows);
 		
 		// badness
 		log("Error: unknown env in 3PG.io.dump - "+env());
@@ -353,13 +353,13 @@ _3PGModel={run:function (lenghtOfGrowth) {
 	},_writeRowsToSheet:function (rows){
 		  var spreadsheet =
 		      SpreadsheetApp.getActiveSpreadsheet();
-		  var resultSheet = spreadsheet.getSheetByName(ioConfig.output); //TODO: decide on where this can be taken out into. Output
+		  var resultSheet = spreadsheet.getSheetByName(m3PGIO.config.output); //TODO: decide on where this can be taken out into. Output
 		  //below start with second row, leave first one untouched
 		  
 		  var range = resultSheet.getRange(1, 1,
 		      rows.length, rows[0].length);
 		  range.setValues(rows);
-	}};_3PGFunc={Intcptn:function (MaxIntcptn, cur_LAI, LAImaxIntcptn){
+	}};m3PGFunc={Intcptn:function (MaxIntcptn, cur_LAI, LAImaxIntcptn){
   if (LAImaxIntcptn<=0){
     return MaxIntcptn;    
   }else {
@@ -411,6 +411,8 @@ _3PGModel={run:function (lenghtOfGrowth) {
   } else{
     return (1 / (1 + Math.pow( ( (cur_StandAge / maxAge) / rAge) , nAge) ) );
   }
+},fSW:function (prev_ASW, maxAWS, swconst, swpower){
+   return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (prev_ASW / 10 / maxAWS) ) / swconst) ) , swpower) );
 },init_fSW:function (cur_ASW, maxAWS, swconst, swpower){
   return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (cur_ASW / 10 / maxAWS) ) / swconst) ) , swpower) );
 },fNutr:function (fN0, FR){
@@ -620,6 +622,13 @@ float AS $$
   } else{
     return (1 / (1 + Math.pow( ( (cur_StandAge / maxAge) / rAge) , nAge) ) );
   }
+
+$$ LANGUAGE plv8 IMMUTABLE STRICT;
+
+CREATE OR REPLACE FUNCTION fSW("prev_ASW" float, "maxAWS" float, "swconst" float, "swpower" float) RETURNS
+float AS $$
+
+   return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (prev_ASW / 10 / maxAWS) ) / swconst) ) , swpower) );
 
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
@@ -913,12 +922,7 @@ WR float,
 WS float,
 W float
 );
-CREATE TYPE tree as (gammaFx float,
-gammaF0 float,
-tgammaF float,
-Rttover float,
-k float,
-fullCanAge float,
+CREATE TYPE tree as (fullCanAge float,
 kG float,
 alpha float,
 Tmax float,
@@ -941,7 +945,6 @@ e20 float,
 rhoAir float,
 lambda float,
 VPDconv float,
-days_per_mon float,
 Qa float,
 Qb float,
 m0 float,
@@ -958,8 +961,6 @@ irrigFrac float,
 StockingDensity float,
 SeedlingMass float,
 y float,
-gDM_mol float,
-molPAR_MJ float,
 maxAWS float,
 swpower float,
 swconst float,
@@ -972,6 +973,15 @@ cpPfsConst float,
 cpRootStoragePct float,
 cpRootLAITarget float
 );
+CREATE TYPE constants as (gammaFx float,
+gammaF0 float,
+tgammaF float,
+Rttover float,
+k float,
+days_per_mon float,
+gDM_mol float,
+molPAR_MJ float
+);
 DROP TABLE trees;
 CREATE TABLE trees OF tree;
-INSERT INTO trees VALUES (0.03, 0.001, 24, 0.005, 0.5, 0, 0.5, 0.0177, 40, 5, 20, 0.2, 50, 0.95, 4, 1, 0.7, 10.8, 10.8, 1, 0.02, 3.33, 0.15, 0, 2.2, 1.2, 2460000, 0.00622, 30.4, -90, 0.8, 0, 0.8, 0.25, -1.161976, 1.91698, 5, 0.0771, 2.2704, 300, 1.5, 1, 2500, 0.001, 0.47, 24, 2.3, 15.4574230821395, 4.6, 0.48, 4.4, 0.18, 2.4, 5, -1.161976, 1.91698, 0.15, 4);
+INSERT INTO trees (fullCanAge, kG, alpha, Tmax, Tmin, Topt, BLcond, maxAge, rAge, nAge, fN0, FR, SLA0, SLA1, tSLA, MaxCond, LAIgcx, MaxIntcptn, LAImaxIntcptn, e20, rhoAir, lambda, VPDconv, Qa, Qb, m0, pRx, pRn, pfsPower, pfsConst, pfsMax, StemConst, StemPower, wSx1000, thinPower, irrigFrac, StockingDensity, SeedlingMass, y, maxAWS, swpower, swconst, cpStemsPerStump, cpStemConst, cpStemPower, cpMaxPfs, cpPfsPower, cpPfsConst, cpRootStoragePct, cpRootLAITarget) VALUES (0, 0.5, 0.0177, 40, 5, 20, 0.2, 50, 0.95, 4, 1, 0.7, 10.8, 10.8, 1, 0.02, 3.33, 0.15, 0, 2.2, 1.2, 2460000, 0.00622, -90, 0.8, 0, 0.8, 0.25, -1.161976, 1.91698, 5, 0.0771, 2.2704, 300, 1.5, 1, 2500, 0.001, 0.47, 15.4574230821395, 4.6, 0.48, 4.4, 0.18, 2.4, 5, -1.161976, 1.91698, 0.15, 4);
