@@ -122,7 +122,7 @@ var m3PG = {
 		    
 		  }
 		  
-		  m3PGIO.dump(rows)
+		  m3PGIO.dump(rows);
 		  
 		  return rows;
 		  
