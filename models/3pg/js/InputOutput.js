@@ -123,8 +123,9 @@ var m3PGIO = {
 		// TODO
 	},
 	
-	dump : function(rows) {
-		if( env() == "appscript" ) return m3PGIO._writeRowsToSheet(rows);
+	dump : function(rows, sheet) {
+	    if (sheet==null || sheet==undefined) sheet = m3PGIO.config.output; //default sheet
+		if( env() == "appscript" ) return m3PGIO._writeRowsToSheet(rows, sheet);
 		else if( env() == "plv8" ) return m3PGIO._setResponse(rows);
 		
 		// badness
@@ -132,12 +133,10 @@ var m3PGIO = {
 		return null;
 	},
 	
-	_writeRowsToSheet : function(rows){
+	_writeRowsToSheet : function(rows, sheet){
 		  var spreadsheet =
 		      SpreadsheetApp.getActiveSpreadsheet();
-		  var resultSheet = spreadsheet.getSheetByName(m3PGIO.config.output); //TODO: decide on where this can be taken out into. Output
-		  //below start with second row, leave first one untouched
-		  
+		  var resultSheet = spreadsheet.getSheetByName(sheet); //TODO: decide on where this can be taken out into. Output		  
 		  var range = resultSheet.getRange(1, 1,
 		      rows.length, rows[0].length);
 		  range.setValues(rows);
