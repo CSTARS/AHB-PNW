@@ -122,7 +122,9 @@ var m3PG = {
 		    
 		  }
 		  
-		  m3PGIO.dump(rows)
+		  m3PGIO.dump(rows);
+		  
+		  return rows;
 		  
 		  //init all - will be p,
 		  //then each step returned from singleStep will be p to feed back into
