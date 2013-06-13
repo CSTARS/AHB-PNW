@@ -87,8 +87,27 @@ function solarRadiation(n) {
 	return R_s; 
 }
 
+// R_s : solar radiation
+function actualDaylightHours(R_s) {
+	console.log("tmp: "+(R_s / R_a));
+	var n = N * ( ((R_s / R_a) - A_s) / B_s );
+	n = n.toFixed(2);
+
+	if( nodeDebug ) console.log("n: "+n);
+	
+	return n; 
+}
+
 if( nodeDebug ) {
 	dailyExtRadiation(new Date(2013, 4, 15), -22.9);
 	daylightHours();
 	solarRadiation(7.1);
+
+	var rads = [3.45, 6.99, 10.28, 15.12, 18.66, 20.82, 22.8, 16.24, 14.6, 8.89, 4.32, 3.11];
+	for( var i = 0; i < rads.length; i++ ) {
+		dailyExtRadiation(new Date(2013, i, 15), -22.9);
+		daylightHours();
+		actualDaylightHours(rads[i]);
+		console.log("\n");
+	}
 }
