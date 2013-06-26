@@ -54,81 +54,85 @@ var m3PG = {
 		  
 		  var keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","pS","litterfall","NPP","WF","WR","WS", "W"];    
 
-		             
-		  var firstMonthResults = m3PG.init(g,d,s);
-		  firstMonthResults.Date = (currentDate.getMonth()+1) + "/" + currentDate.getYear();
-		  
-		  var rows = []; //these will become rows
-		  
-		  log("Results of the first month: " +firstMonthResults);
-		  
-		  rows.push(keysInOrder);
-		  
-		  var firstRow = [];
-		  for (var i = 0; i < keysInOrder.length; i++){
-		    var key = keysInOrder[i];
-		    log(key  + ": " + firstMonthResults[key]);
-		    firstRow.push(firstMonthResults[key]);
-		  }
-		  
-		  rows.push(firstRow);
-
-		  var currentMonthResults = firstMonthResults;
-		  currentMonthResults.lastCoppiceAge = 0;
-		  var nextMonthResults;
-		  
-		  for (var step = 1; step < lengthOfGrowth; step++){
-		    currentDate.setMonth(currentDate.getMonth() + 1); // add a month to current date
-		    log("currentDate = " + currentDate);
-		    currentMonth = currentDate.getMonth();
-		    
-		    //If curretn year is the year of coppice, cut the tree (redestribute the weight)
-		    //set coppicing flag to true
-		    //use coppicing functions
-		    if (willCoppice && currentDate.getYear()==yearToCoppice && currentMonth == monthToCoppice){
-		      log("Time to Coppice!");
-		      //TODO: update trees
-		      
-		      if (isCoppiced == false) {
-		        //first time coppice
-		        //Important function name changes for the first coppice
-		        currentMonthResults.coppice_WR = currentMonthResults.WR;
-		      }
-		      
-		      isCoppiced = true; //growth model changes
-		      currentMonthResults.WS = 1.3; //no stem
-		      currentMonthResults.WF = 2.4; //no foliage
-		      currentMonthResults.lastCoppiceAge = currentMonthResults.StandAge;
-		      //currentMonthResults.StandAge = 0; //the age of stand is 1 month?
-		      yearToCoppice = yearToCoppice + coppiceInterval; //next coppice year
-		      //key Headers change
-		      keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","litterfall","coppice_NPP","WF","coppice_WR","WS", "W"];    
-		      rows.push(keysInOrder);
-		    } 
-		    
-
-		    d = weatherMap[currentMonth]; //increment the month
-		    nextMonthResults = this.singleStep(g,currentMonthResults,d,s, isCoppiced);
-		    nextMonthResults.Date = (currentDate.getMonth()+1)  + "/" + currentDate.getYear();
-		    log("\n Results of the next month: " + nextMonthResults);
-		    var thisRow = [];
-		    for (var i = 0; i < keysInOrder.length; i++) {
-		      var key = keysInOrder[i];
-		      log( key  + ": " + nextMonthResults[key]);
-		      thisRow.push(nextMonthResults[key]);
-		    } 
-		    currentMonthResults = nextMonthResults;
-		    rows.push(thisRow);
-		    
-		  }
-		  
-		  m3PGIO.dump(rows);
-		  
-		  return rows;
+		  m3PG.runCurrentSetup(g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced)
 		  
 		  //init all - will be p,
 		  //then each step returned from singleStep will be p to feed back into
 		  //Weather?
+	},
+	
+	runCurrentSetup: function(g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced){
+	    
+        var firstMonthResults = m3PG.init(g,d,s);
+        firstMonthResults.Date = (currentDate.getMonth()+1) + "/" + currentDate.getYear();
+        
+        var rows = []; //these will become rows
+        
+        log("Results of the first month: " +firstMonthResults);
+        
+        rows.push(keysInOrder);
+        
+        var firstRow = [];
+        for (var i = 0; i < keysInOrder.length; i++){
+          var key = keysInOrder[i];
+          log(key  + ": " + firstMonthResults[key]);
+          firstRow.push(firstMonthResults[key]);
+        }
+        
+        rows.push(firstRow);
+
+        var currentMonthResults = firstMonthResults;
+        currentMonthResults.lastCoppiceAge = 0;
+        var nextMonthResults;
+        
+        for (var step = 1; step < lengthOfGrowth; step++){
+          currentDate.setMonth(currentDate.getMonth() + 1); // add a month to current date
+          log("currentDate = " + currentDate);
+          currentMonth = currentDate.getMonth();
+          
+          //If curretn year is the year of coppice, cut the tree (redestribute the weight)
+          //set coppicing flag to true
+          //use coppicing functions
+          if (willCoppice && currentDate.getYear()==yearToCoppice && currentMonth == monthToCoppice){
+            log("Time to Coppice!");
+            //TODO: update trees
+            
+            if (isCoppiced == false) {
+              //first time coppice
+              //Important function name changes for the first coppice
+              currentMonthResults.coppice_WR = currentMonthResults.WR;
+            }
+            
+            isCoppiced = true; //growth model changes
+            currentMonthResults.WS = 1.3; //no stem
+            currentMonthResults.WF = 2.4; //no foliage
+            currentMonthResults.lastCoppiceAge = currentMonthResults.StandAge;
+            //currentMonthResults.StandAge = 0; //the age of stand is 1 month?
+            yearToCoppice = yearToCoppice + coppiceInterval; //next coppice year
+            //key Headers change
+            keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","litterfall","coppice_NPP","WF","coppice_WR","WS", "W"];    
+            rows.push(keysInOrder);
+          } 
+          
+
+          d = weatherMap[currentMonth]; //increment the month
+          nextMonthResults = this.singleStep(g,currentMonthResults,d,s, isCoppiced);
+          nextMonthResults.Date = (currentDate.getMonth()+1)  + "/" + currentDate.getYear();
+          log("\n Results of the next month: " + nextMonthResults);
+          var thisRow = [];
+          for (var i = 0; i < keysInOrder.length; i++) {
+            var key = keysInOrder[i];
+            log( key  + ": " + nextMonthResults[key]);
+            thisRow.push(nextMonthResults[key]);
+          } 
+          currentMonthResults = nextMonthResults;
+          rows.push(thisRow);
+          
+        }
+        
+        m3PGIO.dump(rows);
+        
+        return rows;
 	},
 	
 	init : function(g,d,s) {
