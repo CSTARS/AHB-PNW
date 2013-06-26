@@ -1,4 +1,3 @@
-
 /**
 
 
@@ -93,6 +92,7 @@ var m3PG = {
           //If curretn year is the year of coppice, cut the tree (redestribute the weight)
           //set coppicing flag to true
           //use coppicing functions
+          log("if ("+willCoppice+" && "+currentDate.getYear()+"=="+yearToCoppice+" && "+currentMonth+" == monthToCoppice)");
           if (willCoppice && currentDate.getYear()==yearToCoppice && currentMonth == monthToCoppice){
             log("Time to Coppice!");
             //TODO: update trees
