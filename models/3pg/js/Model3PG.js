@@ -53,14 +53,15 @@ var m3PG = {
 		  
 		  var keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","pS","litterfall","NPP","WF","WR","WS", "W"];    
 
-		  m3PG.runCurrentSetup(lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap)
+		  var reprintHeaders = true; //print headers at coppice time (to help see that row)
+		  m3PG.runCurrentSetup(lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders)
 		  
 		  //init all - will be p,
 		  //then each step returned from singleStep will be p to feed back into
 		  //Weather?
 	},
 	
-	runCurrentSetup: function(lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap){
+	runCurrentSetup: function(lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders){
 	    
         var firstMonthResults = m3PG.init(g,d,s);
         firstMonthResults.Date = (currentDate.getMonth()+1) + "/" + currentDate.getYear();
@@ -111,7 +112,9 @@ var m3PG = {
             yearToCoppice = yearToCoppice + coppiceInterval; //next coppice year
             //key Headers change
             keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","litterfall","coppice_NPP","WF","coppice_WR","WS", "W"];    
-            rows.push(keysInOrder);
+            if (reprintHeaders==true){
+                rows.push(keysInOrder);
+            } else {}
           } 
           
 
