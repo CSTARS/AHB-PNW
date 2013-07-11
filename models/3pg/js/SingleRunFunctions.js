@@ -366,7 +366,7 @@ m3PGFunc.coppice_pfs = function(prev_WS,StockingDensity, cpStemsPerStump, cpStem
 }
 
 m3PGFunc.coppice_pS = function(cur_pR,pfs) {
-  return (1 - cur_pR) / (1 + 1/pfs );
+  return (1 - cur_pR) / (1 + pfs );
 }
 
 m3PGFunc.coppice_pF = function(cur_pR,pfs) {
