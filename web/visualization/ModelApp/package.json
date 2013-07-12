@@ -1,0 +1,9 @@
+{
+  "name": "AHB-3PG",
+  "description": "AHB - 3PG Model Viewer",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "*",
+    "request": "*"
+  }
+}
