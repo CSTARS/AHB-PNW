@@ -1,4 +1,3 @@
-
 var m3PGFunc = {};
 
 /**Intcptn
@@ -224,7 +223,7 @@ TODO: untis + definition
 */
 m3PGFunc.litterfall = function(gammaFx, gammaF0, prev_StandAge, tgammaF, prev_lastCoppiceAge){
   var prev_realStandAge = prev_StandAge - prev_lastCoppiceAge;
-  Logger.log("DEBUGGING COPPICE: prev_StandAge=" + prev_StandAge +"; prev_realStandAge=" + prev_realStandAge);
+  log("DEBUGGING COPPICE: prev_StandAge=" + prev_StandAge +"; prev_realStandAge=" + prev_realStandAge);
   return gammaFx * gammaF0 / (gammaF0 + (gammaFx - gammaF0) *  Math.exp(-12 * Math.log(1 + gammaFx / gammaF0) * prev_realStandAge / tgammaF) );
 }
 
@@ -366,7 +365,7 @@ m3PGFunc.coppice_pfs = function(prev_WS,StockingDensity, cpStemsPerStump, cpStem
 }
 
 m3PGFunc.coppice_pS = function(cur_pR,pfs) {
-  return (1 - cur_pR) / (1 + 1/pfs );
+  return (1 - cur_pR) / (1 + pfs );
 }
 
 m3PGFunc.coppice_pF = function(cur_pR,pfs) {

@@ -1,4 +1,3 @@
-
 /**
 
 
@@ -54,81 +53,89 @@ var m3PG = {
 		  
 		  var keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","pS","litterfall","NPP","WF","WR","WS", "W"];    
 
-		             
-		  var firstMonthResults = m3PG.init(g,d,s);
-		  firstMonthResults.Date = (currentDate.getMonth()+1) + "/" + currentDate.getYear();
-		  
-		  var rows = []; //these will become rows
-		  
-		  log("Results of the first month: " +firstMonthResults);
-		  
-		  rows.push(keysInOrder);
-		  
-		  var firstRow = [];
-		  for (var i = 0; i < keysInOrder.length; i++){
-		    var key = keysInOrder[i];
-		    log(key  + ": " + firstMonthResults[key]);
-		    firstRow.push(firstMonthResults[key]);
-		  }
-		  
-		  rows.push(firstRow);
-
-		  var currentMonthResults = firstMonthResults;
-		  currentMonthResults.lastCoppiceAge = 0;
-		  var nextMonthResults;
-		  
-		  for (var step = 1; step < lengthOfGrowth; step++){
-		    currentDate.setMonth(currentDate.getMonth() + 1); // add a month to current date
-		    log("currentDate = " + currentDate);
-		    currentMonth = currentDate.getMonth();
-		    
-		    //If curretn year is the year of coppice, cut the tree (redestribute the weight)
-		    //set coppicing flag to true
-		    //use coppicing functions
-		    if (willCoppice && currentDate.getYear()==yearToCoppice && currentMonth == monthToCoppice){
-		      log("Time to Coppice!");
-		      //TODO: update trees
-		      
-		      if (isCoppiced == false) {
-		        //first time coppice
-		        //Important function name changes for the first coppice
-		        currentMonthResults.coppice_WR = currentMonthResults.WR;
-		      }
-		      
-		      isCoppiced = true; //growth model changes
-		      currentMonthResults.WS = 1.3; //no stem
-		      currentMonthResults.WF = 2.4; //no foliage
-		      currentMonthResults.lastCoppiceAge = currentMonthResults.StandAge;
-		      //currentMonthResults.StandAge = 0; //the age of stand is 1 month?
-		      yearToCoppice = yearToCoppice + coppiceInterval; //next coppice year
-		      //key Headers change
-		      keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","litterfall","coppice_NPP","WF","coppice_WR","WS", "W"];    
-		      rows.push(keysInOrder);
-		    } 
-		    
-
-		    d = weatherMap[currentMonth]; //increment the month
-		    nextMonthResults = this.singleStep(g,currentMonthResults,d,s, isCoppiced);
-		    nextMonthResults.Date = (currentDate.getMonth()+1)  + "/" + currentDate.getYear();
-		    log("\n Results of the next month: " + nextMonthResults);
-		    var thisRow = [];
-		    for (var i = 0; i < keysInOrder.length; i++) {
-		      var key = keysInOrder[i];
-		      log( key  + ": " + nextMonthResults[key]);
-		      thisRow.push(nextMonthResults[key]);
-		    } 
-		    currentMonthResults = nextMonthResults;
-		    rows.push(thisRow);
-		    
-		  }
-		  
-		  m3PGIO.dump(rows);
-		  
-		  return rows;
+		  var reprintHeaders = true; //print headers at coppice time (to help see that row)
+		  m3PG.runCurrentSetup(lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders)
 		  
 		  //init all - will be p,
 		  //then each step returned from singleStep will be p to feed back into
 		  //Weather?
+	},
+	
+	runCurrentSetup: function(lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders){
+	    
+        var firstMonthResults = m3PG.init(g,d,s);
+        firstMonthResults.Date = (currentDate.getMonth()+1) + "/" + currentDate.getYear();
+        
+        var rows = []; //these will become rows
+        
+        log("Results of the first month: " +firstMonthResults);
+        
+        rows.push(keysInOrder);
+        
+        var firstRow = [];
+        for (var i = 0; i < keysInOrder.length; i++){
+          var key = keysInOrder[i];
+          log(key  + ": " + firstMonthResults[key]);
+          firstRow.push(firstMonthResults[key]);
+        }
+        
+        rows.push(firstRow);
+
+        var currentMonthResults = firstMonthResults;
+        currentMonthResults.lastCoppiceAge = 0;
+        var nextMonthResults;
+        
+        for (var step = 1; step < lengthOfGrowth; step++){
+          currentDate.setMonth(currentDate.getMonth() + 1); // add a month to current date
+          log("currentDate = " + currentDate);
+          currentMonth = currentDate.getMonth();
+          
+          //If curretn year is the year of coppice, cut the tree (redestribute the weight)
+          //set coppicing flag to true
+          //use coppicing functions
+          log("if ("+willCoppice+" && "+currentDate.getYear()+"=="+yearToCoppice+" && "+currentMonth+" == "+monthToCoppice+")");
+          if (willCoppice && currentDate.getYear()==yearToCoppice && currentMonth == monthToCoppice){
+            log("Time to Coppice!");
+            //TODO: update trees
+            
+            if (isCoppiced == false) {
+              //first time coppice
+              //Important function name changes for the first coppice
+              currentMonthResults.coppice_WR = currentMonthResults.WR;
+            }
+            
+            isCoppiced = true; //growth model changes
+            currentMonthResults.WS = 1.3; //no stem
+            currentMonthResults.WF = 2.4; //no foliage
+            currentMonthResults.lastCoppiceAge = currentMonthResults.StandAge;
+            //currentMonthResults.StandAge = 0; //the age of stand is 1 month?
+            yearToCoppice = yearToCoppice + coppiceInterval; //next coppice year
+            //key Headers change
+            keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","litterfall","coppice_NPP","WF","coppice_WR","WS", "W"];    
+            if (reprintHeaders==true){
+                rows.push(keysInOrder);
+            } else {}
+          } 
+          
+
+          d = weatherMap[currentMonth]; //increment the month
+          nextMonthResults = this.singleStep(g,currentMonthResults,d,s, isCoppiced);
+          nextMonthResults.Date = (currentDate.getMonth()+1)  + "/" + currentDate.getYear();
+          log("\n Results of the next month: " + nextMonthResults);
+          var thisRow = [];
+          for (var i = 0; i < keysInOrder.length; i++) {
+            var key = keysInOrder[i];
+            log( key  + ": " + nextMonthResults[key]);
+            thisRow.push(nextMonthResults[key]);
+          } 
+          currentMonthResults = nextMonthResults;
+          rows.push(thisRow);
+          
+        }
+        
+        m3PGIO.dump(rows);
+        
+        return rows;
 	},
 	
 	init : function(g,d,s) {
@@ -144,8 +151,8 @@ var m3PG = {
 		  c.fVPD = m3PGFunc.fVPD(g.kG, c.VPD);
 		  
 		  //note: the order of var changes here. ASW calsulated before fsw TODO: double check this behavior
-		  c.ASW = m3PGFunc.init_ASW(s.maxAWS);
-		  c.fSW = m3PGFunc.init_fSW(c.ASW, s.maxAWS, s.swconst, s.swpower);
+		  c.ASW = m3PGFunc.init_ASW(s.maxaws);
+		  c.fSW = m3PGFunc.init_fSW(c.ASW, s.maxaws, s.swconst, s.swpower);
 		  c.fAge = m3PGFunc.fAge(c.StandAge, g.maxAge, g.rAge, g.nAge);
 		  c.fFrost = m3PGFunc.fFrost(d.tmin);
 		  c.PAR = m3PGFunc.PAR(d.rad, g.molPAR_MJ);
@@ -185,7 +192,7 @@ var m3PG = {
 		  c.VPD = m3PGFunc.VPD(d.tmin, d.tmax, d.tdmean);
 		  c.fVPD = m3PGFunc.fVPD(g.kG, c.VPD);
 		  
-		  c.fSW = m3PGFunc.fSW(p.ASW, s.maxAWS, s.swconst, s.swpower);
+		  c.fSW = m3PGFunc.fSW(p.ASW, s.maxaws, s.swconst, s.swpower);
 		  c.fAge = m3PGFunc.fAge(p.StandAge, g.maxAge, g.rAge, g.nAge);
 		  c.fFrost = m3PGFunc.fFrost(d.tmin);
 		  c.PAR = m3PGFunc.PAR(d.rad, g.molPAR_MJ);
@@ -223,7 +230,7 @@ var m3PG = {
 		  c.Irrig = m3PGFunc.Irrig(g.irrigFrac, c.Transp, c.Intcptn, d.ppt);
 		  c.CumIrrig = m3PGFunc.CumIrrig(p.CumIrrig, c.Irrig);
 		  
-		  c.ASW = m3PGFunc.ASW(s.maxAWS, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
+		  c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
 		  
 		  log("c.pR=" + c.pR + " c.coppice_pS=" + c.coppice_pS + " p.WF=" + p.WF + " c.litterfall=" + c.litterfall);
 		  c.WF = m3PGFunc.WF(c.pR, p.WF, c.coppice_NPP, c.litterfall);
@@ -243,7 +250,7 @@ var m3PG = {
 		  c.VPD = m3PGFunc.VPD(d.tmin, d.tmax, d.tdmean);
 		  c.fVPD = m3PGFunc.fVPD(g.kG, c.VPD);
 		  
-		  c.fSW = m3PGFunc.fSW(p.ASW, s.maxAWS, s.swconst, s.swpower);
+		  c.fSW = m3PGFunc.fSW(p.ASW, s.maxaws, s.swconst, s.swpower);
 		  c.fAge = m3PGFunc.fAge(p.StandAge, g.maxAge, g.rAge, g.nAge);
 		  c.fFrost = m3PGFunc.fFrost(d.tmin);
 		  c.PAR = m3PGFunc.PAR(d.rad, g.molPAR_MJ);
@@ -267,8 +274,8 @@ var m3PG = {
 		  c.Irrig = m3PGFunc.Irrig(g.irrigFrac, c.Transp, c.Intcptn, d.ppt);
 		  c.CumIrrig = m3PGFunc.CumIrrig(p.CumIrrig, c.Irrig);
 		  
-		  log("DEBUGGIN: maxAWS= " + s.maxAWS + "; ASW=" + p.ASW + "; d.ppt=" + d.ppt + "; c.Transp=" + c.Transp + "; c.Intcptn= " + c.Intcptn + "; c.Irrig= " + c.Irrig);
-		  c.ASW = m3PGFunc.ASW(s.maxAWS, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
+		  log("DEBUGGIN: maxaws= " + s.maxaws + "; ASW=" + p.ASW + "; d.ppt=" + d.ppt + "; c.Transp=" + c.Transp + "; c.Intcptn= " + c.Intcptn + "; c.Irrig= " + c.Irrig);
+		  c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
 		  c.WF = m3PGFunc.WF(c.pF, p.WF, c.NPP, c.litterfall);
 		  c.WR = m3PGFunc.WR(p.WR, c.NPP, c.pR, g.Rttover);
 		  c.WS = m3PGFunc.WS(p.WS, c.NPP, c.pS);
