@@ -142,9 +142,9 @@ var m3PG = {
 		  var c = {};
 		  c.StandAge = m3PGFunc.init_StandAge();
 		  //note: change in order
-		  c.WF = m3PGFunc.init_WF(g.StockingDensity, g.SeedlingMass);
-		  c.WR = m3PGFunc.init_WR(g.StockingDensity, g.SeedlingMass);
-		  c.WS = m3PGFunc.init_WS(g.StockingDensity, g.SeedlingMass);
+		  c.WF = m3PGFunc.init_WF(g.StockingDensity, g.SeedlingFoliageMass);
+		  c.WR = m3PGFunc.init_WR(g.StockingDensity, g.SeedlingRootMass);
+		  c.WS = m3PGFunc.init_WS(g.StockingDensity, g.SeedlingStemMass);
 		  
 		  c.LAI = m3PGFunc.init_LAI(c.WF, g.SLA1, g.SLA0, c.StandAge, g.tSLA);
 		  c.VPD = m3PGFunc.VPD(d.tmin, d.tmax, d.tdmean);
