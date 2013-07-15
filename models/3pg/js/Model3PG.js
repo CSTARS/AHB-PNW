@@ -230,7 +230,7 @@ var m3PG = {
 		  c.Irrig = m3PGFunc.Irrig(g.irrigFrac, c.Transp, c.Intcptn, d.ppt);
 		  c.CumIrrig = m3PGFunc.CumIrrig(p.CumIrrig, c.Irrig);
 		  
-		  c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
+		  c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxaws
 		  
 		  log("c.pR=" + c.pR + " c.coppice_pS=" + c.coppice_pS + " p.WF=" + p.WF + " c.litterfall=" + c.litterfall);
 		  c.WF = m3PGFunc.WF(c.pR, p.WF, c.coppice_NPP, c.litterfall);
@@ -275,7 +275,7 @@ var m3PG = {
 		  c.CumIrrig = m3PGFunc.CumIrrig(p.CumIrrig, c.Irrig);
 		  
 		  log("DEBUGGIN: maxaws= " + s.maxaws + "; ASW=" + p.ASW + "; d.ppt=" + d.ppt + "; c.Transp=" + c.Transp + "; c.Intcptn= " + c.Intcptn + "; c.Irrig= " + c.Irrig);
-		  c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
+		  c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxaws
 		  c.WF = m3PGFunc.WF(c.pF, p.WF, c.NPP, c.litterfall);
 		  c.WR = m3PGFunc.WR(p.WR, c.NPP, c.pR, g.Rttover);
 		  c.WS = m3PGFunc.WS(p.WS, c.NPP, c.pS);

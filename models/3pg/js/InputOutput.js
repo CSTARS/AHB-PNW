@@ -93,8 +93,8 @@ var m3PGIO = {
 	          dateMap["yearsPerCoppice"] = rowData[1];
 	          break;
 	        } else if ( rowData[0] == m3PGIO.config.spreadsheet.soilDataHeader ){
-	          //NOTICE: Order matters! 
-	          soilMap["maxAWS"] = rowData[1];
+	          //NOTICE: Order matters! TODO: make it not matter (read order from sheet)
+	          soilMap["maxaws"] = rowData[1];
 	          soilMap["swpower"] = rowData[2];
 	          soilMap["swconst"] = rowData[3];
 	          break;
