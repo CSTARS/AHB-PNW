@@ -278,8 +278,8 @@ m3PGFunc.WF = function(cur_pF, prev_WF, cur_NPP, cur_litterfall){
 /**init_WF
 Foliage Biomass at planting time
 */
-m3PGFunc.init_WF = function(StockingDensity, SeedlingMass){
-  return 0.5 * StockingDensity * SeedlingMass; 
+m3PGFunc.init_WF = function(StockingDensity, SeedlingFoliageMass){
+  return StockingDensity * SeedlingFoliageMass; 
 }
 
 /**WR
@@ -293,8 +293,8 @@ m3PGFunc.WR = function(prev_WR, cur_NPP, cur_pR, Rttover){
 /**init_WR
 Root Biomass at planting time
 */
-m3PGFunc.init_WR = function(StockingDensity, SeedlingMass){
-  return 0.25 * StockingDensity * SeedlingMass; 
+m3PGFunc.init_WR = function(StockingDensity, SeedlingRootMass){
+  return StockingDensity * SeedlingRootMass; 
 }
 
 /**WS
@@ -308,8 +308,8 @@ m3PGFunc.WS = function(prev_WS, cur_NPP, cur_pS){
 /**init_WS
 Root Biomass at planting time
 */
-m3PGFunc.init_WS = function(StockingDensity, SeedlingMass){
-  return 0.25 * StockingDensity * SeedlingMass; 
+m3PGFunc.init_WS = function(StockingDensity, SeedlingStemMass){
+  return StockingDensity * SeedlingStemMass; 
 }
 
 /**W
