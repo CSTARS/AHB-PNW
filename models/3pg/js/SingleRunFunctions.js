@@ -34,8 +34,8 @@ m3PGFunc.ASW = function(maxASW, prev_ASW, date_ppt, cur_Transp, cur_Intcptn, cur
 /**init_ASW
 Available soil water at planting time
 */
-m3PGFunc.init_ASW = function(maxAWS){
-  return 0.8 * 10 * maxAWS;
+m3PGFunc.init_ASW = function(maxaws){
+  return 0.8 * 10 * maxaws;
 }
 
 
@@ -139,15 +139,15 @@ m3PGFunc.init_fAge = function(cur_StandAge, maxAge, rAge, nAge){
 /**fSW
 TODO: get units and description
 */
-m3PGFunc.fSW = function(prev_ASW, maxAWS, swconst, swpower){
-   return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (prev_ASW / 10 / maxAWS) ) / swconst) ) , swpower) );
+m3PGFunc.fSW = function(prev_ASW, maxaws, swconst, swpower){
+   return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (prev_ASW / 10 / maxaws) ) / swconst) ) , swpower) );
 }
 
 /**
 TODO: WHAT IS INIT_FSW? where in makefile??
 */
-m3PGFunc.init_fSW = function(cur_ASW, maxAWS, swconst, swpower){
-  return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (cur_ASW / 10 / maxAWS) ) / swconst) ) , swpower) );
+m3PGFunc.init_fSW = function(cur_ASW, maxaws, swconst, swpower){
+  return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (cur_ASW / 10 / maxaws) ) / swconst) ) , swpower) );
 }
 
 /**fNutr
