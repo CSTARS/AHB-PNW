@@ -206,7 +206,7 @@ var m3PGIO = {
     
     readWeatherFromRequest : function(weatherMap, soilMap, dateMap, location) { //not from spreadsheet
       //TODO: put into input-output 
-      var weatherJSON = getResponseJSON(location, "Weather");
+      var weatherJSON = m3PGIO.getResponseJSON(location, "Weather");
       var headersInOrder = [];
       for (var i=0; i< weatherJSON.table.cols.length; i++){
          headersInOrder.push(weatherJSON.table.cols[i].id);
@@ -231,7 +231,7 @@ var m3PGIO = {
         //}
       }     
     
-      var soilJSON = getResponseJSON(location, "Soil");
+      var soilJSON = m3PGIO.getResponseJSON(location, "Soil");
       headersInOrder = [];
       for (var i=0; i< soilJSON.table.cols.length; i++){
          headersInOrder.push(soilJSON.table.cols[i].id);
