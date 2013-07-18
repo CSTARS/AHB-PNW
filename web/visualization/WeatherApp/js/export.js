@@ -50,7 +50,7 @@ ahb.modelExport = (function(){
 			_resetBtn();
 			$('#modal-msg').html("");
 			$('#myModal').modal('show');
-			_getName(ckey);
+			_getName(key);
 		});
 
 		$("#login-btn").on('click', function(){
