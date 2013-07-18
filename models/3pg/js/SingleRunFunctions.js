@@ -372,34 +372,34 @@ m3PGFunc.coppice_pF = function(cur_pR,pfs) {
     return (1 - cur_pR) / (1 + 1/pfs );
 }
 
-m3PGFunc.coppice_RootPP = function(cur_npp, cur_nppTarget, WR,W,pRx,cpRootStoragePct,cpRootLAITarget) {
+m3PGFunc.coppice_RootP = function(cur_npp, cur_nppTarget, WR,W,pRx,cpRootStoragePct,cpRootLAITarget) {
  // var npp=NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
  // var nppTarget = NPP(prev_StandAge, fullCanAge, cur_xPP, k, cpRootLAITarget, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
  
   var nppRes = cur_nppTarget - cur_npp;
   //Logger.log("nppRes=" + nppRes);
-  var rootPP;
+  var rootP; //root productivity
   if (nppRes > 0) {
-    rootPP = Math.min(nppRes,WR*(WR/W - pRx)*cpRootStoragePct);
+    rootP = Math.min(nppRes,WR*(WR/W - pRx)*cpRootStoragePct);
   } else {
-    rootPP = 0;
+    rootP = 0;
   }
-  return rootPP;
+  return rootP;
 }
 
-m3PGFunc.coppice_NPP = function(cur_npp,coppice_RootPP,ConversionEfficiency) {
+m3PGFunc.coppice_NPP = function(cur_npp,coppice_RootP,ConversionEfficiency) {
   //var npp = NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
-//  var rootPP = coppice_RootPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost,WR,W,pRx,cpRootStoragePct);
-  return cur_npp+ConversionEfficiency*coppice_RootPP;
+//  var rootP = coppice_RootP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost,WR,W,pRx,cpRootStoragePct);
+  return cur_npp+ConversionEfficiency*coppice_RootP;
 }
 
 /**WR
 units='t/ha' 
 description='Root Biomass'
 */
-m3PGFunc.coppice_WR = function(prev_WR, cur_NPP, cur_pR, Rttover,coppice_RootPP){
-  //Logger.log("DEBUGGING COPPICE: prev_WR=" + prev_WR + "; cur_NPP=" + cur_NPP + "; cur_pR=" + cur_pR + "; Rttover=" + Rttover+ "; coppice_RootPP=" + coppice_RootPP);
-   return prev_WR, prev_WR + cur_NPP * cur_pR - Rttover * prev_WR - coppice_RootPP;
+m3PGFunc.coppice_WR = function(prev_WR, cur_NPP, cur_pR, Rttover,coppice_RootP){
+  //Logger.log("DEBUGGING COPPICE: prev_WR=" + prev_WR + "; cur_NPP=" + cur_NPP + "; cur_pR=" + cur_pR + "; Rttover=" + Rttover+ "; coppice_RootP=" + coppice_RootP);
+   return prev_WR, prev_WR + cur_NPP * cur_pR - Rttover * prev_WR - coppice_RootP;
 }
 
 

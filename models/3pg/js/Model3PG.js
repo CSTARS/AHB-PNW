@@ -200,8 +200,6 @@ var m3PG = {
 		  c.xPP = m3PGFunc.xPP(g.y, c.PAR, g.gDM_mol);
 		  
 		  
-		 // c.coppice_RootPP = coppice_RootPP(p.StandAge, g.fullCanAge, c.xPP, g.k, p.LAI, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost,p.WR,p.W,g.pRx,g.cpRootStoragePct,g.cpRootLAITarget);
-
 		  c.PhysMod = m3PGFunc.PhysMod(c.fVPD, c.fSW, c.fAge);
 		  
 		  c.NPP_regular = m3PGFunc.NPP(p.StandAge, g.fullCanAge, c.xPP, g.k, p.LAI, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost);
@@ -209,10 +207,10 @@ var m3PG = {
 		  c.NPP_target = m3PGFunc.NPP(p.StandAge, g.fullCanAge, c.xPP, g.k, g.cpRootLAITarget, c.fVPD, c.fSW, c.fAge, g.alpha, g.fNutr, c.fT, c.fFrost);
 		   log("c.NPP_target=" + c.NPP_target);
 		  
-		  c.coppice_RootPP = m3PGFunc.coppice_RootPP(c.NPP_regular, c.NPP_target, p.coppice_WR, p.W,g.pRx,g.cpRootStoragePct,g.cpRootLAITarget);
-		  log("c.coppice_RootPP=" + c.coppice_RootPP);
+		  c.coppice_RootP = m3PGFunc.coppice_RootP(c.NPP_regular, c.NPP_target, p.coppice_WR, p.W,g.pRx,g.cpRootStoragePct,g.cpRootLAITarget);
+		  log("c.coppice_RootP=" + c.coppice_RootP);
 		  c.coppice_pfs = m3PGFunc.coppice_pfs(p.WS,g.StockingDensity, g.cpStemsPerStump, g.cpStemConst, g.cpStemPower, g.cpPfsConst, g.cpPfsPower, g.cpMaxPfs);
-		  c.coppice_NPP = m3PGFunc.coppice_NPP(c.NPP_regular,c.coppice_RootPP, g.ConversionEfficiency);
+		  c.coppice_NPP = m3PGFunc.coppice_NPP(c.NPP_regular,c.coppice_RootP, g.ConversionEfficiency);
 		  
 		  c.Intcptn = m3PGFunc.Intcptn(g.MaxIntcptn, c.LAI, g.LAImaxIntcptn);
 		  c.CanCond = m3PGFunc.CanCond(g.MaxCond, c.PhysMod, c.LAI, g.LAIgcx);
@@ -236,7 +234,7 @@ var m3PG = {
 		  c.WF = m3PGFunc.WF(c.pR, p.WF, c.coppice_NPP, c.litterfall);
 		  
 		  log("p.coppice_WR=" + p.coppice_WR + " c.coppice_NPP=" + c.coppice_NPP + " c.pR=" + c.pR + " g.RttoverP=" + g.Rttover);
-		  c.coppice_WR = m3PGFunc.coppice_WR(p.coppice_WR, c.coppice_NPP, c.pR, g.Rttover, c.coppice_RootPP);
+		  c.coppice_WR = m3PGFunc.coppice_WR(p.coppice_WR, c.coppice_NPP, c.pR, g.Rttover, c.coppice_RootP);
 		  c.WS = m3PGFunc.WS(p.WS, c.coppice_NPP, c.coppice_pS);
 		  c.W = m3PGFunc.W(c.WF, c.coppice_WR, c.WS);
 		  c.lastCoppiceAge = p.lastCoppiceAge;
