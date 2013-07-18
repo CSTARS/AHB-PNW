@@ -34,8 +34,8 @@ m3PGFunc.ASW = function(maxASW, prev_ASW, date_ppt, cur_Transp, cur_Intcptn, cur
 /**init_ASW
 Available soil water at planting time
 */
-m3PGFunc.init_ASW = function(maxAWS){
-  return 0.8 * 10 * maxAWS;
+m3PGFunc.init_ASW = function(maxaws){
+  return 0.8 * 10 * maxaws;
 }
 
 
@@ -139,15 +139,15 @@ m3PGFunc.init_fAge = function(cur_StandAge, maxAge, rAge, nAge){
 /**fSW
 TODO: get units and description
 */
-m3PGFunc.fSW = function(prev_ASW, maxAWS, swconst, swpower){
-   return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (prev_ASW / 10 / maxAWS) ) / swconst) ) , swpower) );
+m3PGFunc.fSW = function(prev_ASW, maxaws, swconst, swpower){
+   return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (prev_ASW / 10 / maxaws) ) / swconst) ) , swpower) );
 }
 
 /**
 TODO: WHAT IS INIT_FSW? where in makefile??
 */
-m3PGFunc.init_fSW = function(cur_ASW, maxAWS, swconst, swpower){
-  return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (cur_ASW / 10 / maxAWS) ) / swconst) ) , swpower) );
+m3PGFunc.init_fSW = function(cur_ASW, maxaws, swconst, swpower){
+  return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (cur_ASW / 10 / maxaws) ) / swconst) ) , swpower) );
 }
 
 /**fNutr
@@ -278,8 +278,8 @@ m3PGFunc.WF = function(cur_pF, prev_WF, cur_NPP, cur_litterfall){
 /**init_WF
 Foliage Biomass at planting time
 */
-m3PGFunc.init_WF = function(StockingDensity, SeedlingMass){
-  return 0.5 * StockingDensity * SeedlingMass; 
+m3PGFunc.init_WF = function(StockingDensity, SeedlingFoliageMass){
+  return StockingDensity * SeedlingFoliageMass; 
 }
 
 /**WR
@@ -293,8 +293,8 @@ m3PGFunc.WR = function(prev_WR, cur_NPP, cur_pR, Rttover){
 /**init_WR
 Root Biomass at planting time
 */
-m3PGFunc.init_WR = function(StockingDensity, SeedlingMass){
-  return 0.25 * StockingDensity * SeedlingMass; 
+m3PGFunc.init_WR = function(StockingDensity, SeedlingRootMass){
+  return StockingDensity * SeedlingRootMass; 
 }
 
 /**WS
@@ -308,8 +308,8 @@ m3PGFunc.WS = function(prev_WS, cur_NPP, cur_pS){
 /**init_WS
 Root Biomass at planting time
 */
-m3PGFunc.init_WS = function(StockingDensity, SeedlingMass){
-  return 0.25 * StockingDensity * SeedlingMass; 
+m3PGFunc.init_WS = function(StockingDensity, SeedlingStemMass){
+  return StockingDensity * SeedlingStemMass; 
 }
 
 /**W

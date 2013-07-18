@@ -142,9 +142,9 @@ var m3PG = {
 		  var c = {};
 		  c.StandAge = m3PGFunc.init_StandAge();
 		  //note: change in order
-		  c.WF = m3PGFunc.init_WF(g.StockingDensity, g.SeedlingMass);
-		  c.WR = m3PGFunc.init_WR(g.StockingDensity, g.SeedlingMass);
-		  c.WS = m3PGFunc.init_WS(g.StockingDensity, g.SeedlingMass);
+		  c.WF = m3PGFunc.init_WF(g.StockingDensity, g.SeedlingFoliageMass);
+		  c.WR = m3PGFunc.init_WR(g.StockingDensity, g.SeedlingRootMass);
+		  c.WS = m3PGFunc.init_WS(g.StockingDensity, g.SeedlingStemMass);
 		  
 		  c.LAI = m3PGFunc.init_LAI(c.WF, g.SLA1, g.SLA0, c.StandAge, g.tSLA);
 		  c.VPD = m3PGFunc.VPD(d.tmin, d.tmax, d.tdmean);
@@ -230,7 +230,7 @@ var m3PG = {
 		  c.Irrig = m3PGFunc.Irrig(g.irrigFrac, c.Transp, c.Intcptn, d.ppt);
 		  c.CumIrrig = m3PGFunc.CumIrrig(p.CumIrrig, c.Irrig);
 		  
-		  c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
+		  c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxaws
 		  
 		  log("c.pR=" + c.pR + " c.coppice_pS=" + c.coppice_pS + " p.WF=" + p.WF + " c.litterfall=" + c.litterfall);
 		  c.WF = m3PGFunc.WF(c.pR, p.WF, c.coppice_NPP, c.litterfall);
@@ -275,7 +275,7 @@ var m3PG = {
 		  c.CumIrrig = m3PGFunc.CumIrrig(p.CumIrrig, c.Irrig);
 		  
 		  log("DEBUGGIN: maxaws= " + s.maxaws + "; ASW=" + p.ASW + "; d.ppt=" + d.ppt + "; c.Transp=" + c.Transp + "; c.Intcptn= " + c.Intcptn + "; c.Irrig= " + c.Irrig);
-		  c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
+		  c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxaws
 		  c.WF = m3PGFunc.WF(c.pF, p.WF, c.NPP, c.litterfall);
 		  c.WR = m3PGFunc.WR(p.WR, c.NPP, c.pR, g.Rttover);
 		  c.WS = m3PGFunc.WS(p.WS, c.NPP, c.pS);

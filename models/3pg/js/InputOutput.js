@@ -93,8 +93,8 @@ var m3PGIO = {
 	          dateMap["yearsPerCoppice"] = rowData[1];
 	          break;
 	        } else if ( rowData[0] == m3PGIO.config.spreadsheet.soilDataHeader ){
-	          //NOTICE: Order matters! 
-	          soilMap["maxAWS"] = rowData[1];
+	          //NOTICE: Order matters! TODO: make it not matter (read order from sheet)
+	          soilMap["maxaws"] = rowData[1];
 	          soilMap["swpower"] = rowData[2];
 	          soilMap["swconst"] = rowData[3];
 	          break;
@@ -140,8 +140,117 @@ var m3PGIO = {
 		  var range = resultSheet.getRange(1, 1,
 		      rows.length, rows[0].length);
 		  range.setValues(rows);
-	}	
+	},
+
+    writeRowsToNewSheet : function(array, newSheetName){
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var existingSheet = spreadsheet.getSheetByName(newSheetName);
+      var resultSheet;
+      if (existingSheet!=null && existingSheet != undefined && existingSheet!=""){
+        resultSheet = existingSheet;
+      }
+      else {
+        spreadsheet.insertSheet(newSheetName); 
+        resultSheet = spreadsheet.getSheetByName(newSheetName);
+      }
+      var range = resultSheet.getRange(1, 1,
+                                       array.length, array[0].length);
+      range.setValues(array);
+    },
+    
+    writeRowsToSheetWithOffset : function(array, sheet, offsetFromTheLeft){
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+      var resultSheet = spreadsheet.getSheetByName(sheet); //TODO: decide on where this can be taken out into. Output         
+      var range = resultSheet.getRange(1, offsetFromTheLeft,
+                                       array.length, array[0].length);
+      range.setValues(array);
+    },
+        
+    readTestInputs : function(sheetName){
+      var keyValMap = {};
+      var spreadsheet = SpreadsheetApp.getActiveSpreadsheet(); 
+      //var columns = spreadsheet.getLastColumn();
+      var sheet = spreadsheet.getSheetByName(sheetName); //Switch to testSetup when ready (the code is not ready for it yet) 
+      var data = sheet.getDataRange().getValues();
+      var keys = data[0];  
+      
+      for (var keyNum = 0; keyNum < keys.length; keyNum++){
+        keyValMap[keys[keyNum]] = [];
+      }
+      
+      for (var rowNumber = 1; rowNumber < data.length; rowNumber++) { //start from second row, value is in the forth column, index 3
+        Logger.log(data[rowNumber]);
+        var rowData = data[rowNumber];
+        for (var keyNum = 0; keyNum < keys.length; keyNum++){
+          keyValMap[keys[keyNum]].push(rowData[keyNum]);
+        }
+      } 
+      
+      Logger.log(keyValMap);
+      
+      return keyValMap;
+    }, 
+    
+    getResponseJSON : function(location, requestType){
+      //location
+      var url = "http://alder.bioenergy.casil.ucdavis.edu:8080/vizsource/rest?view=pointTo"+requestType+"("+location[0]+","+location[1]+",8192)&tq=SELECT%20*&tqx=reqId%3A6";
+      Logger.log(url);
+      var responseRaw = UrlFetchApp.fetch(url).getContentText();  
+      //Is this a hack? is there a better way to do this? will the string ever change?
+      var responseBeforeJSON = responseRaw.replace("google.visualization.Query.setResponse(", "").replace(");","");
+      var responseJSON = JSON.parse(responseBeforeJSON);
+    
+      return responseJSON;
+    
+    },
+    
+    readWeatherFromRequest : function(weatherMap, soilMap, dateMap, location) { //not from spreadsheet
+      //TODO: put into input-output 
+      var weatherJSON = m3PGIO.getResponseJSON(location, "Weather");
+      var headersInOrder = [];
+      for (var i=0; i< weatherJSON.table.cols.length; i++){
+         headersInOrder.push(weatherJSON.table.cols[i].id);
+      }  
+      var keys = headersInOrder; //can use same function?
+    
+      //The months are 0 indexed in date utility
+    
+      //Scope is global of a variable after a loop. carefully name inde vars
+      for (var row = 0; row < weatherJSON.table.rows.length; row++) { //indexed form 0, because no the spreadsheet rows, but th ereturned rows
+        var rowData = weatherJSON.table.rows[row].c;    
+        var item = {};
+        for (var column = 0; column < rowData.length; column++) {      
+           item[keys[column]] = rowData[column].v;
+            if (keys[column] == "rad"){
+              item["nrel"] = rowData[column].v / 0.0036;
+            }      
+        }
+        //WHat is this? - referring to the commented out part
+        //if (Object.getOwnPropertyNames(item).length>0){
+          weatherMap[item.month-1] = item; //to start indexing at 0
+        //}
+      }     
+    
+      var soilJSON = m3PGIO.getResponseJSON(location, "Soil");
+      headersInOrder = [];
+      for (var i=0; i< soilJSON.table.cols.length; i++){
+         headersInOrder.push(soilJSON.table.cols[i].id);
+      }
+      keys = headersInOrder;
+      
+      for (var row = 0; row < soilJSON.table.rows.length; row++) {//should be indexed from 0 when not in the context of spreadsheet row, but json row instead
+        var rowData = soilJSON.table.rows[row].c;   
+        var item = {};
+        for (var column = 0; column < rowData.length; column++) {
+            soilMap[keys[column]] = rowData[column].v;      
+        }
+      }
+      
+      return weatherMap;
+    }
+
 }
+
 
 
 //NODE EXPORT HOOK
