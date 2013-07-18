@@ -111,7 +111,7 @@ var m3PG = {
             //currentMonthResults.StandAge = 0; //the age of stand is 1 month?
             yearToCoppice = yearToCoppice + coppiceInterval; //next coppice year
             //key Headers change
-            keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","litterfall","coppice_NPP","WF","coppice_WR","WS", "W"];    
+            keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","litterfall","totalP","WF","coppice_WR","WS", "W"];    
             if (reprintHeaders==true){
                 rows.push(keysInOrder);
             } else {}
@@ -210,7 +210,7 @@ var m3PG = {
 		  c.coppice_RootP = m3PGFunc.coppice_RootP(c.NPP_regular, c.NPP_target, p.coppice_WR, p.W,g.pRx,g.cpRootStoragePct,g.cpRootLAITarget);
 		  log("c.coppice_RootP=" + c.coppice_RootP);
 		  c.coppice_pfs = m3PGFunc.coppice_pfs(p.WS,g.StockingDensity, g.cpStemsPerStump, g.cpStemConst, g.cpStemPower, g.cpPfsConst, g.cpPfsPower, g.cpMaxPfs);
-		  c.coppice_NPP = m3PGFunc.coppice_NPP(c.NPP_regular,c.coppice_RootP, g.ConversionEfficiency);
+		  c.totalP = m3PGFunc.totalP(c.NPP_regular,c.coppice_RootP, g.ConversionEfficiency);
 		  
 		  c.Intcptn = m3PGFunc.Intcptn(g.MaxIntcptn, c.LAI, g.LAImaxIntcptn);
 		  c.CanCond = m3PGFunc.CanCond(g.MaxCond, c.PhysMod, c.LAI, g.LAIgcx);
@@ -231,11 +231,11 @@ var m3PG = {
 		  c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxaws
 		  
 		  log("c.pR=" + c.pR + " c.coppice_pS=" + c.coppice_pS + " p.WF=" + p.WF + " c.litterfall=" + c.litterfall);
-		  c.WF = m3PGFunc.WF(c.pR, p.WF, c.coppice_NPP, c.litterfall);
+		  c.WF = m3PGFunc.WF(c.pR, p.WF, c.totalP, c.litterfall);
 		  
-		  log("p.coppice_WR=" + p.coppice_WR + " c.coppice_NPP=" + c.coppice_NPP + " c.pR=" + c.pR + " g.RttoverP=" + g.Rttover);
-		  c.coppice_WR = m3PGFunc.coppice_WR(p.coppice_WR, c.coppice_NPP, c.pR, g.Rttover, c.coppice_RootP);
-		  c.WS = m3PGFunc.WS(p.WS, c.coppice_NPP, c.coppice_pS);
+		  log("p.coppice_WR=" + p.coppice_WR + " c.totalP=" + c.totalP + " c.pR=" + c.pR + " g.RttoverP=" + g.Rttover);
+		  c.coppice_WR = m3PGFunc.coppice_WR(p.coppice_WR, c.totalP, c.pR, g.Rttover, c.coppice_RootP);
+		  c.WS = m3PGFunc.WS(p.WS, c.totalP, c.coppice_pS);
 		  c.W = m3PGFunc.W(c.WF, c.coppice_WR, c.WS);
 		  c.lastCoppiceAge = p.lastCoppiceAge;
 		  return c;
