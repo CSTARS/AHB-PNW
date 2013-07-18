@@ -14,6 +14,11 @@ ahb.modelExport = (function(){
 		_onWeatherExport(wdt, sdt, key);
 	});
 	
+	$(window).bind('query-map-event', function(e, ll, id){
+		$('#export-3pg-advanced').html("Or visit the advanced 3PG Model tool for you " +
+				"current location <a target='_blank' href='http://alder.bioenergy.casil.ucdavis.edu/3pgModel/app.html?ll="+ll.lat()+","+ll.lng()+"'>here.</a>");
+	});
+	
 	function _onLoginComplete(stage, key) {
 		if( stage == 1 ) {
 			_resetBtn();
@@ -45,7 +50,7 @@ ahb.modelExport = (function(){
 			_resetBtn();
 			$('#modal-msg').html("");
 			$('#myModal').modal('show');
-			_getName(key);
+			_getName(ckey);
 		});
 
 		$("#login-btn").on('click', function(){
