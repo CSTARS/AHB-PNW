@@ -212,7 +212,7 @@ var m3PG = {
 		  c.coppice_RootPP = m3PGFunc.coppice_RootPP(c.NPP_regular, c.NPP_target, p.coppice_WR, p.W,g.pRx,g.cpRootStoragePct,g.cpRootLAITarget);
 		  log("c.coppice_RootPP=" + c.coppice_RootPP);
 		  c.coppice_pfs = m3PGFunc.coppice_pfs(p.WS,g.StockingDensity, g.cpStemsPerStump, g.cpStemConst, g.cpStemPower, g.cpPfsConst, g.cpPfsPower, g.cpMaxPfs);
-		  c.coppice_NPP = m3PGFunc.coppice_NPP(c.NPP_regular,c.coppice_RootPP);
+		  c.coppice_NPP = m3PGFunc.coppice_NPP(c.NPP_regular,c.coppice_RootPP, g.ConversionEfficiency);
 		  
 		  c.Intcptn = m3PGFunc.Intcptn(g.MaxIntcptn, c.LAI, g.LAImaxIntcptn);
 		  c.CanCond = m3PGFunc.CanCond(g.MaxCond, c.PhysMod, c.LAI, g.LAIgcx);

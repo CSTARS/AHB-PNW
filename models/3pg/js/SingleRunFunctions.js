@@ -387,10 +387,10 @@ m3PGFunc.coppice_RootPP = function(cur_npp, cur_nppTarget, WR,W,pRx,cpRootStorag
   return rootPP;
 }
 
-m3PGFunc.coppice_NPP = function(cur_npp,coppice_RootPP) {
+m3PGFunc.coppice_NPP = function(cur_npp,coppice_RootPP,ConversionEfficiency) {
   //var npp = NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
 //  var rootPP = coppice_RootPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost,WR,W,pRx,cpRootStoragePct);
-  return cur_npp+coppice_RootPP;
+  return cur_npp+ConversionEfficiency*coppice_RootPP;
 }
 
 /**WR
