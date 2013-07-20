@@ -17,9 +17,9 @@ Canopy Rainfall Interception at time of planting
 */
 m3PGFunc.init_Intcptn = function(MaxIntcptn, cur_LAI, LAImaxIntcptn){
   if(LAImaxIntcptn <= 0){
-     return MaxIntcptn;
+    return MaxIntcptn;
   } else {
-     return MaxIntcptn * Math.min(1 , cur_LAI / LAImaxIntcptn );
+    return MaxIntcptn * Math.min(1 , cur_LAI / LAImaxIntcptn );
   }
 }
 
@@ -81,9 +81,9 @@ description='Temperature modifier'
 m3PGFunc.fT = function(date_tmin, date_tmax, Tmin, Tmax, Topt){
   var tavg = (date_tmin + date_tmax) / 2;
   if (tavg <= Tmin || tavg >= Tmax){
-     return 0;
+    return 0;
   }else {
-     return  ( (tavg - Tmin) / (Topt - Tmin) )  *  Math.pow ( ( (Tmax - tavg) / (Tmax - Topt) )  , ( (Tmax - Topt) / (Topt - Tmin) ) );
+    return  ( (tavg - Tmin) / (Topt - Tmin) )  *  Math.pow ( ( (Tmax - tavg) / (Tmax - Topt) )  , ( (Tmax - Topt) / (Topt - Tmin) ) );
   }
 }
 
@@ -92,7 +92,7 @@ units='mm/mon'
 description='Required Irrigation'
 */
 m3PGFunc.Irrig = function(irrigFrac, cur_Transp, cur_Intcptn, date_ppt){
-   return Math.max(0 , irrigFrac * (cur_Transp - (1 - cur_Intcptn) * date_ppt) );
+  return Math.max(0 , irrigFrac * (cur_Transp - (1 - cur_Intcptn) * date_ppt) );
 }
 
 
@@ -101,7 +101,7 @@ units='mm'
 description='Cumulative Required Irrigation'
 */
 m3PGFunc.CumIrrig = function(prev_CumIrrig, cur_Irrig){
-   return prev_CumIrrig + cur_Irrig;
+  return prev_CumIrrig + cur_Irrig;
 }
 
 /**init_CumIrrig
@@ -140,7 +140,7 @@ m3PGFunc.init_fAge = function(cur_StandAge, maxAge, rAge, nAge){
 TODO: get units and description
 */
 m3PGFunc.fSW = function(prev_ASW, maxaws, swconst, swpower){
-   return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (prev_ASW / 10 / maxaws) ) / swconst) ) , swpower) );
+  return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (prev_ASW / 10 / maxaws) ) / swconst) ) , swpower) );
 }
 
 /**
@@ -164,7 +164,7 @@ units=unitless
 description='Physiological Modifier to conductance and APARu'
 */
 m3PGFunc.PhysMod = function(cur_fVPD, cur_fSW, cur_fAge){
-   return Math.min(cur_fVPD , cur_fSW) * cur_fAge;
+  return Math.min(cur_fVPD , cur_fSW) * cur_fAge;
 }
 
 /**LAI
@@ -172,7 +172,7 @@ units='m2/m2'
 description='Leaf Area Index'
 */
 m3PGFunc.LAI = function(prev_WF, SLA1, SLA0, prev_StandAge, tSLA){
-   return prev_WF * 0.1 * (SLA1 + (SLA0 - SLA1) * Math.exp(-0.693147180559945 * Math.pow( (prev_StandAge / tSLA) , 2) ) );
+  return prev_WF * 0.1 * (SLA1 + (SLA0 - SLA1) * Math.exp(-0.693147180559945 * Math.pow( (prev_StandAge / tSLA) , 2) ) );
 }
 
 /**init_LAI
@@ -187,7 +187,7 @@ units='gc,m/s'
 description='Canopy Conductance'
 */
 m3PGFunc.CanCond = function(MaxCond, cur_PhysMod, cur_LAI, LAIgcx){
-   return Math.max(0.0001 , MaxCond * cur_PhysMod * Math.min(1 , cur_LAI / LAIgcx) );
+  return Math.max(0.0001 , MaxCond * cur_PhysMod * Math.min(1 , cur_LAI / LAIgcx) );
 }
 
 /**Transp
@@ -195,7 +195,7 @@ units='mm/mon'
 description='Canopy Monthly Transpiration'
 */
 m3PGFunc.Transp = function(days_per_mon, e20, Qa, Qb, date_nrel, date_daylight, rhoAir, lambda, VPDconv, cur_VPD, BLcond, cur_CanCond){
-   return days_per_mon * ( (e20 * (Qa + Qb * (date_nrel / date_daylight) ) + (rhoAir * lambda * VPDconv * cur_VPD * BLcond) ) / (1 + e20 + BLcond / cur_CanCond) ) * date_daylight * 3600 / lambda;
+  return days_per_mon * ( (e20 * (Qa + Qb * (date_nrel / date_daylight) ) + (rhoAir * lambda * VPDconv * cur_VPD * BLcond) ) / (1 + e20 + BLcond / cur_CanCond) ) * date_daylight * 3600 / lambda;
 }
 
 /**NPP
@@ -215,7 +215,7 @@ m3PGFunc.NPP = function(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVP
 TODO: WHAT IS IT?
 */
 m3PGFunc.init_NPP = function(cur_StandAge, fullCanAge, cur_xPP, k, cur_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost){
- return 0;
+  return 0;
 }
 
 /**litterfall
@@ -272,7 +272,7 @@ units='t/ha'
 description='Foliage Biomass'
 */
 m3PGFunc.WF = function(cur_pF, prev_WF, cur_NPP, cur_litterfall){
-   return prev_WF + cur_NPP * cur_pF - cur_litterfall * prev_WF;
+  return prev_WF + cur_NPP * cur_pF - cur_litterfall * prev_WF;
 }
 
 /**init_WF
@@ -287,7 +287,7 @@ units='t/ha'
 description='Root Biomass'
 */
 m3PGFunc.WR = function(prev_WR, cur_NPP, cur_pR, Rttover){
-   return prev_WR + cur_NPP * cur_pR - Rttover * prev_WR;
+  return prev_WR + cur_NPP * cur_pR - Rttover * prev_WR;
 }
 
 /**init_WR
@@ -302,7 +302,7 @@ units='t/ha'
 description='Stem Biomass'
 */
 m3PGFunc.WS = function(prev_WS, cur_NPP, cur_pS){
-   return prev_WS + cur_NPP * cur_pS;
+  return prev_WS + cur_NPP * cur_pS;
 } 
 
 /**init_WS
@@ -354,7 +354,7 @@ NOTE: 10000/10^6 [ha/m2][tDm/gDM]
 m3PGFunc.xPP = function(y, cur_PAR, gDM_mol){
   return y * cur_PAR * gDM_mol / 100;
 }
-      
+
 /*** FUNCTIONS FOR COPPICING */
 
 // Coppice Functions are based on Diameter on Stump, NOT DBH.
@@ -369,13 +369,13 @@ m3PGFunc.coppice_pS = function(cur_pR,pfs) {
 }
 
 m3PGFunc.coppice_pF = function(cur_pR,pfs) {
-    return (1 - cur_pR) / (1 + 1/pfs );
+  return (1 - cur_pR) / (1 + 1/pfs );
 }
 
 m3PGFunc.coppice_RootP = function(cur_npp, cur_nppTarget, WR,W,pRx,cpRootStoragePct,cpRootLAITarget) {
- // var npp=NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
- // var nppTarget = NPP(prev_StandAge, fullCanAge, cur_xPP, k, cpRootLAITarget, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
- 
+  // var npp=NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
+  // var nppTarget = NPP(prev_StandAge, fullCanAge, cur_xPP, k, cpRootLAITarget, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
+  
   var nppRes = cur_nppTarget - cur_npp;
   //Logger.log("nppRes=" + nppRes);
   var rootP; //root productivity
@@ -389,7 +389,7 @@ m3PGFunc.coppice_RootP = function(cur_npp, cur_nppTarget, WR,W,pRx,cpRootStorage
 
 m3PGFunc.totalP = function(cur_npp,coppice_RootP,ConversionEfficiency) {
   //var npp = NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
-//  var rootP = coppice_RootP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost,WR,W,pRx,cpRootStoragePct);
+  //  var rootP = coppice_RootP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost,WR,W,pRx,cpRootStoragePct);
   return cur_npp+ConversionEfficiency*coppice_RootP;
 }
 
@@ -399,55 +399,55 @@ description='Root Biomass'
 */
 m3PGFunc.coppice_WR = function(prev_WR, cur_NPP, cur_pR, Rttover,coppice_RootP){
   //Logger.log("DEBUGGING COPPICE: prev_WR=" + prev_WR + "; cur_NPP=" + cur_NPP + "; cur_pR=" + cur_pR + "; Rttover=" + Rttover+ "; coppice_RootP=" + coppice_RootP);
-   return prev_WR, prev_WR + cur_NPP * cur_pR - Rttover * prev_WR - coppice_RootP;
+  return prev_WR, prev_WR + cur_NPP * cur_pR - Rttover * prev_WR - coppice_RootP;
 }
 
 
 // NODE EXPORT HOOK
 if (typeof module !== 'undefined' && module.exports) {
-	exports.dump = function() {
-		var objStr = "m3PGFunc={";
-		for( var key in m3PGFunc ) {
-			if( typeof m3PGFunc[key] == 'function' ) {
-				objStr += key+":"+m3PGFunc[key].toString()+",";
-			} else {
-				objStr += key+":"+JSON.stringify(m3PGFunc[key])+",";
-			}
-		}
-		return objStr.replace(/,$/,'')+"};";
-	}
-	
-	exports.testFunctions = function() {
-		var key, args, funcStr, assignments;
-		var ret = "";
-		
-		for( key in m3PGFunc ) {
-			if( typeof m3PGFunc[key] == 'function' ) {
-				funcStr = "\nCREATE OR REPLACE FUNCTION "+key+"(";
-				
-				args = getArguments(m3PGFunc[key]);
-				
-				for( var i = 0; i < args.length; i++ ) {
-					if( args[i].replace(/\s/g,'').length > 0 ) {
-						funcStr += "\""+args[i].replace(/\s/g,'')+"\" float, ";
-					}
-				}
-				funcStr = funcStr.replace(/,\s$/,'')+") RETURNS\nfloat AS $$\n";
-				funcStr += getBody(m3PGFunc[key])+"\n";
-				ret += funcStr + "$$ LANGUAGE plv8 IMMUTABLE STRICT;\n";
-			}
-		}
-		return ret;
-	}
-	
-	function getArguments(f) {
-		return f.toString().split("(")[1].split(")")[0].replace(/\s/,'').split(",");
-	}
-	
-	function getBody(f) {
-		var parts = f.toString().split(")");
-		var body = parts[1];
-		parts.splice(0,1);
-		return parts.join(')').replace(/^\s*{/,'').replace(/}[\n\s]*$/,'');
-	}
+  exports.dump = function() {
+    var objStr = "m3PGFunc={";
+    for( var key in m3PGFunc ) {
+      if( typeof m3PGFunc[key] == 'function' ) {
+        objStr += key+":"+m3PGFunc[key].toString()+",";
+      } else {
+        objStr += key+":"+JSON.stringify(m3PGFunc[key])+",";
+      }
+    }
+    return objStr.replace(/,$/,'')+"};";
+  }
+  
+  exports.testFunctions = function() {
+    var key, args, funcStr, assignments;
+    var ret = "";
+    
+    for( key in m3PGFunc ) {
+      if( typeof m3PGFunc[key] == 'function' ) {
+        funcStr = "\nCREATE OR REPLACE FUNCTION "+key+"(";
+        
+        args = getArguments(m3PGFunc[key]);
+        
+        for( var i = 0; i < args.length; i++ ) {
+          if( args[i].replace(/\s/g,'').length > 0 ) {
+            funcStr += "\""+args[i].replace(/\s/g,'')+"\" float, ";
+          }
+        }
+        funcStr = funcStr.replace(/,\s$/,'')+") RETURNS\nfloat AS $$\n";
+        funcStr += getBody(m3PGFunc[key])+"\n";
+        ret += funcStr + "$$ LANGUAGE plv8 IMMUTABLE STRICT;\n";
+      }
+    }
+    return ret;
+  }
+  
+  function getArguments(f) {
+    return f.toString().split("(")[1].split(")")[0].replace(/\s/,'').split(",");
+  }
+  
+  function getBody(f) {
+    var parts = f.toString().split(")");
+    var body = parts[1];
+    parts.splice(0,1);
+    return parts.join(')').replace(/^\s*{/,'').replace(/}[\n\s]*$/,'');
+  }
 }

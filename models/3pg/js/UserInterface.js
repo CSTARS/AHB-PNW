@@ -8,26 +8,26 @@ function onOpen() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var menuEntries;
   menuEntries = [
-                  {name: "Run tests from sheet TestSetup", functionName: "runModelXTest"},
-                  {name: "2 years like GreenWood", functionName: "runModel31"},
-                  {name: "Model 4 Months", functionName: "runModel4"},
-                  {name: "Model 2 Years", functionName: "runModel24"},
-                  {name: "Model 5 Years", functionName: "runModel60"},
-                  {name: "Model 10 Years", functionName: "runModel120"}];
+    {name: "Run tests from sheet TestSetup", functionName: "runModelXTest"},
+    {name: "2 years like GreenWood", functionName: "runModel31"},
+    {name: "Model 4 Months", functionName: "runModel4"},
+    {name: "Model 2 Years", functionName: "runModel24"},
+    {name: "Model 5 Years", functionName: "runModel60"},
+    {name: "Model 10 Years", functionName: "runModel120"}];
   ss.addMenu("Action", menuEntries);
 }
 
 
 function runModel31(){
-   m3PG.run(31);  
+  m3PG.run(31);  
 }
 
 function runModel4(){
-    m3PG.run(4);
+  m3PG.run(4);
 }  
 
 function runModel24(){
-   m3PG.run(24);
+  m3PG.run(24);
 }
 
 
@@ -36,7 +36,7 @@ function runModelXTest(){
   //var allTestValues = readTestInputs("Form Responses 1");
   var allTestValues = m3PGIO.readTestInputs("TestSetup");
   var locationAsString = allTestValues["Location"][0] + "";
-      
+  
   //loop over var names, values, output var names
   
   //column names are assumed, and the lack of whitespace between comma-separated values.
@@ -45,7 +45,7 @@ function runModelXTest(){
   var outputVarName = allTestValues["Output Variable"];
   
   //////////Set up the original version of the model:////////////
-
+  
   //work with offsets and weather data later
   
   var yearToCoppice;
@@ -58,7 +58,7 @@ function runModelXTest(){
   
   //calculate fNutr and add here;
   g.fNutr=m3PGFunc.fNutr(g.fN0, g.FR);
- 
+  
   ////////////////loop over different scenarios////////////////
   for (var testNum = 0; testNum<inputVarNameArray.length; testNum++){
     var inputVarName = inputVarNameArray[testNum];
@@ -88,8 +88,8 @@ function runModelXTest(){
     
     //TODO: deal with output variables - AKA get only them and then print them
     
-    
-    var sheetName = "Test Outputs: " + inputVarName;
+
+    var sheetName = "Test: " + allTestValues["Test Name"][testNum];
     runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate);
     for (var k = 0; k<inputVarVals.length; k++){
       var willCoppice = false;
@@ -119,23 +119,23 @@ function runModelXTest(){
       runSubsequentTimesXTest(inputVarName,inputVarVals[k], k, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVarName);
     }
   }
- 
+  
 }  
 
 function runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,d){
-    
+  
   //init main data structure
   var rows = [];
   var newRow = [];
   newRow.push("Date");
   rows.push(newRow);
   for (var i = 0; i < lengthOfGrowth; i++) {     
-      newRow = [];
-      newRow.push((currentDate.getMonth()+1) + "/" + currentDate.getYear());
-      rows.push(newRow);
-      currentDate.setMonth(currentDate.getMonth() + 1);      
-    }
-
+    newRow = [];
+    newRow.push((currentDate.getMonth()+1) + "/" + currentDate.getYear());
+    rows.push(newRow);
+    currentDate.setMonth(currentDate.getMonth() + 1);      
+  }
+  
   m3PGIO.writeRowsToNewSheet(rows, sheetName);
 }
 
@@ -146,13 +146,13 @@ function runSubsequentTimesXTest(inputVarName, inputVarValue, indexToPrint, shee
   
   //big loop here
   var header = outputVariable + "," + inputVarName + "=" + inputVarValue; //TODO: deal with upper/lower cases?
-
+  
   //TODO: take out computation part (wher you replace x values)  
   var reprintHeaders = false;
   var resultRows = m3PG.runCurrentSetup(lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders);  
   var index = resultRows[0].indexOf(outputVariable);
-
-    var rows = [];
+  
+  var rows = [];
   // key => var inputVar = inputVars[k];
   // index = k = column to print into
   //write out test results
@@ -162,7 +162,7 @@ function runSubsequentTimesXTest(inputVarName, inputVarValue, indexToPrint, shee
   rows.push(currentRow); //the header is set,
   //now loop over actual results
   for (var i = 1; i < resultRows.length; i++) {       
-   // Logger.log("resultRows[i][index] = " + resultRows[i][index]);
+    // Logger.log("resultRows[i][index] = " + resultRows[i][index]);
     currentRow = [];
     currentRow.push(resultRows[i][index]);
     rows.push(currentRow);
@@ -175,17 +175,17 @@ function runSubsequentTimesXTest(inputVarName, inputVarValue, indexToPrint, shee
 
 
 function runModel60(){
-    m3PG.run(60);
+  m3PG.run(60);
 } 
 
 function runModel120(){
-    m3PG.run(120);
+  m3PG.run(120);
 }  
-  
+
 /** this function with use default value when user value not provided. Otherwhise NA? */
 function defaultOrUser(defaultVal, userVal) {
   if (userVal == undefined || userVal==""){
-   return defaultVal;
+    return defaultVal;
   } else {
     return userVal;
   }
@@ -200,8 +200,8 @@ try {
   
   source = UrlFetchApp.fetch("https://raw.github.com/CSTARS/AHB-PNW/master/models/3pg/js/SingleRunFunctions.js").getContentText();
   eval(source);
-
+  
 }catch (e){
   Logger.log(e);
 }
-  
+
