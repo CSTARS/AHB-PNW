@@ -93,7 +93,7 @@ function runModelXTest(){
     
     
     var sheetName = "Test: " + allTestValues["Test Name"][testNum];
-    runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate);
+    runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,experimentParams);
     for (var k = 0; k<inputVarVals.length; k++){
       var willCoppice = false;
       var isCoppiced = false;
@@ -133,7 +133,7 @@ function runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,d,experimentPara
   newRow.push("Date");
   newRow.push("Month Of Growth");
   //2 columns added
-  experimentParams.indexToPrint = 3;
+  experimentParams.indexToPrint = 2;
   rows.push(newRow);
   for (var i = 0; i < lengthOfGrowth; i++) {     
     newRow = [];
@@ -178,7 +178,7 @@ function runSubsequentTimesXTest(inputVarName, inputVarValue, experimentParams, 
   //PROBLEM HERE (make column offset?)
   //big loop here
   experimentParams.indexToPrint = experimentParams.indexToPrint + 1;
-  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, experimentParams.indexToPrint+3);
+  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, experimentParams.indexToPrint);
 }
 
 

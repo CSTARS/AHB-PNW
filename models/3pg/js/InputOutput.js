@@ -158,10 +158,10 @@ var m3PGIO = {
     range.setValues(array);
   },
   
-  writeRowsToSheetWithOffset : function(array, sheet, offsetFromTheLeft){
+  writeRowsToSheetWithOffset : function(array, sheet, offsetFromTheLeft, offsetFromTheTop){
     var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
     var resultSheet = spreadsheet.getSheetByName(sheet); //TODO: decide on where this can be taken out into. Output         
-    var range = resultSheet.getRange(1, offsetFromTheLeft,
+    var range = resultSheet.getRange(offsetFromTheTop, offsetFromTheLeft,
                                      array.length, array[0].length);
     range.setValues(array);
   },
