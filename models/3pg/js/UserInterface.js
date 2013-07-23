@@ -177,8 +177,8 @@ function runSubsequentTimesXTest(inputVarName, inputVarValue, experimentParams, 
   
   //PROBLEM HERE (make column offset?)
   //big loop here
-  experimentParams.indexToPrint +=1;
-  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, experimentParams.indexToPrint);
+  experimentParams.indexToPrint = experimentParams.indexToPrint + 1;
+  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, experimentParams.indexToPrint+3);
 }
 
 
