@@ -133,7 +133,7 @@ function runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,d,experimentPara
   newRow.push("Date");
   newRow.push("Month Of Growth");
   //2 columns added
-  experimentParams.indexToPrint = 2;
+  experimentParams.indexToPrint = 3;
   rows.push(newRow);
   for (var i = 0; i < lengthOfGrowth; i++) {     
     newRow = [];
