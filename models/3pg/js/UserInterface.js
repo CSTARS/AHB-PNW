@@ -56,6 +56,9 @@ function runModelXTest(){
   var g = {};
   m3PGIO.readAllConstants(g); //global variables are an array of key-value pairs. INCLUDES SOIL DEPENDENT ONES - Separate?
   
+  var experimentParams = {};
+  experimentParams.indexToPrint = 0;
+  
   //calculate fNutr and add here;
   g.fNutr=m3PGFunc.fNutr(g.fN0, g.FR);
   
@@ -88,7 +91,7 @@ function runModelXTest(){
     
     //TODO: deal with output variables - AKA get only them and then print them
     
-
+    
     var sheetName = "Test: " + allTestValues["Test Name"][testNum];
     runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate);
     for (var k = 0; k<inputVarVals.length; k++){
@@ -116,31 +119,35 @@ function runModelXTest(){
       
       var keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","pS","litterfall","NPP","WF","WR","WS", "W"];    
       
-      runSubsequentTimesXTest(inputVarName,inputVarVals[k], k, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVarName);
+      runSubsequentTimesXTest(inputVarName,inputVarVals[k], experimentParams, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVarName);
     }
   }
   
 }  
 
-function runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,d){
+function runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,d,experimentParams){
   
   //init main data structure
   var rows = [];
   var newRow = [];
   newRow.push("Date");
+  newRow.push("Month Of Growth");
+  //2 columns added
+  experimentParams.indexToPrint = 2;
   rows.push(newRow);
   for (var i = 0; i < lengthOfGrowth; i++) {     
     newRow = [];
     newRow.push((currentDate.getMonth()+1) + "/" + currentDate.getYear());
+    newRow.push(i);
     rows.push(newRow);
     currentDate.setMonth(currentDate.getMonth() + 1);      
   }
   
-  m3PGIO.writeRowsToNewSheet(rows, sheetName);
+  m3PGIO.writeRowsToNewSheet(rows, sheetName); 
 }
 
 
-function runSubsequentTimesXTest(inputVarName, inputVarValue, indexToPrint, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVariable){
+function runSubsequentTimesXTest(inputVarName, inputVarValue, experimentParams, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVariable){
   //NOTE: only constant variables are modifiable for now (AKA globals "g")
   g[inputVarName] = inputVarValue;
   
@@ -170,7 +177,8 @@ function runSubsequentTimesXTest(inputVarName, inputVarValue, indexToPrint, shee
   
   //PROBLEM HERE (make column offset?)
   //big loop here
-  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, indexToPrint+2);
+  experimentParams.indexToPrint +=1;
+  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, experimentParams.indexToPrint);
 }
 
 
