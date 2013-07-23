@@ -57,7 +57,10 @@ function runModelXTest(){
   m3PGIO.readAllConstants(g); //global variables are an array of key-value pairs. INCLUDES SOIL DEPENDENT ONES - Separate?
   
   var experimentParams = {};
-  experimentParams.indexToPrint = 0;
+  experimentParams.columnOffset = 0;
+  experimentParams.rowOffset = 0;
+  
+  Logger.log("experimentParams= " + experimentParams);
   
   //calculate fNutr and add here;
   g.fNutr=m3PGFunc.fNutr(g.fN0, g.FR);
@@ -121,11 +124,66 @@ function runModelXTest(){
       
       runSubsequentTimesXTest(inputVarName,inputVarVals[k], experimentParams, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVarName);
     }
+    
+    //here we'll write the test setup at the bottom of the results so that the same setup can be rerun when we need it.
+    recordTestSetupForFutureReference(allTestValues, experimentParams, sheetName, g);
   }
   
 }  
 
-function runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,d,experimentParams){
+function recordTestSetupForFutureReference(allTestValues, experimentParams, sheetName, g){
+  var row1 = [];
+  var row2 = [];
+  var rows = [];
+  for (var key in allTestValues){
+    row1.push(key);
+    row2.push(allTestValues[key]);
+  }
+  rows.push(row1);
+  rows.push(row2);
+  
+  experimentParams.rowOffset = experimentParams.rowOffset + 2;
+  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, 1, experimentParams.rowOffset);//write columns on the right from the last one. but on the same rows
+  experimentParams.rowOffset = experimentParams.rowOffset + rows.length + 1;
+  
+  rows = [];
+  //var row = [];
+  //row.push(?? headers ??)
+  for (var key in g){ //iterate over global variables
+    var row = [];
+    row.push(key);
+    row.push(g[key]);
+    rows.push(row);
+  }
+  
+  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, 1, experimentParams.rowOffset);//write columns on the right from the last one. but on the same rows
+  experimentParams.rowOffset = experimentParams.rowOffset + rows.length + 1;
+  
+  /**Weather/soil aren't needed = they are fetched from location. Plant copice date are also in the test setup
+  var weatherMapKeys = ["month","tmin","tmax","tdmean","ppt","rad","daylight"];
+  rows = []; //init rows for weather
+  rows.push(weatherMapKeys);
+  log(weatherMap);
+  log("starts here");
+  for (var monthId in weatherMap){
+    log(monthId);
+    var monthWeather = weatherMap[monthId];
+    log(monthWeather);
+    var row = [];
+    for (var k=0; k<weatherMapKeys.length; k++){
+      var key = weatherMapKeys[k];
+      log(key);
+      row.push(monthWeather[key]);
+    }
+    rows.push(row);
+  }
+  
+  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, 1, experimentParams.rowOffset);//write columns on the right from the last one. but on the same rows
+  experimentParams.rowOffset = experimentParams.rowOffset + rows.length + 1;
+  */
+}
+
+function runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,experimentParams){
   
   //init main data structure
   var rows = [];
@@ -133,13 +191,17 @@ function runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,d,experimentPara
   newRow.push("Date");
   newRow.push("Month Of Growth");
   //2 columns added
-  experimentParams.indexToPrint = 2;
+  experimentParams.columnOffset = 2;
   rows.push(newRow);
+  experimentParams.rowOffset = experimentParams.rowOffset + 1;
+  
   for (var i = 0; i < lengthOfGrowth; i++) {     
     newRow = [];
     newRow.push((currentDate.getMonth()+1) + "/" + currentDate.getYear());
     newRow.push(i);
     rows.push(newRow);
+    experimentParams.rowOffset = experimentParams.rowOffset + 1;
+    
     currentDate.setMonth(currentDate.getMonth() + 1);      
   }
   
@@ -177,8 +239,8 @@ function runSubsequentTimesXTest(inputVarName, inputVarValue, experimentParams, 
   
   //PROBLEM HERE (make column offset?)
   //big loop here
-  experimentParams.indexToPrint = experimentParams.indexToPrint + 1;
-  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, experimentParams.indexToPrint);
+  experimentParams.columnOffset = experimentParams.columnOffset + 1;
+  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, experimentParams.columnOffset,1);//write columns on the right from the last one. but on the same rows
 }
 
 
@@ -212,4 +274,3 @@ try {
 }catch (e){
   Logger.log(e);
 }
-
