@@ -80,15 +80,15 @@ var m3PG = {
       if (isCoppiced == false) {
         //first time coppice
         //Important function name changes for the first coppice
-        firstMonthResults.coppice_WR = g.SeedlingRootMass;
+        firstMonthResults.coppice_WR = firstMonthResults.WR;
         firstMonthResults.WR = undefined;
       }
       isCoppiced = true; //growth model changes into the coppiced one
       
-      firstMonthResults.WS = g.SeedlingStemMass; //no stem
-      firstMonthResults.WF = g.SeedlingFoliageMass; //no foliage
-      firstMonthResults.W = firstMonthResults.WF + firstMonthResults.WS + firstMonthResults.coppice_WR;
+      //firstMonthResults.WS  = the starting value
+      //firstMonthResults.WF  = the starting value
       firstMonthResults.coppice_pS = firstMonthResults.pS;
+      firstMonthResults.pS = undefined;
       firstMonthResults.totalP = firstMonthResults.NPP;//because there is no root contribution
       firstMonthResults.lastCoppiceAge = firstMonthResults.StandAge;
       //currentMonthResults.StandAge = 0; //the age of stand is 1 month?
@@ -141,8 +141,8 @@ var m3PG = {
         }
         
         isCoppiced = true; //growth model changes
-        currentMonthResults.WS = 0; //no stem 
-        currentMonthResults.WF = 0; //no foliage
+        currentMonthResults.WS = 0; //no stem after cut
+        currentMonthResults.WF = 0; //no foliage after cut 
         currentMonthResults.W = currentMonthResults.WF + currentMonthResults.WS + currentMonthResults.coppice_WR;
         currentMonthResults.lastCoppiceAge = currentMonthResults.StandAge;
         //currentMonthResults.StandAge = 0; //the age of stand is 1 month?
