@@ -13,7 +13,7 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript" src="jslib/bootstrap.min.js"></script>
 	<script type="text/javascript" src="jslib/jquery.cookie.js"></script>
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&v=3.12"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script src="https://apis.google.com/js/client.js?onload=initapi"></script>
 	<script type="text/javascript">
@@ -87,17 +87,7 @@
 	    			 $(".search-small").hide();
 	    		 }
 	    	 }
-	    	 
-	    	 $("#test").on('click', function(){
-	    		var canvas = $("<canvas />");
-	    		var chart = $("#weather-chart-panel svg");
-	    		canvas.height(chart.height()).width(chart.width());
-	    		
-	    		var tmp = (new window.XMLSerializer()).serializeToString(chart[0]);
-	    		$("#testRoot").html("").append(canvas);
-	    		 canvg(canvas[0],(new window.XMLSerializer()).serializeToString(chart[0]),{ ignoreMouse: true, ignoreAnimation: true });
-	    		 
-	    	 });
+
 	    	 
 	      });
 	     

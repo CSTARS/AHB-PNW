@@ -4,6 +4,40 @@ function qs(key) {
     return match && decodeURIComponent(match[1].replace(/\+/g, " "));
 }
 
+app.loadModelCode = function(version, callback) {
+	if( typeof version === 'function' ) callback = version;
+	if( !version || typeof version != 'string' ) version = "master";
+	
+	$.ajax({
+		url : "https://api.github.com/repos/CSTARS/AHB-PNW/contents/models/3pg/js/Model3PG.js?ref="+version,
+		success: function(data, status, xhr) {
+			// clean then base64 decode file content
+			// finally, eval js
+			eval(atob(data.content.replace(/[\s\n]/g,'')));
+			
+			// set m3PG object to window scope
+			window.m3PG = m3PG;
+			
+			$.ajax({
+				url : "https://api.github.com/repos/CSTARS/AHB-PNW/contents/models/3pg/js/SingleRunFunctions.js?ref="+version,
+				success: function(data, status, xhr) {
+					eval(atob(data.content.replace(/[\s\n]/g,'')));
+					window.m3PGFunc = m3PGFunc;
+					callback();
+				},
+				error : function() {
+					alert("Failed to load SingleRunFunctions.js from github");
+				}
+			});
+		},
+		error : function() {
+			alert("Failed to load Model3PG.js from github");
+		}
+	});
+}
+
+
+
 app.loadSpreadsheetData = function(callback) {
 	
 	var rootUrl = "https://docs.google.com/spreadsheet/tq?key="+app.spreadsheet.id+"&gid=";

@@ -28,8 +28,6 @@
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/bootstrap-multiselect.js"></script>
 	<script src="js/app.js"></script>
-	<script type="text/javascript" src="Model3PG.js"></script>
-	<script type="text/javascript" src="SingleRunFunctions.js"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 </head>
 <body>
@@ -42,10 +40,14 @@
 		google.load('visualization', '1.0', {'packages':['corechart','table']});
 		google.setOnLoadCallback(function(){
 			$("#status").html("Loading 3pg model...");
-			app.loadSpreadsheetData(function(){
-				$("body").html("").load("app.html", function(){
-					app.init(function(){
-						app.runModel();
+			var version = qs("version");
+			app.loadModelCode(version, function(){
+				$("#status").html("Loading 3pg data...");
+				app.loadSpreadsheetData(function(){
+					$("body").html("").load("app.html", function(){
+						app.init(function(){
+							app.runModel();
+						});
 					});
 				});
 			});
