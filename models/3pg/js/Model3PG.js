@@ -274,8 +274,8 @@ var m3PG = {
     
     c.ASW = m3PGFunc.ASW(s.maxaws, p.ASW, d.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxaws
     
-    log("c.pR=" + c.pR + " c.coppice_pS=" + c.coppice_pS + " p.WF=" + p.WF + " c.litterfall=" + c.litterfall);
-    c.WF = m3PGFunc.WF(c.pR, p.WF, c.totalP, c.litterfall);
+    log("c.coppice_pF=" + c.coppice_pF + " c.coppice_pS=" + c.coppice_pS + " p.WF=" + p.WF + " c.litterfall=" + c.litterfall);
+    c.WF = m3PGFunc.WF(c.coppice_pF, p.WF, c.totalP, c.litterfall);
     
     log("p.coppice_WR=" + p.coppice_WR + " c.totalP=" + c.totalP + " c.pR=" + c.pR + " g.RttoverP=" + g.Rttover);
     c.coppice_WR = m3PGFunc.coppice_WR(p.coppice_WR, c.totalP, c.pR, g.Rttover, c.coppice_RootP);
