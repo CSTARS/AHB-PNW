@@ -93,7 +93,9 @@ var m3PG = {
       firstMonthResults.totalP = firstMonthResults.NPP;//because there is no root contribution
       firstMonthResults.lastCoppiceAge = firstMonthResults.StandAge;
       //currentMonthResults.StandAge = 0; //the age of stand is 1 month?
-      yearToCoppice = yearToCoppice + coppiceInterval; //next coppice year
+      if (!runCoppicedVersion){ //only do this is the coppice cycle started, not if runCoppicedVersion is true and we just force the coppice model to start
+          yearToCoppice = yearToCoppice + coppiceInterval; //next coppice year
+      }
       //key Headers change
       keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","litterfall","totalP","WF","coppice_WR","WS", "W"];    
       if (reprintHeaders==true){
