@@ -399,7 +399,7 @@ description='Root Biomass'
 */
 m3PGFunc.coppice_WR = function(prev_WR, cur_NPP, cur_pR, Rttover,coppice_RootP){
   //Logger.log("DEBUGGING COPPICE: prev_WR=" + prev_WR + "; cur_NPP=" + cur_NPP + "; cur_pR=" + cur_pR + "; Rttover=" + Rttover+ "; coppice_RootP=" + coppice_RootP);
-  return prev_WR, prev_WR + cur_NPP * cur_pR - Rttover * prev_WR - coppice_RootP;
+  return /*prev_WR, */ prev_WR + cur_NPP * cur_pR - Rttover * prev_WR - coppice_RootP;
 }
 
 
