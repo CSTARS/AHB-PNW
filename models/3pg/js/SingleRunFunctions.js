@@ -223,7 +223,7 @@ TODO: untis + definition
 */
 m3PGFunc.litterfall = function(gammaFx, gammaF0, prev_StandAge, tgammaF, prev_lastCoppiceAge){
   var prev_realStandAge = prev_StandAge - prev_lastCoppiceAge;
-  log("DEBUGGING COPPICE: prev_StandAge=" + prev_StandAge +"; prev_realStandAge=" + prev_realStandAge);
+  //log("DEBUGGING COPPICE: prev_StandAge=" + prev_StandAge +"; prev_realStandAge=" + prev_realStandAge);
   return gammaFx * gammaF0 / (gammaF0 + (gammaFx - gammaF0) *  Math.exp(-12 * Math.log(1 + gammaFx / gammaF0) * prev_realStandAge / tgammaF) );
 }
 

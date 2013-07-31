@@ -42,7 +42,7 @@ var m3PGIO = {
       keyValMap[rowData[0]] = rowData[3];
     } 
     
-    log(keyValMap);
+    //log(keyValMap);
     
     return keyValMap;
   },
@@ -179,14 +179,14 @@ var m3PGIO = {
     }
     
     for (var rowNumber = 1; rowNumber < data.length; rowNumber++) { //start from second row, value is in the forth column, index 3
-      Logger.log(data[rowNumber]);
+      //Logger.log(data[rowNumber]);
       var rowData = data[rowNumber];
       for (var keyNum = 0; keyNum < keys.length; keyNum++){
         keyValMap[keys[keyNum]].push(rowData[keyNum]);
       }
     } 
     
-    Logger.log(keyValMap);
+    //Logger.log(keyValMap);
     
     return keyValMap;
   }, 

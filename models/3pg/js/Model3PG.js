@@ -113,7 +113,7 @@ var m3PG = {
     var firstRow = [];
     for (var i = 0; i < keysInOrder.length; i++){
       var key = keysInOrder[i];
-      log(key  + ": " + firstMonthResults[key]);
+      //log(key  + ": " + firstMonthResults[key]);
       firstRow.push(firstMonthResults[key]);
     }
     
@@ -165,7 +165,7 @@ var m3PG = {
       var thisRow = [];
       for (var i = 0; i < keysInOrder.length; i++) {
         var key = keysInOrder[i];
-        log( key  + ": " + nextMonthResults[key]);
+        //log( key  + ": " + nextMonthResults[key]);
         thisRow.push(nextMonthResults[key]);
       } 
       currentMonthResults = nextMonthResults;
