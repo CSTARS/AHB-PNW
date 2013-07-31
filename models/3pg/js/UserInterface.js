@@ -35,46 +35,47 @@ function runModelXTest(){
   // assume planted in march, cut in september
   //var allTestValues = readTestInputs("Form Responses 1");
   var allTestValues = m3PGIO.readTestInputs("TestSetup");
-  var locationAsString = allTestValues["Location"][0] + "";
   
   //loop over var names, values, output var names
   
   //column names are assumed, and the lack of whitespace between comma-separated values.
   var inputVarNameArray = allTestValues["Input Variable"];
   var inputVarValsArray = allTestValues["Input Values"];
-  var outputVarName = allTestValues["Output Variable"];
+  var outputVarNameArray = allTestValues["Output Variable"];
   
   //////////Set up the original version of the model:////////////
   
   //work with offsets and weather data later
   
-  var yearToCoppice;
-  var coppiceInterval;
-  var monthToCoppice;
-  //Global Variables Array
-  
-  var g = {};
-  m3PGIO.readAllConstants(g); //global variables are an array of key-value pairs. INCLUDES SOIL DEPENDENT ONES - Separate?
-  
-  var experimentParams = {};
-  experimentParams.columnOffset = 0;
-  experimentParams.rowOffset = 0;
-  
-  Logger.log("experimentParams= " + experimentParams);
-  
-  //calculate fNutr and add here;
-  g.fNutr=m3PGFunc.fNutr(g.fN0, g.FR);
-  
+
   ////////////////loop over different scenarios////////////////
   for (var testNum = 0; testNum<inputVarNameArray.length; testNum++){
+    var locationAsString = allTestValues["Location"][testNum] + "";
+    var yearToCoppice;
+    var coppiceInterval;
+    var monthToCoppice;
+    //Global Variables Array
+    
+    var g = {};
+    m3PGIO.readAllConstants(g); //global variables are an array of key-value pairs. INCLUDES SOIL DEPENDENT ONES - Separate?
+    
+    var experimentParams = {};
+    experimentParams.columnOffset = 0;
+    experimentParams.rowOffset = 0;
+    
+    Logger.log("experimentParams= " + experimentParams);
+    
+    //calculate fNutr and add here;
+    g.fNutr=m3PGFunc.fNutr(g.fN0, g.FR);
+    
     var inputVarName = inputVarNameArray[testNum];
     var inputVarValsAsText = inputVarValsArray[testNum] + ""; //important hack to make sure this value is a string even when it's a single number
     inputVarValsAsText.replace(/\s/g, "");
     var inputVarVals = inputVarValsAsText.split(',');
     
-    var outputVarNameAsText = outputVarName[testNum];
+    var outputVarNameAsText = outputVarNameArray[testNum];
     outputVarNameAsText.split(" ").join(""); //FOR some reason nothing works in removing white spaces?? FIXME: make this work later
-    var outputVarName = outputVarNameAsText;
+    var outputVarName = outputVarNameAsText;    
     
     var weatherMap = {};
     var s = {}; //soilMap
@@ -122,22 +123,23 @@ function runModelXTest(){
       
       var keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","pS","litterfall","NPP","WF","WR","WS", "W"];    
       
-      runSubsequentTimesXTest(inputVarName,inputVarVals[k], experimentParams, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVarName);
+      var runCoppicedVersion = (allTestValues["Model Type"] == "coppice");
+      runSubsequentTimesXTest(runCoppicedVersion,inputVarName,inputVarVals[k], experimentParams, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVarName);
     }
     
     //here we'll write the test setup at the bottom of the results so that the same setup can be rerun when we need it.
-    recordTestSetupForFutureReference(allTestValues, experimentParams, sheetName, g);
+    recordTestSetupForFutureReference(allTestValues, testNum, experimentParams, sheetName, g); 
   }
   
 }  
 
-function recordTestSetupForFutureReference(allTestValues, experimentParams, sheetName, g){
+function recordTestSetupForFutureReference(allTestValues, testNum, experimentParams, sheetName, g){
   var row1 = [];
   var row2 = [];
   var rows = [];
   for (var key in allTestValues){
     row1.push(key);
-    row2.push(allTestValues[key]);
+    row2.push(allTestValues[key][testNum]);
   }
   rows.push(row1);
   rows.push(row2);
@@ -209,16 +211,16 @@ function runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,experimentParams
 }
 
 
-function runSubsequentTimesXTest(inputVarName, inputVarValue, experimentParams, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVariable){
+function runSubsequentTimesXTest(runCoppicedVersion,inputVarName, inputVarValue, experimentParams, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVariable){
   //NOTE: only constant variables are modifiable for now (AKA globals "g")
   g[inputVarName] = inputVarValue;
   
-  //big loop here
-  var header = outputVariable + "," + inputVarName + "=" + inputVarValue; //TODO: deal with upper/lower cases?
+  //big loop here //outputVariable + "," + // <= ommited for now - only one y var
+  var header = inputVarName + "=" + inputVarValue; //TODO: deal with upper/lower cases?
   
   //TODO: take out computation part (wher you replace x values)  
   var reprintHeaders = false;
-  var resultRows = m3PG.runCurrentSetup(lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders);  
+  var resultRows = m3PG.runCurrentSetup(runCoppicedVersion,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders);  
   var index = resultRows[0].indexOf(outputVariable);
   
   var rows = [];
@@ -241,6 +243,7 @@ function runSubsequentTimesXTest(inputVarName, inputVarValue, experimentParams, 
   //big loop here
   experimentParams.columnOffset = experimentParams.columnOffset + 1;
   m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, experimentParams.columnOffset,1);//write columns on the right from the last one. but on the same rows
+  
 }
 
 
