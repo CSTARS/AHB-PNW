@@ -54,14 +54,15 @@ var m3PG = {
     var keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","pS","litterfall","NPP","WF","WR","WS", "W"];    
     
     var reprintHeaders = true; //print headers at coppice time (to help see that row)
-    m3PG.runCurrentSetup(lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders)
+    var runCoppicedVersion = false; //this variable at the moment is only used in running test setup
+    m3PG.runCurrentSetup(runCoppicedVersion,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders)
     
     //init all - will be p,
     //then each step returned from singleStep will be p to feed back into
     //Weather?
   },
   
-  runCurrentSetup: function(lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders){
+  runCurrentSetup: function(runCoppicedVersion,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders){
     
     //for running the coppice model right away we need to assume it is being coppiced right away, 
     //but the only diff is the init weight of stem, foliage and root. all prev values are 0
@@ -73,7 +74,7 @@ var m3PG = {
     
     var rows = []; //these will become rows
     //if coppiced in the first month (AKA running coppice model from day one)
-    if (willCoppice && currentDate.getYear()==yearToCoppice && currentMonth == monthToCoppice){
+    if (runCoppicedVersion || (willCoppice && currentDate.getYear()==yearToCoppice && currentMonth == monthToCoppice)){
       log("Time to Coppice!");
       //TODO: update trees
       
