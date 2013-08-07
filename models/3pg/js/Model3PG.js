@@ -51,7 +51,7 @@ var m3PG = {
     
     log(d);
     
-    var keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","pS","litterfall","NPP","WF","WR","WS", "W"];    
+    var keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","pS","coppice_pF","litterfall","NPP","WF","WR","WS", "W"];    
     
     var reprintHeaders = true; //print headers at coppice time (to help see that row)
     var runCoppicedVersion = false; //this variable at the moment is only used in running test setup
@@ -97,7 +97,7 @@ var m3PG = {
           yearToCoppice = yearToCoppice + coppiceInterval; //next coppice year
       }
       //key Headers change
-      keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","coppice_pS","litterfall","totalP","WF","coppice_WR","WS", "W"];    
+      keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","coppice_pF","litterfall","totalP","WF","coppice_WR","WS", "W"];    
       if (reprintHeaders==true){
         rows.push(keysInOrder);
       } else {}
