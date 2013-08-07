@@ -151,7 +151,7 @@ var m3PG = {
         //currentMonthResults.StandAge = 0; //the age of stand is 1 month?
         yearToCoppice = yearToCoppice + coppiceInterval; //next coppice year
         //key Headers change
-        keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","litterfall","totalP","WF","coppice_WR","WS", "W"];    
+        keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","coppice_pS","coppice_pF","litterfall","totalP","WF","coppice_WR","WS", "W"];    
         if (reprintHeaders==true){
           rows.push(keysInOrder);
         } else {}
