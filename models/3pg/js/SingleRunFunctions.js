@@ -240,10 +240,6 @@ m3PGFunc.init_litterfall = function(gammaFx, gammaF0, cur_StandAge, tgammaF){
 /**pS
 TODO: units and description
 */
-m3PGFunc.pS = function(prev_WS, StockingDensity, StemConst, StemPower, cur_pR, pfsConst, pfsPower){
-  var avDBH = Math.pow( ( (prev_WS * 1000 / StockingDensity) / StemConst) , (1 / StemPower) );
-  return (1 - cur_pR) / (1 + ( pfsConst * Math.pow(avDBH , pfsPower) ) );
-}
 
 /**init_pS
 TODO: WHAT IS IT SUPPOSED TO BE???
@@ -263,9 +259,7 @@ m3PGFunc.pR = function(pRx, pRn, cur_PhysMod, m0, FR){
 /**pF
 TODO: units and description
 */
-m3PGFunc.pF = function(cur_pR, cur_pS){
-  return 1 - cur_pR - cur_pS;
-}
+
 
 /**WF
 units='t/ha' 
@@ -286,9 +280,7 @@ m3PGFunc.init_WF = function(StockingDensity, SeedlingFoliageMass){
 units='t/ha' 
 description='Root Biomass'
 */
-m3PGFunc.WR = function(prev_WR, cur_NPP, cur_pR, Rttover){
-  return prev_WR + cur_NPP * cur_pR - Rttover * prev_WR;
-}
+
 
 /**init_WR
 Root Biomass at planting time
@@ -358,21 +350,21 @@ m3PGFunc.xPP = function(y, cur_PAR, gDM_mol){
 /*** FUNCTIONS FOR COPPICING */
 
 // Coppice Functions are based on Diameter on Stump, NOT DBH.
-m3PGFunc.coppice_pfs = function(prev_WS,StockingDensity, cpStemsPerStump, cpStemConst, cpStemPower, cpPfsConst, cpPfsPower,cpMaxPfs) {
+m3PGFunc.pfs = function(prev_WS,StockingDensity, cpStemsPerStump, cpStemConst, cpStemPower, cpPfsConst, cpPfsPower,cpMaxPfs) {
   var avDOB = Math.pow( ( (prev_WS * 1000 / StockingDensity / cpStemsPerStump) / cpStemConst) , (1 / cpStemPower) );
   var ppfs= cpPfsConst * Math.pow(avDOB , cpPfsPower);
   return Math.min(cpMaxPfs,ppfs);
 }
 
-m3PGFunc.coppice_pS = function(cur_pR,pfs) {
+m3PGFunc.pS = function(cur_pR,pfs) {
   return (1 - cur_pR) / (1 + pfs );
 }
 
-m3PGFunc.coppice_pF = function(cur_pR,pfs) {
+m3PGFunc.pF = function(cur_pR,pfs) {
   return (1 - cur_pR) / (1 + 1/pfs );
 }
 
-m3PGFunc.coppice_RootP = function(cur_npp, cur_nppTarget, WR,W,pRx,cpRootStoragePct,cpRootLAITarget) {
+m3PGFunc.RootP = function(cur_npp, cur_nppTarget, WR,W,pRx,cpRootStoragePct,cpRootLAITarget) {
   // var npp=NPP(prev_StandAge, fullCanAge, cur_xPP, k, prev_LAI, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
   // var nppTarget = NPP(prev_StandAge, fullCanAge, cur_xPP, k, cpRootLAITarget, cur_fVPD, cur_fSW, cur_fAge, alpha, fNutr, cur_fT, cur_fFrost);
   
@@ -397,7 +389,7 @@ m3PGFunc.totalP = function(cur_npp,coppice_RootP,ConversionEfficiency) {
 units='t/ha' 
 description='Root Biomass'
 */
-m3PGFunc.coppice_WR = function(prev_WR, cur_NPP, cur_pR, Rttover,coppice_RootP){
+m3PGFunc.WR = function(prev_WR, cur_NPP, cur_pR, Rttover,coppice_RootP){
   log("DEBUGGING COPPICE: prev_WR=" + prev_WR + "; cur_NPP=" + cur_NPP + "; cur_pR=" + cur_pR + "; Rttover=" + Rttover+ "; coppice_RootP=" + coppice_RootP);
   return /*prev_WR, */ prev_WR + cur_NPP * cur_pR - Rttover * prev_WR - coppice_RootP;
 }
