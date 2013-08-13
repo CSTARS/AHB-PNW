@@ -1,4 +1,4 @@
-CREATE TYPE weather as (
+CREATE TYPE weather_t as (
 "tmin" float,
 "tmax" float,
 "tdmean" float,
@@ -7,18 +7,23 @@ CREATE TYPE weather as (
 "daylight" float
 );
 
-CREATE TYPE soil as (
-"maxaws" float,
+CREATE TYPE soil_t as (
+"maxAWS" float,
 "swpower" float,
 "swconst" float
 );
 
-CREATE TYPE plantation_state as (
+CREATE TYPE plantation_state_t as (
+"feedstockHarvest" float,
+"coppiceCount" float,
+"coppiceAge" float,
 "VPD" float,
 "fVPD" float,
 "fT" float,
 "fFrost" float,
 "fNutr" float,
+"fSW" float,
+"fAge" float,
 "PAR" float,
 "xPP" float,
 "Intcptn" float,
@@ -29,20 +34,22 @@ CREATE TYPE plantation_state as (
 "LAI" float,
 "CanCond" float,
 "Transp" float,
-"fSW" float,
-"fAge" float,
 "PhysMod" float,
+"pfs" float,
 "pR" float,
 "pS" float,
+"pF" float,
 "litterfall" float,
 "NPP" float,
+"RootP" float,
+"dW" float,
 "WF" float,
 "WR" float,
 "WS" float,
 "W" float
 );
 
-CREATE type management as (
+CREATE type manage_t as (
        "irrigFrac" float,
        "fertility" float,
        coppice boolean

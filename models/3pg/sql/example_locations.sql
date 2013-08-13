@@ -5,7 +5,7 @@ create table locations (
        latitude float
 );
 
-insert into locations (name,longitude,latitude) from
+insert into locations (name,longitude,latitude) select * from
 (VALUES
 ('Hayden, ID',-116.7856,47.7661),
 ('Pilchuck, WA',-121.7967,48.0578),
@@ -13,7 +13,7 @@ insert into locations (name,longitude,latitude) from
 ('Clarksbug, CA',-121.5272,38.4206)
 ) AS l(name,longitude,latitude);
 
--- in AFRI
+-- --in AFRI
 -- create temp view fields as 
 --  select *,
 --  (public_view.pointToPID(longitude,latitude,8192)).pid 
@@ -138,31 +138,33 @@ month,pid,daylight
 12,303216,9.3491296768
 \.
 
+drop table if exists pixel;
 create table pixel as 
 with 
 s as (
-  select pid,(maxaws,swconst,swpower)::soil as soil 
+  select pid,(maxaws,swconst,swpower)::soil_t as soil 
   from pixel_sw join pixel_maxaws using (pid)
 ),
 d as (
- select pid,array_agg(month) as month,array_agg(daylight) as daylight 
- from grass_daylight group by pid order by month
+ select pid,array_agg(month order by month) as month,
+ array_agg(daylight order by month) as daylight 
+ from grass_daylight group by pid
 ), 
 u as (
  select pid,generate_subscripts(tmin,1) i,
  unnest(tmin) as tmin,
  unnest(tmax) as tmax,
- unnest(tdmean) as tdmean,unnest(ppt) as ppt,unnest(rs) as rs,
+ unnest(tdmean) as tdmean,unnest(ppt) as ppt,unnest(rs)*0.0036 as rs,
  unnest(daylight) as daylight 
- from pixel_weather join 
+ from weather join 
  d using (pid)
 ), 
 w as (
- select pid,i,(tmin,tmax,tdmean,ppt,rs,daylight)::weather as weather 
- from u order by pid,i
+ select pid,i,(tmin,tmax,tdmean,ppt,rs,daylight)::weather_t as weather 
+ from u
 ),
 ws as (
- select pid,array_agg(weather) as mean_weather 
+ select pid,array_agg(weather order by i) as mean_weather 
  from w group by pid
 )
 select pid,soil,mean_weather from s join ws using (pid);

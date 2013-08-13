@@ -1,71 +1,37 @@
---drop schema m3pgjs cascade;
---create schema m3pgjs;
-set search_path=m3pgjs,public;
-\i types.sql
-\i tree.sql
-\i example_locations.sql
--- If you've modified the js script, then reimport the plv8_startup, otherwise, just run it.
---\i plv8_startup.sql
-select plv8_startup();
-
--- Test showing badness of null defaults.
---create or replace function foo (test float DEFAUlT null) RETURNS float as $$ test=(test===null)?10:test ; plv8.elog(NOTICE,test);return test;$$ LANGUAGE plv8 IMMUTABLE STRICT;
---ahb=# select * from foo(11);
---NOTICE:  11
--- foo 
---  11
---ahb=# select * from foo();
-
-create or replace function init(p plantation, t tree,w weather,s soil) 
-RETURNS plantation_state AS $$
-	return m3PG.init(p,t,w,s);
+create or replace function init(plantation plantation_t, tree tree_t,soil soil_t) 
+RETURNS plantation_state_t AS $$
+	return m3PG.init(plantation,tree,soil);
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-create or replace function singleStepCoppiced(t tree,s soil,w weather,
-m management,
-c plantation_state) 
-RETURNS plantation_state AS $$
-	return m3PG.singleStepCoppiced(t,s,w,m,c);
+create or replace function singleStepCoppiced(
+plantation plantation_t,
+tree tree_t,
+soil soil_t,
+weather weather_t,
+manage manage_t,
+cur plantation_state_t) 
+RETURNS plantation_state_t AS $$
+	return m3PG.singleStepCoppiced(plantation,tree,soil,weather,manage,cur);
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-create or replace function pixelTree(
- i_date date,i_cnt int, 
- i_tree tree,i_pixel pixel) 
-RETURNS TABLE(d date,ps plantation_state) AS $$
-BEGIN
-RETURN QUERY 
-with
-recursive psm(dt,p) as (
- VALUES (i_date,
- init(i_tree,
-      (i_pixel).mean_weather[extract(month from '2012-03-01'::date)],
-      (i_pixel).soil))
-UNION ALL 
- select (dt+'1 month'::interval)::date as dt,
- singleStep(
-      i_tree,
-      (i_pixel).mean_weather[extract(month from dt+'1 month'::interval)],
-      (i_pixel).soil,p) as p
- from psm
-) 
-select dt,p from psm limit i_cnt;
-END;
-$$ LANGUAGE plpgsql IMMUTABLE STRICT;
-
-create or replace function grow(i_tree tree,
-i_soil soil,weathers weather[],manage management[])
-RETURNS plantation_state[] AS $$
+create or replace function grow(
+plantation plantation_t, 
+tree tree_t,
+soil soil_t,
+weather weather_t[],
+manage manage_t[])
+RETURNS plantation_state_t[] AS $$
 DECLARE
-cur plantation_state;
-new plantation_state;
-grow plantation_state[] = '{}';
-w weather;
+cur plantation_state_t;
+new plantation_state_t;
+grow plantation_state_t[] = '{}';
+i integer;
 BEGIN
-cur := init(i_tree,i_soil,weathers[1],manage[1]);
---FOREACH w IN ARRAY weathers
-FOR i IN 1..array_length(weathers,1)
+cur := init(plantation,tree,soil);
+--FOREACH w IN ARRAY weather
+FOR i IN 1..array_length(weather,1)
 LOOP
- new:= singleStepCoppiced(i_tree,i_soil,weathers[i],manage[i],cur);
+ new:= singleStepCoppiced(plantation,tree,soil,weather[i],manage[i],cur);
  grow := array_append(grow,new);
  cur:=new;
 END LOOP; 
@@ -73,50 +39,50 @@ return grow;
 END;
 $$ LANGUAGE plpgsql IMMUTABLE STRICT;
 
+create or replace function example_dates(
+st date DEFAULT '2012-03-01'::date,
+en date DEFAULT '2035-12-01'::date
+)
+RETURNS date[] AS $$
+ select array_agg(d::date) 
+ from 
+ generate_series($1,$2,'1 month'::interval) as d;
+$$ LANGUAGE sql IMMUTABLE STRICT;
 
 create or replace function example_management(
-st date DEFAULT '2012-03-01'::date,
-en date DEFAULT '2035-12-01'::date,
+dates date[],
 coppice date[] DEFAULT  '{2014-09-01,2017-09-01,2020-09-01,2023-09-01,
                           2026-09-01,2029-09-01,2032-09-01,2035-09-01}'::date[],
 irrigFrac float DEFAULT 1.0,
 fertility float DEFAULT 0.8
 )
-RETURNS management[] AS $$
-with d as (
- select d::date date 
- from 
- generate_series($1,$2,'1 month'::interval) as d
-),
+RETURNS manage_t[] AS $$
+WITH
 foo as (
  select date,
- ($4,$5, case when 
+ ($3,$4, case when 
 (
- d.date = ANY ($3)
+  date = ANY ($2)
 )
-  THEN true else false END)::management as manage
-from d) 
+  THEN true else false END)::manage_t as manage
+from unnest($1) as d(date)
+)
 select 
 array_agg(manage order by date) as manage
 from foo
 $$ LANGUAGE sql IMMUTABLE STRICT;
 
 create or replace function example_weather(
-mean_weather weather[],
-st date DEFAULT '2012-03-01'::date,
-en date DEFAULT '2035-12-01'::date
+dates date[],
+mean_weather weather_t[]
 )
-RETURNS weather[] AS $$
-with d as (
- select d::date date,
-        $1[extract(month from d)] as weather  
- from 
- generate_series($2,$3,'1 month'::interval) as d
+RETURNS weather_t[] AS $$
+with 
+d as (
+ select date,
+        $2[extract(month from date)] as weather  
+ from unnest($1) as date
 )
 select  array_agg(weather order by date) 
 from d; 
 $$ LANGUAGE sql IMMUTABLE STRICT;
-
-create temp table growit as select 
-pid,trees.type,grow(trees,pixel.soil,example_weather(p.weather),m) as ps 
-from trees,pixel p,example_management() as m;
