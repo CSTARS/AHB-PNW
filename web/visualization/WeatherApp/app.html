@@ -13,7 +13,7 @@
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script type="text/javascript" src="jslib/bootstrap.min.js"></script>
 	<script type="text/javascript" src="jslib/jquery.cookie.js"></script>
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&v=3.12"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script src="https://apis.google.com/js/client.js?onload=initapi"></script>
 	<script type="text/javascript">
@@ -87,17 +87,7 @@
 	    			 $(".search-small").hide();
 	    		 }
 	    	 }
-	    	 
-	    	 $("#test").on('click', function(){
-	    		var canvas = $("<canvas />");
-	    		var chart = $("#weather-chart-panel svg");
-	    		canvas.height(chart.height()).width(chart.width());
-	    		
-	    		var tmp = (new window.XMLSerializer()).serializeToString(chart[0]);
-	    		$("#testRoot").html("").append(canvas);
-	    		 canvg(canvas[0],(new window.XMLSerializer()).serializeToString(chart[0]),{ ignoreMouse: true, ignoreAnimation: true });
-	    		 
-	    	 });
+
 	    	 
 	      });
 	     
@@ -185,10 +175,13 @@
 <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Export to 3PG Model Spreadsheet</h3>
+    <h3 id="myModalLabel">Export to 3PG Model</h3>
   </div>
   <div class="modal-body">
-  	<div class='alert alert-block'>Enter a Google Spreadsheet url below or click 'Help Creating Spreadsheet' for more information.</div>
+  	<div class='alert alert-block'>
+  		<div>Enter a Google Spreadsheet url below or click 'Help Creating Spreadsheet' for more information.</div>
+  		<div style="margin-top:10px" id="export-3pg-advanced"></div>
+  	</div>
   	<div id="login-here">First, <a id="login-btn" style="cursor:pointer">login to your google account</a></div>
   	<table cellpadding="5">
   		<tr>

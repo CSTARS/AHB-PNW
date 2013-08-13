@@ -15,6 +15,8 @@ ahb.map = (function() {
 	var fusionLayer = null;
 	
 	function init() {
+		// use the new maps look and feel
+		google.maps.visualRefresh = true;
 		
 		INIT_MAP_OPTIONS.center = new google.maps.LatLng(INIT_MAP_OPTIONS.centerY, INIT_MAP_OPTIONS.centerX);
 		INIT_MAP_OPTIONS.mapTypeId = google.maps.MapTypeId.ROADMAP;

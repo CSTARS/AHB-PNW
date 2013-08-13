@@ -1,0 +1,62 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="css/font-awesome.css" />
+	<link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css" />
+
+	<script type="text/javascript">
+		var app = {
+			spreadsheet : {
+				id : "0AmgH34NLQLU-dHA0QkViSnE2WV9tZGdXX2JRVC1ISEE",
+				worksheets : {
+					metadata : 0,
+					constants : 19
+				},
+				dataTables : {}
+			},
+			inputs : {
+				weather : ["month","tmin","tmax","tdmean","ppt","rad","daylight"]
+			},
+			outputs : ["VPD","fVPD","fT","fFrost","PAR","xPP","Intcptn","ASW","CumIrrig",
+			           "Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge",
+			           "PhysMod","pR","pS","litterfall","NPP","WF","WR","WS","W"],
+			debug : false
+		};
+	</script>
+	
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/bootstrap-multiselect.js"></script>
+	<script src="js/app.js"></script>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+</head>
+<body>
+
+	<div id="status">Loading...</div>
+
+
+	<script type="text/javascript">
+		$("#status").html("Loading visualization package...");
+		google.load('visualization', '1.0', {'packages':['corechart','table']});
+		google.setOnLoadCallback(function(){
+			$("#status").html("Loading 3pg model...");
+			var version = qs("version");
+			app.loadModelCode(version, function(){
+				$("#status").html("Loading 3pg data...");
+				app.loadSpreadsheetData(function(){
+					$("body").html("").load("app.html", function(){
+						app.init(function(){
+							app.runModel();
+						});
+					});
+				});
+			});
+		});
+		
+		// override the log function
+		log = function(msg) {
+			if( app.debug ) console.log(msg);
+		};
+	</script>
+</body>
+</html>

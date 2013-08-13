@@ -1,0 +1,127 @@
+<div id="root">
+
+	<div class="row-fluid">
+		<div class="span4">
+			<div class="accordion" id="accordion">
+			  <div class="accordion-group">
+			    <div class="accordion-heading">
+			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseZero">
+			        Constants
+			      </a>
+			    </div>
+			    <div id="collapseZero" class="accordion-body collapse in">
+			      <div class="accordion-inner">
+			       	<div id="constants" style="overflow:auto"></div>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+		
+			
+		</div>
+		<div class="span8">
+			
+			<div class="accordion" id="accordion2">
+			  <div class="accordion-group">
+			    <div class="accordion-heading">
+			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+			        Metadata
+			      </a>
+			    </div>
+			    <div id="collapseOne" class="accordion-body collapse">
+			      <div class="accordion-inner">
+			       	<div id="metadata" style="overflow:auto"></div>
+			      </div>
+			    </div>
+			  </div>
+			  <div class="accordion-group">
+			    <div class="accordion-heading">
+			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+			        Inputs
+			      </a>
+			    </div>
+			    <div id="collapseTwo" class="accordion-body collapse">
+			      <div class="accordion-inner">
+			        <div id="inputs" style="overflow:auto">
+			        	<h4>Run Time</h4>
+			        	<div>
+			        		<table class="table table-striped">
+			        			<tr>
+			        				<td>Number of months to run 3PG Model </td>
+			        				<td> <input  class="minput" type="text" id="monthsToRun" value="120" style="height:40px" /></td>
+			        			</tr>
+			        		</table>
+			        	</div>
+			        	<h4>Chart Options</h4>
+			        	<div>
+			        		<table class="table table-striped">
+			        			<tr>
+			        				<td>Output variable(s) to chart </td>
+			        				<td> <select class="minput" id="chartTypeInput" multiple="multiple"></select></td>
+			        			</tr>
+			        			<tr>
+			        				<td>Variation analysis parameter </td>
+			        				<td> <select class="minput" id="variationAnalysisInput"><option>None</option></select></td>
+			        			</tr>
+			        			<tr id="multiRunVarInputs-outer" style="display:none">
+			        				<td>Variation parameter values to compare (comma separate)<br />
+			        					<span style="color:#888;font-size:11px">The model will be run one time for each specified input</span>
+			        				</td>
+			        				<td> <textarea class="minput" id="multiRunVarInputs"></textarea></td>
+			        			</tr>
+			        		</table>
+			        	</div>
+			        
+			        	<h4>Soil</h4>
+			        	<div>
+			        		<table class="table table-striped">
+			        			<tr><td>Max Available Soil Water (maxaws)</td><td><input type="text" class="minput" id="input-soil-maxaws" style="height:40px" /></td></tr>
+			        			<tr><td>Power of Moisture Ratio Deficit (swpower)</td><td><input type="text" class="minput" id="input-soil-swpower" style="height:40px" /></td></tr>
+			        			<tr><td>Moisture Ratio Deficit (swconst)</td><td><input type="text" class="minput" id="input-soil-swconst"  style="height:40px" /></td></tr>
+			        		</table>
+			        	</div>
+			        	
+			        	<h4>Dates</h4>
+			        	<div>
+			        		<table class="table table-striped">
+			        			<tr><td>Date Planted</td><td><input type="date" class="minput" id="input-date-datePlanted" style="height:40px" /></td></tr>
+			        			<tr><td>Date Coppiced</td><td><input type="date" class="minput" id="input-date-dateCoppiced" style="height:40px" /></td></tr>
+			        			<tr><td>Coppice Interval Years</td><td><input type="text" class="minput" id="input-date-yearsPerCoppice" style="height:40px" /></td></tr>
+			        		</table>
+			        	</div>
+			        	
+			        	<h4>Weather</h4>
+			        	<div id="weather-inputs"></div>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+			  <div class="accordion-group">
+			    <div class="accordion-heading">
+			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapseThree">
+			        Raw Output
+			      </a>
+			    </div>
+			    <div id="collapseThree" class="accordion-body collapse">
+			      <div class="accordion-inner">
+			        <div id="output" style="overflow:auto"></div>
+			      </div>
+			    </div>
+			  </div>
+			  <div class="accordion-group">
+			    <div class="accordion-heading">
+			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#collapseFour">
+			        Charts
+			      </a>
+			    </div>
+			    <div id="collapseFour" class="accordion-body collapse">
+			      <div class="accordion-inner">
+			        <div id="chart" style="overflow:auto"></div>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			
+		</div>
+	</div>
+</div>
