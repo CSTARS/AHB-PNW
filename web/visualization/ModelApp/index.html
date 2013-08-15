@@ -1,8 +1,7 @@
 <html>
 <head>
-	<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="css/font-awesome.css" />
-	<link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css" />
 
 	<script type="text/javascript">
 		var app = {
@@ -20,7 +19,8 @@
 			outputs : ["VPD","fVPD","fT","fFrost","PAR","xPP","Intcptn","ASW","CumIrrig",
 			           "Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge",
 			           "PhysMod","pR","pS","litterfall","NPP","WF","WR","WS","W"],
-			debug : false
+			debug : false,
+			devmode : false
 		};
 	</script>
 	
@@ -40,7 +40,11 @@
 		google.load('visualization', '1.0', {'packages':['corechart','table']});
 		google.setOnLoadCallback(function(){
 			$("#status").html("Loading 3pg model...");
+			
 			var version = qs("version");
+			var devmode = qs("devmode");
+			if( devmode ) app.devmode = true;
+			
 			app.loadModelCode(version, function(){
 				$("#status").html("Loading 3pg data...");
 				app.loadSpreadsheetData(function(){
