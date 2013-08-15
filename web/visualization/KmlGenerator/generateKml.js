@@ -244,7 +244,7 @@ function createKml(data, date, partial) {
                 	.replace("{{id}}",d.pid)
                 	.replace("{{time}}",time)
                 	.replace("{{description}}","id: "+d.pid+"<br />"+type+": "+d[type]+"<br />"+dateStr+
-						  "<a href='http://alder.bioenergy.casil.ucdavis.edu/?ll="+d.points[0][0]+","+d.points[0][1]+"'>Model App</a>")
+						  "<a href='http://alder.bioenergy.casil.ucdavis.edu/3pgModel/?ll="+d.points[0][0]+","+d.points[0][1]+"'>Model App</a>")
                 	.replace("{{linecolor}}",color)
                 	.replace("{{color}}",color)
                 	.replace("{{coordinates}}",coord);
