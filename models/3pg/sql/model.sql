@@ -1,22 +1,20 @@
-create or replace function init(plantation plantation_t, tree tree_t,soil soil_t) 
+create or replace function init(plantation plantation_t,soil soil_t) 
 RETURNS plantation_state_t AS $$
-	return m3PG.init(plantation,tree,soil);
+	return m3PG.init(plantation,soil);
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
 create or replace function singleStepCoppiced(
 plantation plantation_t,
-tree tree_t,
 soil soil_t,
 weather weather_t,
 manage manage_t,
 cur plantation_state_t) 
 RETURNS plantation_state_t AS $$
-	return m3PG.singleStepCoppiced(plantation,tree,soil,weather,manage,cur);
+	return m3PG.singleStepCoppiced(plantation,soil,weather,manage,cur);
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
 create or replace function grow(
 plantation plantation_t, 
-tree tree_t,
 soil soil_t,
 weather weather_t[],
 manage manage_t[])
@@ -27,11 +25,11 @@ new plantation_state_t;
 grow plantation_state_t[] = '{}';
 i integer;
 BEGIN
-cur := init(plantation,tree,soil);
+cur := init(plantation,soil);
 --FOREACH w IN ARRAY weather
 FOR i IN 1..array_length(weather,1)
 LOOP
- new:= singleStepCoppiced(plantation,tree,soil,weather[i],manage[i],cur);
+ new:= singleStepCoppiced(plantation,soil,weather[i],manage[i],cur);
  grow := array_append(grow,new);
  cur:=new;
 END LOOP; 

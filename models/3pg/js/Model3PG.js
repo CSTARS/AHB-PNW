@@ -111,7 +111,7 @@ var m3PG = {
           
 
           d = weatherMap[currentMonth]; //increment the month
-            nextMonthResults = this.singleStep(g,s,d,m,currentMonthResults);
+            nextMonthResults = this.singleStepCoppiced(g,s,d,m,currentMonthResults);
           nextMonthResults.Date = (currentDate.getMonth()+1)  + "/" + currentDate.getYear();
           log("\n Results of the next month: " + nextMonthResults);
           var thisRow = [];
@@ -130,9 +130,8 @@ var m3PG = {
         return rows;
 	},
 	
-    init : function(plantation,tree,soil) {
+    init : function(plantation,soil) {
 	var p = {};
-
 	p.feedstockHarvest=0;
 	p.coppiceCount=0;
 	p.coppiceAge = 0;
@@ -145,7 +144,10 @@ var m3PG = {
 	p.WR = plantation.pR * p.W;
 	p.ASW = 0.8 * 10 * soil.maxAWS; // The 10 is because maxAWS is in cm and ASW in mm (?) Why (?)
 	p.StandAge = 0;
-	p.LAI = m3PGFunc.LAI(p.WF, tree.SLA1, tree.SLA0, p.StandAge, tree.tSLA);
+	var tree=plantation.seedlingTree;
+	// sla = Specific Leaf Area
+	var sla=m3PGFunc.tdp(p.StandAge,tree.SLA);
+	p.LAI = p.WF * 0.1 * sla; // Landsburg eq 9.5
 
 	// These aren't used so can be set to anything;  They are set to match the postgres type
 	p.VPD=0;
@@ -172,17 +174,15 @@ var m3PG = {
 	return p;		
 	},
 	
-	singleStep : function(g,p,d,s,isCoppiced){
-		  log("isCoppiced? = " + isCoppiced);
-		  if (isCoppiced) {
-		      return this.singleStepCoppiced(g,d,s,p);
-		  } else {
-		      return this.singleStepSincePlanting(g,d,s,p);
-		  }
-	},
-	
-    singleStepCoppiced : function(plantation,tree,soil,weather,manage,p) {
+    singleStepCoppiced : function(plantation,soil,weather,manage,p) {
 	var c = new Object();
+	var tree;
+	if (c.coppiceCount==0) {
+	    tree=plantation.seedlingTree;
+	} else {
+	    tree=plantation.coppicedTree;
+	}
+//	log(tree.type+":"+tree.maxAge);
 	if (manage.coppice == true) {
 	    // Add in a stump margin....
 	    c.feedstockHarvest= p.feedstockHarvest+p.WS;
@@ -196,16 +196,17 @@ var m3PG = {
 	    c.coppiceCount = p.coppiceCount;
 	    c.coppiceAge = p.coppiceAge+1.0/12;
 	}
-	c.StandAge = m3PGFunc.StandAge(p.StandAge);
-	c.LAI = m3PGFunc.LAI(p.WF, tree.SLA1, tree.SLA0, p.StandAge, tree.tSLA);
+	c.StandAge = p.StandAge+1.0/12;
+	var sla=m3PGFunc.tdp(p.StandAge,tree.SLA);
+	c.LAI = p.WF * 0.1 * sla; // Landsburg eq 9.5
 	c.VPD = m3PGFunc.VPD(weather.tmin, weather.tmax, weather.tdmean);
 	c.fVPD = m3PGFunc.fVPD(tree.kG, c.VPD);
 	
 	c.fSW = m3PGFunc.fSW(p.ASW, soil.maxAWS, soil.swconst, soil.swpower);
-	c.fAge = m3PGFunc.fAge(p.StandAge, tree.maxAge, tree.rAge, tree.nAge);
+        c.fAge=m3PGFunc.tdp(p.StandAge,tree.fAge);
 	c.fFrost = m3PGFunc.fFrost(weather.tmin);
 	c.PAR = m3PGFunc.PAR(weather.rad);
-	c.fT = m3PGFunc.fT(weather.tmin, weather.tmax, tree.Tmin, tree.Tmax, tree.Topt);
+	c.fT = m3PGFunc.fT((weather.tmin+weather.tmax)/2, tree.fT);
 	c.xPP = m3PGFunc.xPP(tree.y, c.PAR);
 	c.PhysMod = m3PGFunc.PhysMod(c.fVPD, c.fSW, c.fAge);
 	c.fNutr=m3PGFunc.fNutr(tree.fN0, manage.fertility);
@@ -214,23 +215,16 @@ var m3PG = {
 	var NPP_target = m3PGFunc.NPP(p.StandAge, tree.fullCanAge, c.xPP, tree.k, tree.rootLAITarget, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
 	c.RootP = m3PGFunc.coppice.RootP(c.NPP, NPP_target, p.WR, p.W,tree.pRx,tree.rootStoragePct);
 	
-	var stemsPerStump;
-	if (c.coppiceCount==0) {
-	    stemsPerStump=plantation.stemsPerStump;
-	} else {
-	    stemsPerStump=tree.stemsPerStump;
-	}
-	c.pfs = m3PGFunc.coppice.pfs(p.WS,plantation.StockingDensity, stemsPerStump, 
+	c.pfs = m3PGFunc.coppice.pfs(p.WS,plantation.StockingDensity, tree.stemsPerStump, 
 				       tree.stemConst, tree.stemPower, tree.pfsConst, tree.pfsPower, tree.pfsMax);
 	
 	c.dW = c.NPP+tree.rootEfficiency*c.RootP;
 	
-	c.Intcptn = m3PGFunc.Intcptn(tree.MaxIntcptn, c.LAI, tree.LAImaxIntcptn);
-	c.CanCond = m3PGFunc.CanCond(tree.MaxCond, c.PhysMod, c.LAI, tree.LAIgcx);
+	c.Intcptn = m3PGFunc.Intcptn(c.LAI, tree.Intcptn);
+	c.CanCond = m3PGFunc.CanCond(c.PhysMod, c.LAI, tree.Conductance);
 	
-	c.pR = m3PGFunc.pR(tree.pRx, tree.pRn, c.PhysMod, tree.m0, manage.fertility);	
-	c.litterfall = m3PGFunc.litterfall(tree.gammaFx, tree.gammaF0, p.StandAge, tree.tgammaF);
-	
+	c.pR = m3PGFunc.pR(c.PhysMod, manage.fertility,tree.pR);	
+        c.litterfall=m3PGFunc.tdp(p.StandAge,tree.litterfall);
 	//log("weather.rad=" + weather.rad + " weather.daylight=" + weather.daylight + " tree.rhoAir=" + tree.rhoAir + " tree.lambda=" + tree.lambda + " tree.VPDconv=" + tree.VPDconv + " c.VPD=" + c.VPD + " tree.BLcond=" + tree.BLcond + " c.CanCond=" + c.CanCond);
 	c.Transp = m3PGFunc.Transp(weather.rad, weather.daylight, c.VPD, tree.BLcond, c.CanCond);
 	
@@ -248,68 +242,9 @@ var m3PG = {
 	c.WR = m3PGFunc.coppice.WR(p.WR, c.dW, c.pR, tree.Rttover, c.RootP);
 	c.WS = m3PGFunc.WS(p.WS, c.dW, c.pS);
 	c.W = c.WF+c.WR+c.WS;
+//	c.fFrost=litterfall;
 	return c;
-	},
-	
-    singleStepSincePlanting : function(g,soil,weather,manage,p){
-		  var c = new Object();
-		  c.StandAge = m3PGFunc.StandAge(p.StandAge);
-	    log("p:"+p.StandAge+" c:"+c.StandAge);
-		  c.LAI = m3PGFunc.LAI(p.WF, g.SLA1, g.SLA0, p.StandAge, g.tSLA);
-		  c.VPD = m3PGFunc.VPD(weather.tmin, weather.tmax, weather.tdmean);
-		  c.fVPD = m3PGFunc.fVPD(g.kG, c.VPD);
-		  
-		  c.fSW = m3PGFunc.fSW(p.ASW, soil.maxAWS, soil.swconst, soil.swpower);
-		  c.fAge = m3PGFunc.fAge(p.StandAge, g.maxAge, g.rAge, g.nAge);
-		  c.fFrost = m3PGFunc.fFrost(weather.tmin);
-		  c.fNutr=m3PGFunc.fNutr(g.fN0, manage.fertility);
-		  c.PAR = m3PGFunc.PAR(weather.rad);
-		  
-		  c.xPP = m3PGFunc.xPP(g.y, c.PAR);
-		  c.PhysMod = m3PGFunc.PhysMod(c.fVPD, c.fSW, c.fAge);
-		  c.Intcptn = m3PGFunc.Intcptn(g.MaxIntcptn, c.LAI, g.LAImaxIntcptn);
-		  c.CanCond = m3PGFunc.CanCond(g.MaxCond, c.PhysMod, c.LAI, g.LAIgcx);
-		  
-		  c.pR = m3PGFunc.pR(g.pRx, g.pRn, c.PhysMod, g.m0, manage.fertility);
-		  c.fT = m3PGFunc.fT(weather.tmin, weather.tmax, g.Tmin, g.Tmax, g.Topt);
-	// log("p.StandAge:"+p.StandAge+
-	//     "; g.fullCanAge:"+g.fullCanAge+
-	//     "; c.xPP:"+c.xPP+
-	//     "; g.k:"+g.k+
-	//     "; p.LAI:"+p.LAI+
-	//     "; c.fVPD:"+c.fVPD+
-	//     "; c.fSW:"+c.fSW+
-	//     "; c.fAge:"+c.fAge+
-	//     "; g.alpha:"+g.alpha+
-	//     "; c.fNutr:"+c.fNutr+
-	//     "; c.fT:"+c.fT+
-	//     "; c.fFrost:"+c.fFrost
-	//    );
-		  c.NPP = m3PGFunc.NPP(p.StandAge, g.fullCanAge, c.xPP, g.k, p.LAI, c.fVPD, c.fSW, c.fAge, g.alpha, c.fNutr, c.fT, c.fFrost);
-	c.dW=c.NPP;
-		  c.litterfall = m3PGFunc.litterfall(g.gammaFx, g.gammaF0, p.StandAge, g.tgammaF);
-		    
-//		  log("weather.rad=" + weather.rad + " weather.daylight=" + weather.daylight + " g.rhoAir=" + g.rhoAir + " g.lambda=" + g.lambda + " g.VPDconv=" + g.VPDconv + " c.VPD=" + c.VPD + " g.BLcond=" + g.BLcond + " c.CanCond=" + c.CanCond);
-	    c.Transp = m3PGFunc.Transp(weather.rad, weather.daylight, c.VPD, g.BLcond, c.CanCond);
-		  c.pS = m3PGFunc.pS(p.WS, plantation.StockingDensity, g.stemConst, g.stemPower, c.pR, g.pfsConst, g.pfsPower);
-		  c.pF = m3PGFunc.pF(c.pR, c.pS);
-		  
-//		  log("DEBUGGIN: irrigFrac= " + manage.irrigFrac + "; Transp=" + c.Transp + "; c.Intcptn=" + c.Intcptn + "; weather.ppt=" + weather.ppt);
-		  c.Irrig = m3PGFunc.Irrig(manage.irrigFrac, c.Transp, c.Intcptn, weather.ppt);
-		  c.CumIrrig = m3PGFunc.CumIrrig(p.CumIrrig, c.Irrig);
-		  
-//		  log("DEBUGGIN: maxAWS= " + soil.maxAWS + "; ASW=" + p.ASW + "; weather.ppt=" + weather.ppt + "; c.Transp=" + c.Transp + "; c.Intcptn= " + c.Intcptn + "; c.Irrig= " + c.Irrig);
-		  c.ASW = m3PGFunc.ASW(soil.maxAWS, p.ASW, weather.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
-		  c.WF = m3PGFunc.WF(c.pF, p.WF, c.dW, c.litterfall);
-		  c.WR = m3PGFunc.WR(p.WR, c.dW, c.pR, g.Rttover);
-		  c.WS = m3PGFunc.WS(p.WS, c.dW, c.pS);
-		  c.W = m3PGFunc.W(c.WF, c.WR, c.WS);
-		  return c;
-	},
-	
-	
-	
-	
+	},	
 }
 
 function env() {
