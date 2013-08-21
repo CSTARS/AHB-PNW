@@ -1,0 +1,20 @@
+Setup:
+	npm install pg (only once)
+	ssh -f -N -L 65432:localhost:5432 [username]@alder.bioenergy.casil.ucdavis.edu (setup a tunnel)
+
+
+usage: node generateKml.js [-u username] [-l | -v db_variable] [-f factor] [-d]
+  -u : postgres username
+  -l : list all variables
+  -v : variable to use
+  -f : (optional) scale factor for data, default 300
+  -d : (optional) dates to use, default last
+       -date's should be comma separated (no spaces). 
+       -a month's span can be included w/ a : 
+       -examples: 
+       	2013-01-01 (start 2013-01-01 end 2013-02-01) 
+       	2013-01-01:2 (start 2013-01-01 end 2013-03-01) 
+       	2013-*:2 (generate every 3rd month, each date range will span 3 months)
+       	2013-*:2,2014-*:2 (same as above but include 2014)
+       	2015-* (every month for 2014)
+

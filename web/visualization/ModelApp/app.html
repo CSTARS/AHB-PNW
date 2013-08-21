@@ -1,49 +1,50 @@
-<div id="root">
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand">AHB - 3PG Model</a>
+    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <div class="nav-collapse collapse" id="navbar-main">
+      <ul class="nav navbar-nav">
+        <li><a href="#contstants">Constants</a></li>
+        <li><a href="#metadata">Metadata</a></li>
+        <li><a href="#inputs">Inputs</a></li>
+        <li><a href="#output">Raw Output</a></li>
+        <li><a href="#chart">Charts</a></li>
+      </ul>
 
-	<div class="row-fluid">
-		<div class="span4">
-			<div class="accordion" id="accordion">
-			  <div class="accordion-group">
-			    <div class="accordion-heading">
-			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseZero">
-			        Constants
-			      </a>
-			    </div>
-			    <div id="collapseZero" class="accordion-body collapse in">
-			      <div class="accordion-inner">
-			       	<div id="constants" style="overflow:auto"></div>
-			      </div>
-			    </div>
-			  </div>
-			</div>
-		
-			
-		</div>
-		<div class="span8">
-			
-			<div class="accordion" id="accordion2">
-			  <div class="accordion-group">
-			    <div class="accordion-heading">
-			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-			        Metadata
-			      </a>
-			    </div>
-			    <div id="collapseOne" class="accordion-body collapse">
-			      <div class="accordion-inner">
-			       	<div id="metadata" style="overflow:auto"></div>
-			      </div>
-			    </div>
-			  </div>
-			  <div class="accordion-group">
-			    <div class="accordion-heading">
-			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-			        Inputs
-			      </a>
-			    </div>
-			    <div id="collapseTwo" class="accordion-body collapse">
-			      <div class="accordion-inner">
-			        <div id="inputs" style="overflow:auto">
-			        	<h4>Run Time</h4>
+      <ul class="nav navbar-nav pull-right">
+        <li><a >Login</a></li>
+      </ul>
+
+    </div>
+  </div>
+</div>
+
+<div class="container" id="root" style="padding-top:50px">
+
+	<section id="constants">
+                <div class="page-header">
+                        <h1>Constants</h1>
+                </div>
+               <div id="constants-content"></div>
+    </section>
+    
+    <section id="metadata">
+                <div class="page-header">
+                        <h1>Metadata</h1>
+                </div>
+               <div id="metadata-content"></div>
+    </section>
+
+	<section id="inputs">
+                <div class="page-header">
+                        <h1>Inputs</h1>
+                </div>
+               <div id="inputs-content">
+               		<h4>Run Time</h4>
 			        	<div>
 			        		<table class="table table-striped">
 			        			<tr>
@@ -92,36 +93,20 @@
 			        	
 			        	<h4>Weather</h4>
 			        	<div id="weather-inputs"></div>
-			        </div>
-			      </div>
-			    </div>
-			  </div>
-			  <div class="accordion-group">
-			    <div class="accordion-heading">
-			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapseThree">
-			        Raw Output
-			      </a>
-			    </div>
-			    <div id="collapseThree" class="accordion-body collapse">
-			      <div class="accordion-inner">
-			        <div id="output" style="overflow:auto"></div>
-			      </div>
-			    </div>
-			  </div>
-			  <div class="accordion-group">
-			    <div class="accordion-heading">
-			      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion4" href="#collapseFour">
-			        Charts
-			      </a>
-			    </div>
-			    <div id="collapseFour" class="accordion-body collapse">
-			      <div class="accordion-inner">
-			        <div id="chart" style="overflow:auto"></div>
-			      </div>
-			    </div>
-			  </div>
-			</div>
-			
-		</div>
-	</div>
+               		</div>
+    </section>
+    
+    <section id="output">
+                <div class="page-header">
+                        <h1>Raw Output</h1>
+                </div>
+               <div id="output-content" style="overflow:hidden"></div>
+    </section>
+    
+    <section id="chart">
+                <div class="page-header">
+                        <h1>Charts</h1>
+                </div>
+               <div id="chart-content"></div>
+    </section>
 </div>

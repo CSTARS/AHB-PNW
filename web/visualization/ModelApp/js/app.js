@@ -5,6 +5,18 @@ function qs(key) {
 }
 
 app.loadModelCode = function(version, callback) {
+	
+	// load script from a this server
+	// scripts should be in /jslib
+	if( app.devmode ) {
+		$.getScript("jslib/Model3PG.js", function(){
+			$.getScript("jslib/SingleRunFunctions.js", function(){
+				callback();
+			});
+		});
+		return;
+	}
+	
 	if( typeof version === 'function' ) callback = version;
 	if( !version || typeof version != 'string' ) version = "master";
 	
@@ -68,7 +80,7 @@ app.loadSpreadsheetData = function(callback) {
 
 app.init = function(callback) {
 	
-	var metaTable = new google.visualization.Table($("#metadata")[0]);
+	var metaTable = new google.visualization.Table($("#metadata-content")[0]);
 	metaTable.draw(app.spreadsheet.dataTables.metadata.getDataTable(), {});
 
 	app.createConstantInputs(app.spreadsheet.dataTables.constants.getDataTable().toJSON(),
@@ -90,7 +102,7 @@ app.createConstantInputs = function(table, metadata) {
 	table = JSON.parse(table);
 	metadata = JSON.parse(metadata);
 	
-	var ele = $("#constants");
+	var ele = $("#constants-content");
 	
 	var nameCol = 0;
 	var inputCol = 0;
@@ -132,7 +144,7 @@ app.getMetadataMap = function(metadata) {
 }
 
 app.createInputs = function(callback) {
-	var ele = $("#inputs");
+	var ele = $("#inputs-content");
 	
 	var cols = app.inputs.weather;
 	var table = "<table class='table table-striped'>";
@@ -290,7 +302,7 @@ app.showResults = function(rows) {
 	
 	app.showRawOutput(rows);
 	
-	$("#chart").html("");
+	$("#chart-content").html("");
 	var types = $("#chartTypeInput").val();
 	for( var i = 0; i < types.length; i++ ){
 		app.showChart(types[i], rows);
@@ -348,7 +360,7 @@ app.showRawOutput = function(data) {
 				(vType == 'None' ? '' : '('+vType+'='+variations[i]+')')+'</a></li>'));
 		contents.append($('<div class="tab-pane '+(i == 0 ? 'active' : "")+'" id="rawout'+i+'"></div>'));
 	}
-	$("#output").html("").append(tabs).append(contents);
+	$("#output-content").html("").append(tabs).append(contents);
 	$("#rawOutputTabs").tab();
 	
 	for( var i = 0; i < data.length; i++ ) {
