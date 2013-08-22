@@ -1,8 +1,17 @@
 var m3PGIO = {
   
   config : {
-    // spreadsheet or table where the input contstants are stored
-    constansts : "input_constants",
+    //spreadsheet or table where the managements choices are stored
+    manage_sheet : "manage_params",
+    
+    // spreadsheet or table where the plantation contstants are stored
+    plantation_sheet : "plantation_params",
+    
+    // spreadsheet or table where planted tree constants are stored
+    seedlingTree_sheet : "seedlingTree_params",
+    
+    // spreadsheet or table where coppiced tree constants are stored
+    coppicedTree_sheet : "coppicedTree_params",
     
     // spreadsheet or table where the input weather/soil/planted data is stored
     weather    : "Weather",
@@ -21,53 +30,200 @@ var m3PGIO = {
     output : "Output"
   },
   
-  readAllConstants : function(keyValMap) {
-    if( env() == "appscript" ) return m3PGIO._readAllConstantsAppscript(keyValMap);
-    else if( env() == "plv8" ) return m3PGIO._readAllConstantsPlv8(keyValMap);
+  readAllConstants : function(plantation) {
+    if( env() == "appscript" ) return m3PGIO._readAllConstantsAppscript(plantation);
+    else if( env() == "plv8" ) return m3PGIO._readAllConstantsPlv8(keyValMap);//TODO: needs to change. keyValMap not available anymore
     
     // badness
     log("Error: unknown env in 3PG.io.readAllConstants - "+env());
     return null;
   },
   
-  _readAllConstantsAppscript : function(keyValMap) {
-    var spreadsheet = SpreadsheetApp.getActiveSpreadsheet(); //Hardcoded 3PG spreadsheet id
+  _readAllConstantsAppscript : function(plantation) {
+    var spreadsheet = SpreadsheetApp.getActiveSpreadsheet(); 
     //var columns = spreadsheet.getLastColumn();
-    var sheet = spreadsheet.getSheetByName(m3PGIO.config.constansts); 
-    var data = sheet.getDataRange().getValues();
-    var keys = data[0];  
+    
+    //Read Plantation parameters
+    
+    sheet = spreadsheet.getSheetByName(m3PGIO.config.plantation_sheet); 
+    data = sheet.getDataRange().getValues();
+    keys = data[0];  
     
     for (var row = 1; row < data.length; row++) { //start from second row, value is in the forth column, index 3
       var rowData = data[row];
-      keyValMap[rowData[0]] = rowData[3];
+      plantation[rowData[0]] = rowData[3];
     } 
     
-    //log(keyValMap);
+    log(plantation);
     
-    return keyValMap;
+    //Read Tree parameters
+    var sheet = spreadsheet.getSheetByName(m3PGIO.config.coppicedTree_sheet); 
+    var data = sheet.getDataRange().getValues();
+    var keys = data[0];  
+    
+    
+    var tree = {}; //empty tree
+    log("coppiced_tree");
+    for (var row = 1; row < data.length; row++) { //start from second row, value is in the forth column, index 3
+      var rowData = data[row];
+      
+      //TODO: do some error handling here
+      //TODO: remove hard coded stuff - only here as a shortcut to get the code over to Justin quickly
+      if (rowData[0]=="fT"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].mn = array[0];
+        tree[rowData[0]].opt = array[1];
+        tree[rowData[0]].mx = array[2];
+      } else if (rowData[0]=="fAge"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].f0 = array[0];
+        tree[rowData[0]].f1 = array[1];
+        tree[rowData[0]].tm = array[2];
+        tree[rowData[0]].n = array[3];
+      } else if (rowData[0]=="SLA"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].f0 = array[0];
+        tree[rowData[0]].f1 = array[1];
+        tree[rowData[0]].tm = array[2];
+        tree[rowData[0]].n = array[3];
+      } else if (rowData[0]=="Conductance"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].mn = array[0];
+        tree[rowData[0]].mx = array[1];
+        tree[rowData[0]].lai = array[2];
+      } else if (rowData[0]=="Intcptn"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].mn = array[0];
+        tree[rowData[0]].mx = array[1];
+        tree[rowData[0]].lai = array[2];
+      } else if (rowData[0]=="pR"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].mn = array[0];
+        tree[rowData[0]].mx = array[1];
+        tree[rowData[0]].m0 = array[2];
+      } else if (rowData[0]=="litterfall"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].f0 = array[0];
+        tree[rowData[0]].f1 = array[1];
+        tree[rowData[0]].tm = array[2];
+        tree[rowData[0]].n = array[3];
+      } else if (rowData[3]!=undefined && rowData[3]!=null && rowData[3]!=""){      
+        tree[rowData[0]] = rowData[3];
+        if (rowData[0]==="fullCanAge"){
+         log("fullCanAge="+tree[rowData[0]]) ;
+        }
+      }
+      log(rowData[0] + ": "  + tree[rowData[0]]);
+    } 
+    tree.fullCanAge = 0;
+    plantation.coppicedTree = tree;
+    
+    spreadsheet.getSheetByName(m3PGIO.config.seedlingTree_sheet); 
+    data = sheet.getDataRange().getValues();
+    keys = data[0];  
+    tree = {}; //empty tree object
+    log("seedlingTree");
+    for (var row = 1; row < data.length; row++) { //start from second row, value is in the forth column, index 3
+      var rowData = data[row];
+      
+      //TODO: do some error handling here
+      //TODO: remove hard coded stuff - only here as a shortcut to get the code over to Justin quickly
+      if (rowData[0]=="fT"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].mn = array[0];
+        tree[rowData[0]].opt = array[1];
+        tree[rowData[0]].mx = array[2];
+      } else if (rowData[0]=="fAge"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].f0 = array[0];
+        tree[rowData[0]].f1 = array[1];
+        tree[rowData[0]].tm = array[2];
+        tree[rowData[0]].n = array[3];
+      } else if (rowData[0]=="SLA"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].f0 = array[0];
+        tree[rowData[0]].f1 = array[1];
+        tree[rowData[0]].tm = array[2];
+        tree[rowData[0]].n = array[3];
+      } else if (rowData[0]=="Conductance"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].mn = array[0];
+        tree[rowData[0]].mx = array[1];
+        tree[rowData[0]].lai = array[2];
+      } else if (rowData[0]=="Intcptn"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].mn = array[0];
+        tree[rowData[0]].mx = array[1];
+        tree[rowData[0]].lai = array[2];
+      } else if (rowData[0]=="pR"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].mn = array[0];
+        tree[rowData[0]].mx = array[1];
+        tree[rowData[0]].m0 = array[2];
+      } else if (rowData[0]=="litterfall"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].f0 = array[0];
+        tree[rowData[0]].f1 = array[1];
+        tree[rowData[0]].tm = array[2];
+        tree[rowData[0]].n = array[3];
+      } else{      
+        tree[rowData[0]] = rowData[3];
+        if (rowData[0]==="fullCanAge"){
+         log("fullCanAge="+tree[rowData[0]]) ;
+        }
+      }
+      log(rowData[0] + ": "  + tree[rowData[0]]);
+    } 
+    tree.fullCanAge = 0; //TOF\DO fix reading from SJ!!!
+    plantation.seedlingTree = tree;
+    
+
+    
+    //Read Manage parameters
+    
+    sheet = spreadsheet.getSheetByName(m3PGIO.config.manage_sheet); 
+    data = sheet.getDataRange().getValues();
+    keys = data[0];  
+    
+    for (var row = 1; row < data.length; row++) { //start from second row, value is in the forth column, index 3
+      var rowData = data[row];
+      manage[rowData[0]] = rowData[3];
+    } 
+    
+    log(manage);
+    
   },
   
   _readAllConstantsPlv8 : function(keyValMap) {
     // TODO
   },
   
-  testReadWeather : function() {
-    var weatherMap = {};
-    var soilMap = {};
-    var dateMap = {};
-    readWeather(weatherMap, soilMap, dateMap);
-  },
-  
-  readWeather : function(weatherMap, soilMap, dateMap) {
-    if( env() == "appscript" ) return m3PGIO._readWeatherAppScript(weatherMap, soilMap, dateMap);
-    else if( env() == "plv8" ) return m3PGIO._readWeatherPlv8(weatherMap, soilMap, dateMap);
+  readWeather : function(weatherMap, plantingParams) {
+    
+    if( env() == "appscript" ) return m3PGIO._readWeatherAppScript(weatherMap, plantingParams);
+    else if( env() == "plv8" ) return m3PGIO._readWeatherPlv8(weatherMap, soilMap, dateMap);//TODO: this needs to be rewritten, because soilMap doesn't exist enymor
     
     // badness
     log("Error: unknown env in 3PG.io.readWeather - "+env());
     return null;
   },
   
-  _readWeatherAppScript : function(weatherMap, soilMap, dateMap) {
+  _readWeatherAppScript : function(weatherMap, plantingParams) {
+    
     var spreadsheet = SpreadsheetApp.getActiveSpreadsheet(); //Hardcoded 3PG spreadsheet id
     //var columns = spreadsheet.getLastColumn();
     var sheet = spreadsheet.getSheetByName(m3PGIO.config.weather); //weather_Davis
@@ -81,41 +237,42 @@ var m3PGIO = {
     for (var row = 1; row < data.length; row++) {
       var rowData = data[row];
       
-      var item = {};
+      var monthOfWeather = clone(weather);//new weather object
       for (var column = 0; column < keys.length; column++) {
         if ( rowData[0] == m3PGIO.config.spreadsheet.plantedDateHeader ){
-          dateMap["datePlanted"] = rowData[1];
+          plantingParams["datePlanted"] = rowData[1];
           break;
         } else if ( rowData[0] == m3PGIO.config.spreadsheet.coppiceDateHeader ){
-          dateMap["dateCoppiced"] = rowData[1];
+          plantingParams["dateCoppiced"] = rowData[1];
           break;
-        } else if (rowData[0]== m3PGIO.config.spreadsheet.coppiceIntervalHeader ){
-          dateMap["yearsPerCoppice"] = rowData[1];
+        } else if ( rowData[0]== m3PGIO.config.spreadsheet.coppiceIntervalHeader ){
+          plantingParams["yearsPerCoppice"] = rowData[1];
           break;
         } else if ( rowData[0] == m3PGIO.config.spreadsheet.soilDataHeader ){
           //NOTICE: Order matters! TODO: make it not matter (read order from sheet)
-          soilMap["maxaws"] = rowData[1];
-          soilMap["swpower"] = rowData[2];
-          soilMap["swconst"] = rowData[3];
+          soil.maxAWS = rowData[1];
+          soil.swpower = rowData[2];
+          soil.swconst = rowData[3];
           break;
         }
         
-        if (rowData[0] != null && rowData[0] != ""){
-          item[keys[column]] = rowData[column];
+        if (rowData[column] != undefined && rowData[column] != null && rowData[column] != ""){
+          monthOfWeather[keys[column]] = rowData[column];
           if (keys[column] == "rad"){
-            item["nrel"] = rowData[column] / 0.0036;
+            monthOfWeather["nrel"] = rowData[column] / 0.0036;
           }
         }
       }
-      if (Object.getOwnPropertyNames(item).length>0){
-        weatherMap[row-1] = item; //to start indexing at 0
+      
+      if (Object.getOwnPropertyNames(monthOfWeather).length>0){ //TODO: do something with the nulls that are extra months?
+        weatherMap[row-1] = monthOfWeather; //to start indexing at 0
       }
     }       
     //var nrel = keyValMap.rad / 0.0036;
     
     log(weatherMap);
-    log(dateMap);
-    log(soilMap);
+    log(plantation);
+    log(soil);
     return weatherMap;
   },
   

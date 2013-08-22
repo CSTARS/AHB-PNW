@@ -3,65 +3,73 @@ var m3PGFunc = {};
 m3PGFunc.constant = function(c) {
 //    log("constant:"+c);
     var constant={
-	days_per_month:{
-	    value:30.4,
-	    units:"days/mo",
-	    description:"Number of Days in an average month"
-	},
-	e20:{
-	    value:2.2,
-	    units:"vp/t",
-	    description:"Rate of change of saturated VP with T at 20C"
-	},
-	rhoAir:{
-	    value:1.2,
-	    units:"kg/m^3",
-	    description:"Density of air"
-	},
-	lambda:{
-	    value:2460000,
-	    units:"J/kg",
-	    description:"Latent heat of vapourisation of h2o"
-	},
-	VPDconv:{
-	    value:0.000622,
-	    units:"?",
-	    description:"Convert VPD to saturation deficit = 18/29/1000"
-	},
-	Qa:{
-	    value:-90,
-	    units:"W/m^2",
-	    description:"Intercept of net radiation versus solar radiation relationship"
-	},
-	Qb:{
-	    value:0.8,
-	    units:"",
-	    description:""
-	},
-	gDM_mol:{
-	    value:24,
-	    units:"g/mol(C)",
-	    description:"Molecular weight of dry matter"
-	},
-	molPAR_MJ:{
-	    value:2.3,
-	    units:"mol(C)/MJ",
-	    description:"Conversion of solar radiation to PAR"
-	}
+    days_per_month:{
+        value:30.4,
+        units:"days/mo",
+        description:"Number of Days in an average month"
+    },
+    e20:{
+        value:2.2,
+        units:"vp/t",
+        description:"Rate of change of saturated VP with T at 20C"
+    },
+    rhoAir:{
+        value:1.2,
+        units:"kg/m^3",
+        description:"Density of air"
+    },
+    lambda:{
+        value:2460000,
+        units:"J/kg",
+        description:"Latent heat of vapourisation of h2o"
+    },
+    VPDconv:{
+        value:0.000622,
+        units:"?",
+        description:"Convert VPD to saturation deficit = 18/29/1000"
+    },
+    Qa:{
+        value:-90,
+        units:"W/m^2",
+        description:"Intercept of net radiation versus solar radiation relationship"
+    },
+    Qb:{
+        value:0.8,
+        units:"",
+        description:""
+    },
+    gDM_mol:{
+        value:24,
+        units:"g/mol(C)",
+        description:"Molecular weight of dry matter"
+    },
+    molPAR_MJ:{
+        value:2.3,
+        units:"mol(C)/MJ",
+        description:"Conversion of solar radiation to PAR"
+    }
     };
     return constant[c].value;
+}
+
+/** Time Dependant Parameter
+units='various'
+description='This function creates a time dependant function that decays 
+(or rises from f0 to f1.  The value (f0+f1)/2 is reached at tm, 
+and the slope of the line at tm is given by p.
+**/
+m3PGFunc.tdp = function(x,f) {
+  var p=f.f1 + (f.f0-f.f1)*Math.exp(-Math.log(2)*Math.pow((x/f.tm),f.n));
+//  log("f("+x+";f0,f1,tm,n)="+p+";"+f.f0+","+f.f1+","+f.tm+","+f.n);
+  return p;
 }
 
 /**Intcptn
 units='unitless' 
 description='Canopy Rainfall interception'
 */
-m3PGFunc.Intcptn = function(MaxIntcptn, cur_LAI, LAImaxIntcptn){
-  if (LAImaxIntcptn<=0){
-    return MaxIntcptn;    
-  }else {
-    return MaxIntcptn * Math.min(1 , cur_LAI / LAImaxIntcptn);
-  }
+m3PGFunc.Intcptn = function(cur_LAI, c){
+    return Math.max(c.mn,c.mn + (c.mx - c.mn) * Math.min(1 , cur_LAI / c.lai));
 }
 
 /**ASW
@@ -111,13 +119,18 @@ m3PGFunc.fFrost = function(date_tmin) {
 units=unitless
 description='Temperature modifier'
 */
-m3PGFunc.fT = function(date_tmin, date_tmax, Tmin, Tmax, Topt){
-  var tavg = (date_tmin + date_tmax) / 2;
-  if (tavg <= Tmin || tavg >= Tmax){
-     return 0;
+m3PGFunc.fT = function(tavg, fT){
+    var f;
+  if (tavg <= fT.mn || tavg >= fT.mx){
+     f=0;
   }else {
-     return  ( (tavg - Tmin) / (Topt - Tmin) )  *  Math.pow ( ( (Tmax - tavg) / (Tmax - Topt) )  , ( (Tmax - Topt) / (Topt - Tmin) ) );
+     f = ( (tavg - fT.mn) / (fT.opt - fT.mn) )  *  
+             Math.pow ( ( (fT.mx - tavg) / (fT.mx - fT.opt) ), 
+                        ( (fT.mx - fT.opt) / (fT.opt - fT.mn) ) 
+                      );
   }
+//  log("fT(x):mn,opt,mx=f:fT("+tavg+"):"+fT.mn+","+fT.opt+","+fT.mx+"="+f);
+    return(f);
 }
 
 /**Irrig
@@ -126,21 +139,6 @@ description='Required Irrigation'
 */
 m3PGFunc.Irrig = function(irrigFrac, cur_Transp, cur_Intcptn, date_ppt){
    return Math.max(0 , irrigFrac * (cur_Transp - (1 - cur_Intcptn) * date_ppt) );
-}
-
-
-/**fAge
-//TODO: recheck description
-TODO: set nage=0 as a param in the model setup (like a checkbox)
-units='unitless'
-description='age modifier'
-*/
-m3PGFunc.fAge = function(prev_StandAge, maxAge, rAge, nAge){
-  if (nAge==0){
-    return 1;
-  } else{
-    return (1 / (1 + Math.pow( ( (prev_StandAge / maxAge) / rAge) , nAge) ) );
-  }
 }
 
 /**fSW
@@ -167,20 +165,12 @@ m3PGFunc.PhysMod = function(cur_fVPD, cur_fSW, cur_fAge){
    return Math.min(cur_fVPD , cur_fSW) * cur_fAge;
 }
 
-/**LAI
-units='m2/m2' 
-description='Leaf Area Index'
-*/
-m3PGFunc.LAI = function(prev_WF, SLA1, SLA0, prev_StandAge, tSLA){
-   return prev_WF * 0.1 * (SLA1 + (SLA0 - SLA1) * Math.exp(-0.693147180559945 * Math.pow( (prev_StandAge / tSLA) , 2) ) );
-}
-
 /**CanCond
 units='gc,m/s' 
 description='Canopy Conductance'
 */
-m3PGFunc.CanCond = function(MaxCond, cur_PhysMod, cur_LAI, LAIgcx){
-   return Math.max(0.0001 , MaxCond * cur_PhysMod * Math.min(1 , cur_LAI / LAIgcx) );
+m3PGFunc.CanCond = function(cur_PhysMod, cur_LAI, cond){
+   return Math.max(cond.mn , cond.mx * cur_PhysMod * Math.min(1 , cur_LAI / cond.lai) );
 }
 
 /**Transp
@@ -207,35 +197,9 @@ m3PGFunc.NPP = function(prev_StandAge, fullCanAge, xPP, k, prev_LAI, fVPD, fSW, 
   var CanCover = 1;
   if (prev_StandAge < fullCanAge){
     CanCover = prev_StandAge / fullCanAge;
-  } //else CanCover = 1;
-    // log("StandAge:"+prev_StandAge+
-    // 	" fullCanAge:"+fullCanAge+
-    // 	" xPP:"+xPP+
-    // 	" k:"+k+
-    // 	" LAI:"+prev_LAI+
-    // 	" fVPD:"+fVPD+
-    // 	" fSW:"+fSW+
-    // 	" fAge:"+fAge+
-    // 	" alpha:"+alpha+
-    // 	" fNutr:"+fNutr+
-    // 	" fT:"+fT+
-    // 	" fFrost"+fFrost
-    //    );
-	
+  } 
 
   return xPP * (1 - (Math.exp(-k * prev_LAI) ) ) * CanCover * Math.min(fVPD , fSW) * fAge * alpha * fNutr * fT * fFrost;
-}
-
-/**litterfall
-TODO: untis + definition
-I'm not sure I believe the litterfall should be reset.  That means the root never gets old.
-*/
-m3PGFunc.litterfall = function(gammaFx, gammaF0, prev_StandAge, tgammaF, prev_lastCoppiceAge){
-    prev_lastCoppiceAge = typeof prev_lastCoppiceAge !== 'undefined' ? 
-	prev_lastCoppiceAge : 0;
-  var prev_realStandAge = prev_StandAge - prev_lastCoppiceAge;
-  //log("DEBUGGING COPPICE: prev_StandAge=" + prev_StandAge +"; prev_realStandAge=" + prev_realStandAge);
-  return gammaFx * gammaF0 / (gammaF0 + (gammaFx - gammaF0) *  Math.exp(-12 * Math.log(1 + gammaFx / gammaF0) * prev_realStandAge / tgammaF) );
 }
 
 /**pS
@@ -250,8 +214,9 @@ m3PGFunc.pS = function(prev_WS, StockingDensity,
 /**pR
 TODO: units and description
 */
-m3PGFunc.pR = function(pRx, pRn, cur_PhysMod, m0, FR){
-  return (pRx * pRn) / (pRn + (pRx - pRn) * cur_PhysMod * (m0 + (1 - m0) * FR) );
+m3PGFunc.pR = function(cur_PhysMod, FR,pR){
+  return (pR.mx * pR.mn) / 
+         (pR.mn + (pR.mx - pR.mn) * cur_PhysMod * (pR.m0 + (1 - pR.m0) * FR) );
 }
 
 /**pF
@@ -285,22 +250,6 @@ m3PGFunc.WS = function(prev_WS, cur_NPP, cur_pS){
    return prev_WS + cur_NPP * cur_pS;
 } 
 
-/**W
-units='t/ha' 
-description='Tree Biomass'
-*/
-m3PGFunc.W = function(cur_WF, cur_WR, cur_WS){
-  return cur_WF + cur_WR + cur_WS;
-}
-
-/**StandAge
-TODO: units and description
-*/
-m3PGFunc.StandAge = function(prev_StandAge){
-  return prev_StandAge + 1.0/12;
-}
-
-
 /*** FUNCTIONS FROM ANOTHER MAKEFILE solar.mk in alder:/home/quinn/qjhart.postgis-data/m3pg$ cat solar.mk */
 
 /**PAR
@@ -311,7 +260,7 @@ molPAR_MJ [mol/MJ] is a constant Conversion of solar radiation to PAR
 */
 m3PGFunc.PAR = function(date_rad, molPAR_MJ){
     molPAR_MJ = typeof molPAR_MJ !== 'undefined' ? 
-	molPAR_MJ : m3PGFunc.constant('molPAR_MJ');
+    molPAR_MJ : m3PGFunc.constant('molPAR_MJ');
     return date_rad * m3PGFunc.constant('days_per_month') * molPAR_MJ;
 }
 
@@ -323,7 +272,7 @@ gGM_mol [g/mol] is the molecular weight of dry matter
 */
 m3PGFunc.xPP = function(y, cur_PAR, gDM_mol){
     gDM_mol = typeof gDM_mol !== 'undefined' ? 
-	gDM_mol : m3PGFunc.constant('gDM_mol');
+    gDM_mol : m3PGFunc.constant('gDM_mol');
     return y * cur_PAR * gDM_mol / 100;
 }
       
@@ -372,49 +321,49 @@ m3PGFunc.coppice.WR = function(prev_WR, cur_NPP, cur_pR, Rttover,RootP){
 
 // NODE EXPORT HOOK
 if (typeof module !== 'undefined' && module.exports) {
-	exports.dump = function() {
-		var objStr = "m3PGFunc={";
-		for( var key in m3PGFunc ) {
-			if( typeof m3PGFunc[key] == 'function' ) {
-				objStr += key+":"+m3PGFunc[key].toString()+",";
-			} else {
-				objStr += key+":"+JSON.stringify(m3PGFunc[key])+",";
-			}
-		}
-		return objStr.replace(/,$/,'')+"};";
-	}
-	
-	exports.testFunctions = function() {
-		var key, args, funcStr, assignments;
-		var ret = "";
-		
-		for( key in m3PGFunc ) {
-			if( typeof m3PGFunc[key] == 'function' ) {
-				funcStr = "\nCREATE OR REPLACE FUNCTION "+key+"(";
-				
-				args = getArguments(m3PGFunc[key]);
-				
-				for( var i = 0; i < args.length; i++ ) {
-					if( args[i].replace(/\s/g,'').length > 0 ) {
-						funcStr += "\""+args[i].replace(/\s/g,'')+"\" float, ";
-					}
-				}
-				funcStr = funcStr.replace(/,\s$/,'')+") RETURNS\nfloat AS $$\n";
-				funcStr += getBody(m3PGFunc[key])+"\n";
-				ret += funcStr + "$$ LANGUAGE plv8 IMMUTABLE STRICT;\n";
-			}
-		}
-		return ret;
-	}
-	
-	function getArguments(f) {
-		return f.toString().split("(")[1].split(")")[0].replace(/\s/,'').split(",");
-	}
-	
-	function getBody(f) {
-		var parts = f.toString().split(")");
-		var body = parts[1];
-		parts.splice(0,1);
-		return parts.join(')').replace(/^\s*{/,'').replace(/}[\n\s]*$/,'');
-	}
+    exports.dump = function() {
+        var objStr = "m3PGFunc={";
+        for( var key in m3PGFunc ) {
+            if( typeof m3PGFunc[key] == 'function' ) {
+                objStr += key+":"+m3PGFunc[key].toString()+",";
+            } else {
+                objStr += key+":"+JSON.stringify(m3PGFunc[key])+",";
+            }
+        }
+        return objStr.replace(/,$/,'')+"};";
+    }
+    
+    exports.testFunctions = function() {
+        var key, args, funcStr, assignments;
+        var ret = "";
+        
+        for( key in m3PGFunc ) {
+            if( typeof m3PGFunc[key] == 'function' ) {
+                funcStr = "\nCREATE OR REPLACE FUNCTION "+key+"(";
+                
+                args = getArguments(m3PGFunc[key]);
+                
+                for( var i = 0; i < args.length; i++ ) {
+                    if( args[i].replace(/\s/g,'').length > 0 ) {
+                        funcStr += "\""+args[i].replace(/\s/g,'')+"\" float, ";
+                    }
+                }
+                funcStr = funcStr.replace(/,\s$/,'')+") RETURNS\nfloat AS $$\n";
+                funcStr += getBody(m3PGFunc[key])+"\n";
+                ret += funcStr + "$$ LANGUAGE plv8 IMMUTABLE STRICT;\n";
+            }
+        }
+        return ret;
+    }
+    
+    function getArguments(f) {
+        return f.toString().split("(")[1].split(")")[0].replace(/\s/,'').split(",");
+    }
+    
+    function getBody(f) {
+        var parts = f.toString().split(")");
+        var body = parts[1];
+        parts.splice(0,1);
+        return parts.join(')').replace(/^\s*{/,'').replace(/}[\n\s]*$/,'');
+    }
 }
