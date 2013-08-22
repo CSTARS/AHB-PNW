@@ -35,7 +35,19 @@ app.loadModelCode = function(version, callback) {
 				success: function(data, status, xhr) {
 					eval(atob(data.content.replace(/[\s\n]/g,'')));
 					window.m3PGFunc = m3PGFunc;
-					callback();
+					
+					$.ajax({
+						url : "https://api.github.com/repos/CSTARS/AHB-PNW/contents/models/3pg/js/DataModel.js?ref="+version,
+						success: function(data, status, xhr) {
+							eval(atob(data.content.replace(/[\s\n]/g,'')));
+							app.model = model;
+							callback();
+						},
+						error : function() {
+							alert("Failed to load SingleRunFunctions.js from github");
+						}
+					});
+					
 				},
 				error : function() {
 					alert("Failed to load SingleRunFunctions.js from github");
