@@ -8,15 +8,13 @@
     </button>
     <div class="nav-collapse collapse" id="navbar-main">
       <ul class="nav navbar-nav">
-        <li><a href="#contstants">Constants</a></li>
-        <li><a href="#metadata">Metadata</a></li>
         <li><a href="#inputs">Inputs</a></li>
+        <li><a href="#configuration">Configuration</a></li>
         <li><a href="#output">Raw Output</a></li>
         <li><a href="#chart">Charts</a></li>
       </ul>
 
-      <ul class="nav navbar-nav pull-right">
-        <li><a >Login</a></li>
+      <ul class="nav navbar-nav pull-right"  id="login-header">
       </ul>
 
     </div>
@@ -25,25 +23,18 @@
 
 <div class="container" id="root" style="padding-top:50px">
 
-	<section id="constants">
-                <div class="page-header">
-                        <h1>Constants</h1>
-                </div>
-               <div id="constants-content"></div>
-    </section>
-    
-    <section id="metadata">
-                <div class="page-header">
-                        <h1>Metadata</h1>
-                </div>
-               <div id="metadata-content"></div>
-    </section>
-
 	<section id="inputs">
                 <div class="page-header">
                         <h1>Inputs</h1>
                 </div>
-               <div id="inputs-content">
+               <div id="inputs-content"></div>
+    </section>
+
+	<section id="configuration">
+                <div class="page-header">
+                        <h1>Configuration</h1>
+                </div>
+               <div id="configuration-content">
                		<h4>Run Time</h4>
 			        	<div>
 			        		<table class="table table-striped">
@@ -72,15 +63,6 @@
 			        			</tr>
 			        		</table>
 			        	</div>
-			        
-			        	<h4>Soil</h4>
-			        	<div>
-			        		<table class="table table-striped">
-			        			<tr><td>Max Available Soil Water (maxaws)</td><td><input type="text" class="minput" id="input-soil-maxaws" style="height:40px" /></td></tr>
-			        			<tr><td>Power of Moisture Ratio Deficit (swpower)</td><td><input type="text" class="minput" id="input-soil-swpower" style="height:40px" /></td></tr>
-			        			<tr><td>Moisture Ratio Deficit (swconst)</td><td><input type="text" class="minput" id="input-soil-swconst"  style="height:40px" /></td></tr>
-			        		</table>
-			        	</div>
 			        	
 			        	<h4>Dates</h4>
 			        	<div>
@@ -90,9 +72,7 @@
 			        			<tr><td>Coppice Interval Years</td><td><input type="text" class="minput" id="input-date-yearsPerCoppice" style="height:40px" /></td></tr>
 			        		</table>
 			        	</div>
-			        	
-			        	<h4>Weather</h4>
-			        	<div id="weather-inputs"></div>
+
                		</div>
     </section>
     
@@ -110,3 +90,18 @@
                <div id="chart-content"></div>
     </section>
 </div>
+
+<div class="modal fade" id="google-login">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
+      </div>
+      <div class="modal-body">
+     
+      </div>
+     
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

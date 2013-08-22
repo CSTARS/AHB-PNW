@@ -4,7 +4,7 @@ app.drive = (function(){
 	var TREE_MIME_TYPE = "application/vnd.ahb-3pg.tree";
 	var DRIVE_API_VERSION = "v2";
 	
-	var CLIENT_ID = "344190713465.apps.googleusercontent.com";
+	var CLIENT_ID = "962079416283-mn2f8g2avn4t091f4chlfjac5juc5rmr.apps.googleusercontent.com";
 	
 	var OAUTH_SCOPES = 'https://www.googleapis.com/auth/drive.file '+
 		'https://www.googleapis.com/auth/drive.install '+
@@ -13,12 +13,65 @@ app.drive = (function(){
 	var token = "";
 	
 	function init() {
+		$("#google-login").modal({show:false});
+		_createLoginBtn();
 		
+		$("#login-with-google").
 		
-		setInterval(function(){
-			_checkToken();
-		},1000*5*60);
+		loadApi(function(){
+			setInterval(function(){
+				_checkToken();
+			},1000*5*60);
+		});
+		
 	}
+	
+	function _createLoginBtn() {
+		var btn = $('<li class="dropdown">'+
+				'<a class="dropdown-toggle" data-toggle="dropdown">Login<b class="caret"></b></a>'+
+				'<ul class="dropdown-menu">'+
+					'<li><a id="login-with-google">Login with Google</a></li>'+
+				'</ul></li>')
+
+		btn.find('#login-with-google').on('click', function(){
+			$("#google-login").modal('hide');
+			signIn(function(token){
+				$.ajax({
+					url  : "https://www.googleapis.com/oauth2/v1/userinfo",
+					beforeSend: function (request) {
+		                request.setRequestHeader("Authorization", 'Bearer ' + token.access_token);
+		            },
+					success : function(data, status, xhr) {
+						try {
+							data = JSON.parse(data);
+						} catch (e) {}
+						
+						_createLogoutBtn(data.name);
+						
+					},
+					error : function() {}
+				});
+			});
+		});
+
+		$("#login-header").html("").append(btn);
+	}
+	
+	function _createLogoutBtn(name) {
+		var btn = $('<li class="dropdown">'+
+				'<a class="dropdown-toggle" data-toggle="dropdown">'+name+'<b class="caret"></b></a>'+
+				'<ul class="dropdown-menu">'+
+					'<li><a id="logout">Logout</a></li>'+
+				'</ul></li>')
+
+		btn.find('#logout').on('click', function(){
+			token = null;
+			_createLoginBtn();
+		});
+	
+		$("#login-header").html("").append(btn);
+	}
+	
 	
 	// tokens expire, every once in awhile check the current token hasn't
 	// if it has, then update
@@ -144,7 +197,7 @@ app.drive = (function(){
 	        base64Data +
 	        close_delim;
 
-	    var request = $wnd.gapi.client.request({
+	    var request = gapi.client.request({
 	        'path': '/upload/drive/v2/files',
 	        'method': 'POST',
 	        'params': {'uploadType': 'multipart'},
