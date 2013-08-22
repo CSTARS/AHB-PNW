@@ -4,7 +4,16 @@ app.inputForm = (function(){
 		'<div class="col-lg-6"><div class="form-group">'+
 			'<label for="{{id}}" class="col-lg-4 control-label">{{label}}</label>'+
 			'<div class="col-lg-8">'+
-				'<input type="text" class="form-control" id="{{id}}" style="width:200px;display:inline-block">&nbsp;&nbsp;{{units}}'+
+				'<input type="{{type}}" class="form-control" id="{{id}}" style="width:200px;display:inline-block">&nbsp;&nbsp;{{units}}'+
+				'<p class="help-block">{{description}}</p>' +
+			'</div>'+
+		'</div></div>';
+	
+	var ARRAY_INPUT_TEMPLATE = 
+		'<div class="col-lg-6"><div class="form-group">'+
+			'<label for="{{id}}" class="col-lg-4 control-label">{{label}}</label>'+
+			'<div class="col-lg-8">'+
+				'{{inputs}}'+
 				'<p class="help-block">{{description}}</p>' +
 			'</div>'+
 		'</div></div>';
@@ -31,7 +40,7 @@ app.inputForm = (function(){
 	}
 	
 	function _createWeatherInputs() {
-		for( var attr in app.models.weather ) {
+		for( var attr in app.model.weather ) {
 			if( attr != "nrel" ) cols.push(attr);
 		}
 		
@@ -95,8 +104,8 @@ app.inputForm = (function(){
 	function create(ele) {
 		var model, m, attr, config;
 		
-		for( model in app.models ) {
-			m = app.models[model];
+		for( model in app.model ) {
+			m = app.model[model];
 			for( attr in m ) {
 				config = m[attr];
 				
@@ -139,11 +148,33 @@ app.inputForm = (function(){
 				for( var i = 0; i < attributes.length; i++) {
 					var attr = attributes[i];
 					
-					row += INPUT_TEMPLATE
-											.replace(/{{id}}/g, model+"_"+attr.label)
-											.replace(/{{label}}/g, attr.label)
-											.replace(/{{units}}/g, attr.units ? attr.units : '')
-											.replace(/{{description}}/g, attr.description ? attr.description : '');
+					if( typeof attr.value == 'object' ) {
+						var arrInputs = "";
+						for( var key in attr.value ) {
+							arrInputs += key+' <input type="number" class="form-control" id="{'+model+"_"+attr.label+"_"+key+
+													'" style="width:60px;display:inline-block">&nbsp;&nbsp;';
+						}
+						arrInputs += attr.units ? attr.units : '';
+						
+						row += ARRAY_INPUT_TEMPLATE
+							.replace(/{{id}}/g, model+"_"+attr.label)
+							.replace(/{{inputs}}/g, arrInputs)
+							.replace(/{{label}}/g, attr.label)
+							.replace(/{{description}}/g, attr.description ? attr.description : '');
+						
+						
+					} else {
+						var type = "number";
+						if( typeof attr.value == "string" ) type = "text";
+						
+						row += INPUT_TEMPLATE
+							.replace(/{{id}}/g, model+"_"+attr.label)
+							.replace(/{{label}}/g, attr.label)
+							.replace(/{{type}}/g, type)
+							.replace(/{{units}}/g, attr.units ? attr.units : '')
+							.replace(/{{description}}/g, attr.description ? attr.description : '');
+					}
+					
 					c++;
 					if( c == 2 ) {
 						c = 0;
@@ -159,7 +190,7 @@ app.inputForm = (function(){
 		content += '</div>';
 		tabHeader += "</ul>";
 		
-		ele.html(tabHeader+content);
+		ele.html(tabHeader+"<div class='form-horizontal'>"+content+"</div>");
 		
 		$('#input_tabs a').click(function (e) {
 			  e.preventDefault()
