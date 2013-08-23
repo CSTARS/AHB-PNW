@@ -91,17 +91,21 @@
     </section>
 </div>
 
-<div class="modal fade" id="google-login">
+<div class="modal fade" id="select-weather-modal">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-
+		Select Location
       </div>
       <div class="modal-body">
-     
+     		<div id="gmap" style="height:350px;width:100%;border:1px solid #ccc"></div>
+     		click map to select location
       </div>
-     
+      <div class="modal-footer">
+     	<a class="btn pull-right" data-dismiss="modal" >Cancel</a>
+      </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+

@@ -4,7 +4,7 @@ app.inputForm = (function(){
 		'<div class="col-lg-6"><div class="form-group">'+
 			'<label for="{{id}}" class="col-lg-4 control-label">{{label}}</label>'+
 			'<div class="col-lg-8">'+
-				'<input type="{{type}}" class="form-control" id="{{id}}" style="width:200px;display:inline-block">&nbsp;&nbsp;{{units}}'+
+				'<input type="{{type}}" class="form-control" id="{{id}}" style="width:200px;display:inline-block" value="{{value}}">&nbsp;&nbsp;{{units}}'+
 				'<p class="help-block">{{description}}</p>' +
 			'</div>'+
 		'</div></div>';
@@ -25,6 +25,8 @@ app.inputForm = (function(){
 	
 	// for weather data
 	var cols = [];
+	
+	var map = null;
 	
 	/**
 	 * Options : 
@@ -64,41 +66,94 @@ app.inputForm = (function(){
 			}
 			table += "</tr>";
 		}
-		return table+"</table>";
+		return "<div style='margin-top:10px'><a class='btn btn-primary' id='select-weather-location'><i class='icon-map-marker'></i> Select Location</a> "+
+					"<div class='pull-right'>Current Location: <span id='current-weather-location'></span></div></div>"+ 
+					table+"</table>";
 		
 	}
 	
 	function _setWeatherData() {
 		var ll = qs("ll");
 		if( ll ) {
-			var url = "http://alder.bioenergy.casil.ucdavis.edu:8080/vizsource/rest?view=pointToWeather("+ll+",8192)"
-			var q = new google.visualization.Query(url);
-			q.setQuery('SELECT *');
-			q.send(function(response){
-				var table = JSON.parse(response.getDataTable().toJSON());
-				
-				for( var i = 0; i < table.rows.length; i++ ) {
-					for( var j = 1; j < table.cols.length; j++ ) {
-						$("#weather-"+cols[j]+"-"+i).val(table.rows[i].c[j].v);
-					}
-				}
-				
-			});
-			
-			var url = "http://alder.bioenergy.casil.ucdavis.edu:8080/vizsource/rest?view=pointToSOIL("+ll+",8192)"
-			var q = new google.visualization.Query(url);
-			q.setQuery('SELECT *');
-			q.send(function(response){
-				var table = JSON.parse(response.getDataTable().toJSON());
-				for( var i = 0; i < table.cols.length; i++ ) {
-					$("#soil-"+table.cols[i].id).val(table.rows[0].c[i].v);
-				}
-				
-
-			});
-			
-			
+			ll = ll.split(",");
+			_queryWeatherData(ll[0], ll[1]);
+		} else {
+			$("#current-weather-location").html("Not Set"); 
 		}
+	}
+	
+	function _queryWeatherData(lng, lat) {
+		var url = "http://alder.bioenergy.casil.ucdavis.edu:8080/vizsource/rest?view=pointToWeather("+lng+","+lat+",8192)"
+		var q = new google.visualization.Query(url);
+		q.setQuery('SELECT *');
+		q.send(function(response){
+			var table = JSON.parse(response.getDataTable().toJSON());
+			
+			for( var i = 0; i < table.rows.length; i++ ) {
+				for( var j = 1; j < table.cols.length; j++ ) {
+					$("#weather-"+cols[j]+"-"+i).val(table.rows[i].c[j] ? table.rows[i].c[j].v : "");
+				}
+			}
+			
+		});
+		
+		var url = "http://alder.bioenergy.casil.ucdavis.edu:8080/vizsource/rest?view=pointToSOIL("+lng+","+lat+",8192)"
+		var q = new google.visualization.Query(url);
+		q.setQuery('SELECT *');
+		q.send(function(response){
+			var table = JSON.parse(response.getDataTable().toJSON());
+			for( var i = 0; i < table.cols.length; i++ ) {
+				$("#soil-"+table.cols[i].id).val(table.rows[0].c[i].v);
+			}
+			
+
+		});
+		$("#current-weather-location").html(lng+", "+lat); 
+	}
+	
+	function _selectWeatherLocation() {
+		if( !map ) {
+			$("#select-weather-modal").modal({});
+			
+			// wait for the modal to init
+			setTimeout(function(){
+				map = new google.maps.Map($("#gmap")[0], {
+					center : new google.maps.LatLng(35, -121),
+					zoom: 5,
+					mapTypeId : google.maps.MapTypeId.ROADMAP
+				});
+				
+				var fusionLayer = new google.maps.FusionTablesLayer({
+					  query: {
+					    select: 'boundary',
+					    from: '1hV9vQG3Sc0JLPduFpWJztfLK-ex6ccyMg_ptE_s'
+					  },
+					  styles: [{
+				         polygonOptions: {
+				           strokeColor   : "#0000FF",
+				           strokeOpacity : 0.5,
+				           fillColor     : '#FEFEFE',
+				           fillOpacity   : 0.2
+				         }
+				      }],
+					  suppressInfoWindows : true
+				});
+				fusionLayer.opacity = .8;
+				fusionLayer.setMap(map);
+				
+				google.maps.event.addListener(map, 'click', function(e) {
+					console.log(e);
+					_queryWeatherData(e.latLng.lng(), e.latLng.lat())
+					$("#select-weather-modal").modal('hide');
+				});
+				
+			},500);
+		} else {
+			$("#select-weather-modal").modal('show');
+		}
+		
+		
+		
 	}
 	
 	function create(ele) {
@@ -171,6 +226,7 @@ app.inputForm = (function(){
 							.replace(/{{id}}/g, model+"_"+attr.label)
 							.replace(/{{label}}/g, attr.label)
 							.replace(/{{type}}/g, type)
+							.replace(/{{value}}/g, attr.value != -1 ? attr.value : '')
 							.replace(/{{units}}/g, attr.units ? attr.units : '')
 							.replace(/{{description}}/g, attr.description ? attr.description : '');
 					}
@@ -197,6 +253,8 @@ app.inputForm = (function(){
 			  $(this).tab('show')
 		});
 		$('#tab_inputs_weather').tab('show');
+		
+		$('#select-weather-location').on('click', _selectWeatherLocation);
 		
 		_setWeatherData();
 	}
