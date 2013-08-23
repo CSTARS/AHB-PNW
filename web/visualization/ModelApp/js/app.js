@@ -35,7 +35,19 @@ app.loadModelCode = function(version, callback) {
 				success: function(data, status, xhr) {
 					eval(atob(data.content.replace(/[\s\n]/g,'')));
 					window.m3PGFunc = m3PGFunc;
-					callback();
+					
+					$.ajax({
+						url : "https://api.github.com/repos/CSTARS/AHB-PNW/contents/models/3pg/js/DataModel.js?ref="+version,
+						success: function(data, status, xhr) {
+							eval(atob(data.content.replace(/[\s\n]/g,'')));
+							app.model = model;
+							callback();
+						},
+						error : function() {
+							alert("Failed to load SingleRunFunctions.js from github");
+						}
+					});
+					
 				},
 				error : function() {
 					alert("Failed to load SingleRunFunctions.js from github");
@@ -56,35 +68,22 @@ app.loadSpreadsheetData = function(callback) {
 	var loadCount = 0;
 	
 	var metadataQuery = new google.visualization.Query(rootUrl+app.spreadsheet.worksheets.metadata);
-	var constantsQuery = new google.visualization.Query(rootUrl+app.spreadsheet.worksheets.constants);
 	
 	metadataQuery.setQuery('');
-	constantsQuery.setQuery('');
+
 	
 	metadataQuery.send(function(response){
 		app.spreadsheet.dataTables["metadata"] = response;
-		check();
+		callback(); 
 	});
-	
-	constantsQuery.send(function(response){
-		app.spreadsheet.dataTables["constants"] = response;
-		check();
-	});
-	
-	function check() {
-		loadCount++;
-		if( loadCount == 2 && callback ) callback(); 
-	}
 	
 }
 
 app.init = function(callback) {
 	
-	var metaTable = new google.visualization.Table($("#metadata-content")[0]);
-	metaTable.draw(app.spreadsheet.dataTables.metadata.getDataTable(), {});
-
-	app.createConstantInputs(app.spreadsheet.dataTables.constants.getDataTable().toJSON(),
-			app.spreadsheet.dataTables.metadata.getDataTable().toJSON());
+	var ele = $("#inputs-content");
+	app.inputForm.create(ele);
+	
 	app.createInputs(function(){
 		
 		$(".minput").on('blur', function(){
@@ -98,76 +97,11 @@ app.init = function(callback) {
 		
 }
 
-app.createConstantInputs = function(table, metadata) {
-	table = JSON.parse(table);
-	metadata = JSON.parse(metadata);
-	
-	var ele = $("#constants-content");
-	
-	var nameCol = 0;
-	var inputCol = 0;
-	for( var i = 0; i < table.cols.length; i++ ) {
-		if( table.cols[i].label == "constant" ) nameCol = i;
-		else if( table.cols[i].label == "default_value" ) inputCol = i;
-	}
-	
-	var metadataMap = app.getMetadataMap(metadata);
-	
-	var variationAnalysisInput = $("#variationAnalysisInput");
-	var html = "<table class='table table-striped'>";
-	for( var i = 0; i < table.rows.length; i++ ) {
-		var val = table.rows[i].c[nameCol].v;
-		html += "<tr><td>"+( metadataMap[val.toLowerCase()] ? "<a data-toggle='tooltip' title data-original-title='"+metadataMap[val.toLowerCase()]+"'>"+val+"</a>" : val)+"</td>"+
-				"<td><input id='input-const-"+val+"' class='minput const' style='height:30px' placeholder='"+
-				table.rows[i].c[inputCol].v+"' value='"+table.rows[i].c[inputCol].v+"' type='text'  /></td></tr>";
-		variationAnalysisInput.append($("<option value='"+val+"'>"+val+"</option>"))
-	}
-	ele.html(html+"</table>");
-	
-}
-
-app.getMetadataMap = function(metadata) {
-	var map = {};
-	var mKeyCol = 0;
-	var mValCal = 0;
-	
-	for( var i = 0; i < metadata.cols.length; i++ ) {
-		if( metadata.cols[i].label.match(/3PGpjs.*/) ) mKeyCol = i;
-		else if( metadata.cols[i].label.match(/Parameter description.*/) ) mValCal = i;
-	}
-	
-	for( var i = 0; i < metadata.rows.length; i++ ) {
-		map[metadata.rows[i].c[mKeyCol].v.toLowerCase()] = metadata.rows[i].c[mValCal].v;
-	}
-	
-	return map;
-}
 
 app.createInputs = function(callback) {
 	var ele = $("#inputs-content");
 	
-	var cols = app.inputs.weather;
-	var table = "<table class='table table-striped'>";
-
-	table += "<tr>";
-	for( var i = 0; i < cols.length; i++ ) {
-		table += "<td>"+cols[i]+"</td>";
-	}
-	table += "</tr>";
 	
-	for( var i = 0; i < 12; i++ ) {
-		table += "<tr>";
-		for( var j = 0; j < cols.length; j++ ) {
-			if( j == 0 ) {
-				table += "<td>"+(i+1)+"</td>";
-			} else {
-				table += "<td><input class='minput' id='input-weather-"+cols[j]+"-"+i+"' type='text' style='width:50px;height:40px' /></td>";
-			}
-		}
-		table += "</tr>";
-	}
-	table = $(table+"</table>");
-	ele.append(table);
 	
 	var chartTypeSelector = $("#chartTypeInput");
 	for( var i = 0; i < app.outputs.length; i++ ) {
@@ -210,46 +144,7 @@ app.createInputs = function(callback) {
 		$("#multiRunVarInputs").val($("#input-const-"+val).val());
 	});
 	
-	// load the lat lng data if it exsits
-	var ll = qs("ll");
-	if( ll ) {
-		var url = "http://alder.bioenergy.casil.ucdavis.edu:8080/vizsource/rest?view=pointToWeather("+ll+",8192)"
-		var q = new google.visualization.Query(url);
-		q.setQuery('SELECT *');
-		q.send(function(response){
-			var table = JSON.parse(response.getDataTable().toJSON());
-			
-			for( var i = 0; i < table.rows.length; i++ ) {
-				for( var j = 1; j < table.cols.length; j++ ) {
-					$("#input-weather-"+cols[j]+"-"+i).val(table.rows[i].c[j].v);
-				}
-			}
-			
-			check();
-		});
-		
-		var url = "http://alder.bioenergy.casil.ucdavis.edu:8080/vizsource/rest?view=pointToSOIL("+ll+",8192)"
-		var q = new google.visualization.Query(url);
-		q.setQuery('SELECT *');
-		q.send(function(response){
-			var table = JSON.parse(response.getDataTable().toJSON());
-			for( var i = 0; i < table.cols.length; i++ ) {
-				$("#input-soil-"+table.cols[i].id).val(table.rows[0].c[i].v);
-			}
-			
-			check();
-		});
-		
-		
-	} else {
-		callback();
-	}
-	
-	var loaded = 0;
-	function check() {
-		loaded++;
-		if( loaded == 2 && callback ) callback();
-	}
+	callback();
 	
 }
 

@@ -3,51 +3,51 @@ var m3PGFunc = {};
 m3PGFunc.constant = function(c) {
 //    log("constant:"+c);
     var constant={
-	days_per_month:{
-	    value:30.4,
-	    units:"days/mo",
-	    description:"Number of Days in an average month"
-	},
-	e20:{
-	    value:2.2,
-	    units:"vp/t",
-	    description:"Rate of change of saturated VP with T at 20C"
-	},
-	rhoAir:{
-	    value:1.2,
-	    units:"kg/m^3",
-	    description:"Density of air"
-	},
-	lambda:{
-	    value:2460000,
-	    units:"J/kg",
-	    description:"Latent heat of vapourisation of h2o"
-	},
-	VPDconv:{
-	    value:0.000622,
-	    units:"?",
-	    description:"Convert VPD to saturation deficit = 18/29/1000"
-	},
-	Qa:{
-	    value:-90,
-	    units:"W/m^2",
-	    description:"Intercept of net radiation versus solar radiation relationship"
-	},
-	Qb:{
-	    value:0.8,
-	    units:"",
-	    description:""
-	},
-	gDM_mol:{
-	    value:24,
-	    units:"g/mol(C)",
-	    description:"Molecular weight of dry matter"
-	},
-	molPAR_MJ:{
-	    value:2.3,
-	    units:"mol(C)/MJ",
-	    description:"Conversion of solar radiation to PAR"
-	}
+    days_per_month:{
+        value:30.4,
+        units:"days/mo",
+        description:"Number of Days in an average month"
+    },
+    e20:{
+        value:2.2,
+        units:"vp/t",
+        description:"Rate of change of saturated VP with T at 20C"
+    },
+    rhoAir:{
+        value:1.2,
+        units:"kg/m^3",
+        description:"Density of air"
+    },
+    lambda:{
+        value:2460000,
+        units:"J/kg",
+        description:"Latent heat of vapourisation of h2o"
+    },
+    VPDconv:{
+        value:0.000622,
+        units:"?",
+        description:"Convert VPD to saturation deficit = 18/29/1000"
+    },
+    Qa:{
+        value:-90,
+        units:"W/m^2",
+        description:"Intercept of net radiation versus solar radiation relationship"
+    },
+    Qb:{
+        value:0.8,
+        units:"",
+        description:""
+    },
+    gDM_mol:{
+        value:24,
+        units:"g/mol(C)",
+        description:"Molecular weight of dry matter"
+    },
+    molPAR_MJ:{
+        value:2.3,
+        units:"mol(C)/MJ",
+        description:"Conversion of solar radiation to PAR"
+    }
     };
     return constant[c].value;
 }
@@ -230,7 +230,7 @@ molPAR_MJ [mol/MJ] is a constant Conversion of solar radiation to PAR
 */
 m3PGFunc.PAR = function(date_rad, molPAR_MJ){
     molPAR_MJ = typeof molPAR_MJ !== 'undefined' ? 
-	molPAR_MJ : m3PGFunc.constant('molPAR_MJ');
+    molPAR_MJ : m3PGFunc.constant('molPAR_MJ');
     return date_rad * m3PGFunc.constant('days_per_month') * molPAR_MJ;
 }
 
@@ -242,7 +242,7 @@ gGM_mol [g/mol] is the molecular weight of dry matter
 */
 m3PGFunc.xPP = function(y, cur_PAR, gDM_mol){
     gDM_mol = typeof gDM_mol !== 'undefined' ? 
-	gDM_mol : m3PGFunc.constant('gDM_mol');
+    gDM_mol : m3PGFunc.constant('gDM_mol');
     return y * cur_PAR * gDM_mol / 100;
 }
       
@@ -271,49 +271,49 @@ m3PGFunc.coppice.RootP = function(cur_npp, cur_nppTarget, WR,W,pRx,frac) {
 
 // NODE EXPORT HOOK
 if (typeof module !== 'undefined' && module.exports) {
-	exports.dump = function() {
-		var objStr = "m3PGFunc={";
-		for( var key in m3PGFunc ) {
-			if( typeof m3PGFunc[key] == 'function' ) {
-				objStr += key+":"+m3PGFunc[key].toString()+",";
-			} else {
-				objStr += key+":"+JSON.stringify(m3PGFunc[key])+",";
-			}
-		}
-		return objStr.replace(/,$/,'')+"};";
-	}
-	
-	exports.testFunctions = function() {
-		var key, args, funcStr, assignments;
-		var ret = "";
-		
-		for( key in m3PGFunc ) {
-			if( typeof m3PGFunc[key] == 'function' ) {
-				funcStr = "\nCREATE OR REPLACE FUNCTION "+key+"(";
-				
-				args = getArguments(m3PGFunc[key]);
-				
-				for( var i = 0; i < args.length; i++ ) {
-					if( args[i].replace(/\s/g,'').length > 0 ) {
-						funcStr += "\""+args[i].replace(/\s/g,'')+"\" float, ";
-					}
-				}
-				funcStr = funcStr.replace(/,\s$/,'')+") RETURNS\nfloat AS $$\n";
-				funcStr += getBody(m3PGFunc[key])+"\n";
-				ret += funcStr + "$$ LANGUAGE plv8 IMMUTABLE STRICT;\n";
-			}
-		}
-		return ret;
-	}
-	
-	function getArguments(f) {
-		return f.toString().split("(")[1].split(")")[0].replace(/\s/,'').split(",");
-	}
-	
-	function getBody(f) {
-		var parts = f.toString().split(")");
-		var body = parts[1];
-		parts.splice(0,1);
-		return parts.join(')').replace(/^\s*{/,'').replace(/}[\n\s]*$/,'');
-	}
+    exports.dump = function() {
+        var objStr = "m3PGFunc={";
+        for( var key in m3PGFunc ) {
+            if( typeof m3PGFunc[key] == 'function' ) {
+                objStr += key+":"+m3PGFunc[key].toString()+",";
+            } else {
+                objStr += key+":"+JSON.stringify(m3PGFunc[key])+",";
+            }
+        }
+        return objStr.replace(/,$/,'')+"};";
+    }
+    
+    exports.testFunctions = function() {
+        var key, args, funcStr, assignments;
+        var ret = "";
+        
+        for( key in m3PGFunc ) {
+            if( typeof m3PGFunc[key] == 'function' ) {
+                funcStr = "\nCREATE OR REPLACE FUNCTION "+key+"(";
+                
+                args = getArguments(m3PGFunc[key]);
+                
+                for( var i = 0; i < args.length; i++ ) {
+                    if( args[i].replace(/\s/g,'').length > 0 ) {
+                        funcStr += "\""+args[i].replace(/\s/g,'')+"\" float, ";
+                    }
+                }
+                funcStr = funcStr.replace(/,\s$/,'')+") RETURNS\nfloat AS $$\n";
+                funcStr += getBody(m3PGFunc[key])+"\n";
+                ret += funcStr + "$$ LANGUAGE plv8 IMMUTABLE STRICT;\n";
+            }
+        }
+        return ret;
+    }
+    
+    function getArguments(f) {
+        return f.toString().split("(")[1].split(")")[0].replace(/\s/,'').split(",");
+    }
+    
+    function getBody(f) {
+        var parts = f.toString().split(")");
+        var body = parts[1];
+        parts.splice(0,1);
+        return parts.join(')').replace(/^\s*{/,'').replace(/}[\n\s]*$/,'');
+    }
 }
