@@ -177,12 +177,11 @@ var m3PG = {
     singleStepCoppiced : function(plantation,soil,weather,manage,p) {
 	var c = new Object();
 	var tree;
-	if (c.coppiceCount==0) {
+	if (p.coppiceCount==0) {
 	    tree=plantation.seedlingTree;
 	} else {
 	    tree=plantation.coppicedTree;
 	}
-//	log(tree.type+":"+tree.maxAge);
 	if (manage.coppice == true) {
 	    // Add in a stump margin....
 	    c.feedstockHarvest= p.feedstockHarvest+p.WS;
@@ -212,13 +211,13 @@ var m3PG = {
 	c.fNutr=m3PGFunc.fNutr(tree.fN0, manage.fertility);
 	c.NPP = m3PGFunc.NPP(p.StandAge, tree.fullCanAge, c.xPP, tree.k, p.LAI, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
 	
-	var NPP_target = m3PGFunc.NPP(p.StandAge, tree.fullCanAge, c.xPP, tree.k, tree.rootLAITarget, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
-	c.RootP = m3PGFunc.coppice.RootP(c.NPP, NPP_target, p.WR, p.W,tree.pRx,tree.rootStoragePct);
+	var NPP_target = m3PGFunc.NPP(p.StandAge, tree.fullCanAge, c.xPP, tree.k, tree.rootP.LAITarget, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
+	c.RootP = m3PGFunc.coppice.RootP(c.NPP, NPP_target, p.WR, p.W,
+					 tree.pR.mx,tree.rootP.frac);
+
+	c.pfs = m3PGFunc.coppice.pfs(p.WS*1000/plantation.StockingDensity, tree.pfs);
 	
-	c.pfs = m3PGFunc.coppice.pfs(p.WS,plantation.StockingDensity, tree.stemsPerStump, 
-				       tree.stemConst, tree.stemPower, tree.pfsConst, tree.pfsPower, tree.pfsMax);
-	
-	c.dW = c.NPP+tree.rootEfficiency*c.RootP;
+	c.dW = c.NPP+tree.rootP.efficiency*c.RootP;
 	
 	c.Intcptn = m3PGFunc.Intcptn(c.LAI, tree.Intcptn);
 	c.CanCond = m3PGFunc.CanCond(c.PhysMod, c.LAI, tree.Conductance);
@@ -227,22 +226,22 @@ var m3PG = {
         c.litterfall=m3PGFunc.tdp(p.StandAge,tree.litterfall);
 	//log("weather.rad=" + weather.rad + " weather.daylight=" + weather.daylight + " tree.rhoAir=" + tree.rhoAir + " tree.lambda=" + tree.lambda + " tree.VPDconv=" + tree.VPDconv + " c.VPD=" + c.VPD + " tree.BLcond=" + tree.BLcond + " c.CanCond=" + c.CanCond);
 	c.Transp = m3PGFunc.Transp(weather.rad, weather.daylight, c.VPD, tree.BLcond, c.CanCond);
-	
-	c.pS = m3PGFunc.coppice.pS(c.pR,c.pfs);
-	c.pF = m3PGFunc.coppice.pF(c.pR,c.pfs);	
+
+	// Calculated from pfs
+	c.pS = (1 - c.pR) / (1 + c.pfs );
+	c.pF = (1 - c.pR) / (1 + 1/c.pfs );
+
 	c.Irrig = m3PGFunc.Irrig(manage.irrigFrac, c.Transp, c.Intcptn, weather.ppt);
 	c.CumIrrig = p.CumIrrig + c.Irrig;
 	
 	c.ASW = m3PGFunc.ASW(soil.maxAWS, p.ASW, weather.ppt, c.Transp, c.Intcptn, c.Irrig); //for some reason spelled maxAWS
 	
-	//log("c.pR=" + c.pR + " c.pS=" + c.pS + " p.WF=" + p.WF + " c.litterfall=" + c.litterfall);
-	c.WF = m3PGFunc.WF(c.pR, p.WF, c.dW, c.litterfall);
-	
-	//log("p.WR=" + p.WR + " c.dW=" + c.dW + " c.pR=" + c.pR + " tree.RttoverP=" + tree.Rttover);
-	c.WR = m3PGFunc.coppice.WR(p.WR, c.dW, c.pR, tree.Rttover, c.RootP);
-	c.WS = m3PGFunc.WS(p.WS, c.dW, c.pS);
+	c.WF = p.WF + c.dW * c.pF - c.litterfall * p.WF;	
+	// Include contribution of RootP // Error in old code ! 
+	c.WR = p.WR + c.dW * c.pR - tree.pR.turnover * p.WR - c.RootP;
+	c.WS = p.WS + c.dW * c.pS;
 	c.W = c.WF+c.WR+c.WS;
-//	c.fFrost=litterfall;
+//	c.fFrost=litterfall; // fFrost easy to use for testing.
 	return c;
 	},	
 }

@@ -64,6 +64,16 @@ m3PGFunc.tdp = function(x,f) {
   return p;
 }
 
+m3PGFunc.lin = function(x, p){
+    if (x<0) {
+	return p.mn;
+    }
+    if (x>p.xmax) {
+	return p.xmax;
+    }
+    return p.mn + (p.mx-p.mn)*(x/p.xmax);
+}
+
 /**Intcptn
 units='unitless' 
 description='Canopy Rainfall interception'
@@ -202,15 +212,6 @@ m3PGFunc.NPP = function(prev_StandAge, fullCanAge, xPP, k, prev_LAI, fVPD, fSW, 
   return xPP * (1 - (Math.exp(-k * prev_LAI) ) ) * CanCover * Math.min(fVPD , fSW) * fAge * alpha * fNutr * fT * fFrost;
 }
 
-/**pS
-TODO: units and description
-*/
-m3PGFunc.pS = function(prev_WS, StockingDensity, 
-                      stemConst, stemPower, cur_pR, pfsConst, pfsPower){
-  var avDBH = Math.pow( ( (prev_WS * 1000 / StockingDensity) / stemConst) , (1 / stemPower) );
-  return (1 - cur_pR) / (1 + ( pfsConst * Math.pow(avDBH , pfsPower) ) );
-}
-
 /**pR
 TODO: units and description
 */
@@ -218,37 +219,6 @@ m3PGFunc.pR = function(cur_PhysMod, FR,pR){
   return (pR.mx * pR.mn) / 
          (pR.mn + (pR.mx - pR.mn) * cur_PhysMod * (pR.m0 + (1 - pR.m0) * FR) );
 }
-
-/**pF
-TODO: units and description
-*/
-m3PGFunc.pF = function(cur_pR, cur_pS){
-  return 1 - cur_pR - cur_pS;
-}
-
-/**WF
-units='t/ha' 
-description='Foliage Biomass'
-*/
-m3PGFunc.WF = function(cur_pF, prev_WF, cur_NPP, cur_litterfall){
-   return prev_WF + cur_NPP * cur_pF - cur_litterfall * prev_WF;
-}
-
-/**WR
-units='t/ha' 
-description='Root Biomass'
-*/
-m3PGFunc.WR = function(prev_WR, cur_NPP, cur_pR, Rttover){
-   return prev_WR + cur_NPP * cur_pR - Rttover * prev_WR;
-}
-
-/**WS
-units='t/ha' 
-description='Stem Biomass'
-*/
-m3PGFunc.WS = function(prev_WS, cur_NPP, cur_pS){
-   return prev_WS + cur_NPP * cur_pS;
-} 
 
 /*** FUNCTIONS FROM ANOTHER MAKEFILE solar.mk in alder:/home/quinn/qjhart.postgis-data/m3pg$ cat solar.mk */
 
@@ -280,44 +250,24 @@ m3PGFunc.xPP = function(y, cur_PAR, gDM_mol){
 m3PGFunc.coppice = {};
 
 // Coppice Functions are based on Diameter on Stump, NOT DBH.
-m3PGFunc.coppice.pfs = function(prev_WS,StockingDensity, stemsPerStump, stemConst, stemPower, pfsConst, pfsPower,pfsMax) {
-  var avDOB = Math.pow( ( (prev_WS * 1000 / StockingDensity / stemsPerStump) / stemConst) , (1 / stemPower) );
-  var ppfs= pfsConst * Math.pow(avDOB , pfsPower);
+// Calculates the pfs based on the stem weight in KG
+m3PGFunc.coppice.pfs = function(stem, p) {
+  var avDOB = Math.pow( ( stem / p.stemCnt / p.stemC) , (1 / p.stemP) );
+    var ppfs= p.pfsC * Math.pow(avDOB , p.pfsP);
 //    log("avDOB:"+avDOB+"ppfs:"+ppfs);
-  return Math.min(pfsMax,ppfs);
+  return Math.min(p.pfsMx,ppfs);
 }
-
-m3PGFunc.coppice.pS = function(cur_pR,pfs) {
-  return (1 - cur_pR) / (1 + pfs );
-}
-
-m3PGFunc.coppice.pF = function(cur_pR,pfs) {
-    return (1 - cur_pR) / (1 + 1/pfs );
-}
-
-m3PGFunc.coppice.RootP = function(cur_npp, cur_nppTarget, WR,W,pRx,rootStoragePct) {
+m3PGFunc.coppice.RootP = function(cur_npp, cur_nppTarget, WR,W,pRx,frac) {
   var nppRes = cur_nppTarget - cur_npp;
-//  log("nppRes=" + nppRes);
   var rootPP;
-  if (nppRes > 0) {
-//      log("WR:"+WR+"W:"+W+"pRx:"+pRx+"rootStoragePct:"+rootStoragePct);
-    rootPP = Math.min(nppRes,WR*(WR/W - pRx)*rootStoragePct);
+  if (nppRes > 0 && WR/W > pRx ) {
+//      log(nppRes+"<"+WR*(WR/W - pRx)+"*"+frac);
+      rootPP = Math.min(nppRes,WR*(WR/W - pRx)*frac);
   } else {
     rootPP = 0; 
  }
-//    log("RootP"+rootPP);
   return rootPP;
 }
-
-/**WR
-units='t/ha' 
-description='Root Biomass'
-*/
-m3PGFunc.coppice.WR = function(prev_WR, cur_NPP, cur_pR, Rttover,RootP){
-  //log("DEBUGGING COPPICE: prev_WR=" + prev_WR + "; cur_NPP=" + cur_NPP + "; cur_pR=" + cur_pR + "; Rttover=" + Rttover+ "; RootP=" + RootP);
-   return prev_WR, prev_WR + cur_NPP * cur_pR - Rttover * prev_WR - RootP;
-}
-
 
 // NODE EXPORT HOOK
 if (typeof module !== 'undefined' && module.exports) {
