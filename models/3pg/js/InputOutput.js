@@ -173,6 +173,12 @@ var m3PGIO = {
         tree[rowData[0]].mn = array[0];
         tree[rowData[0]].mx = array[1];
         tree[rowData[0]].m0 = array[2];
+      } else if (rowData[0]=="rootP"){
+        var array = rowData[3].split(',');
+        tree[rowData[0]]={};
+        tree[rowData[0]].frac = array[0];
+        tree[rowData[0]].LAITarget = array[1];
+        tree[rowData[0]].efficiency = array[2];
       } else if (rowData[0]=="litterfall"){
         var array = rowData[3].split(',');
         tree[rowData[0]]={};
