@@ -198,7 +198,7 @@ var model = {
 			},
 		},
 		rootP : {
-				description:"These parameters specify root allocation to growth after coppicing."
+				description:"These parameters specify root allocation to growth after coppicing.",
 				frac : {
 				    units : "[month^1]",
 				    description : "Specifies the fractional amount of root biomass that exceeds the aboveground requirements that can be supplied in a given month.",
@@ -238,55 +238,56 @@ var model = {
 				    },
 
 				}
-			    },
-			},
-		
-		plantation : {
-			type:{
-				 value : "",
-				 description : ""
-			 },
-			StockingDensity:{
+		}
+	}
+	// end tree
+			
+	plantation : {
+		type : {
+			value : "",
+			description : ""
+		},
+		StockingDensity : {
 				 value : -1,
 				 units : "",
 				 description : ""
-			 },
-			SeedlingMass:{
+		},
+		SeedlingMass : {
 				 value : -1,
 				 units : "",
 				 description : ""
-			 },
-			stemsPerStump:{
+		},
+		stemsPerStump: {
 				 value : -1,
 				 units : "",
 				 description : ""
-			 },
-			initialStemsPerStump:{
+		},
+		initialStemsPerStump:{
 				 value : -1,
 				 units : "",
 				 description : ""
-			 },
-			pS:{
+		},
+		pS : {
 				 value : -1,
 				 units : "",
 				 description : ""
-			 },
-			pF:{
+		},
+		pF:{
 				 value : -1,
 				 units : "",
 				 description : ""
-			 },
-			pR:{
+		},
+		pR : {
 				 value : -1,
 				 units : "",
 				 description : ""
-			 },
-			seedlingTree:{
+		},
+		seedlingTree:{
 				 value : -1,
 				 units : "",
 				 description : ""
-			 },
-			coppicedTree:{
+		},
+		coppicedTree:{
 				 value : -1,
 				 units : "",
 				 description : ""
