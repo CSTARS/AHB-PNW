@@ -20,6 +20,13 @@ create type cond_t as (
  lai float
 );
 
+drop type if exists intcpt_t cascade;
+create type intcpt_t as (
+ mn float,
+ mx float,
+ lai float
+);
+
 
 drop type if exists pR_t cascade;
 create type pR_t as (
@@ -60,7 +67,7 @@ CREATE TYPE tree_t as (
 "fN0" float,
 "SLA" tdp_t,
 "Conductance" cond_t,
-"Intcptn" cond_t,
+"Intcptn" intcpt_t,
 "pR" pR_t,
 "y" float,
 pfs pfs_t,
@@ -72,9 +79,9 @@ litterfall tdp_t
 CREATE TABLE tree OF tree_t ( type with options primary key );
 
 INSERT INTO tree (type,"fullCanAge", "kG", "alpha", "fT", "BLcond", "fAge", "fN0", "SLA","Conductance", "Intcptn", "pR", "y", "pfs", "rootP","litterfall", "k") VALUES 
-('default',0, 0.5, 0.0177, (5,20,40)::fT_t, 0.2, (1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.02, 3.33)::cond_t, (0,0.15,5)::cond_t, (0.25,0.8,0,0.005)::pR_t, 0.47, (4.4, 0.18, 2.4, 5, -1.161976, 1.91698)::pfs_t, (0.25, 10, 0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
-('poplar',0, 0.5, 0.06, (5,20,40)::fT_t, 0.2, (1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.02, 3.33)::cond_t, (0,0.15,5)::cond_t, (0.25,0.34,0,0.005)::pR_t, 0.47, (2.8, 0.18, 2.4, 2, -1.161976, 1.91698)::pfs_t, (1, 10, 0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
-('popstick',0, 0.5, 0.06, (5,20,40)::fT_t, 0.2,(1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.02, 3.33)::cond_t, (0,0.15,5)::cond_t, (0.25,0.34,0,0.005)::pR_t, 0.47, (1, 0.18, 2.4, 2, -1.161976, 1.91698)::pfs_t, (0.01, 10, 0.6)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5);
+('default',0, 0.5, 0.0177, (5,20,40)::fT_t, 0.2, (1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.02, 3.33)::cond_t, (0,0.15,5)::intcpt_t, (0.25,0.8,0,0.005)::pR_t, 0.47, (4.4, 0.18, 2.4, 5, -1.161976, 1.91698)::pfs_t, (0.25, 10, 0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
+('poplar',0, 0.5, 0.06, (5,20,40)::fT_t, 0.2, (1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.02, 3.33)::cond_t, (0,0.15,5)::intcpt_t, (0.25,0.34,0,0.005)::pR_t, 0.47, (2.8, 0.18, 2.4, 2, -1.161976, 1.91698)::pfs_t, (1,10,0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
+('popstick',0, 0.5, 0.06, (5,20,40)::fT_t, 0.2,(1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.02, 3.33)::cond_t, (0,0.15,5)::intcpt_t, (0.25,0.34,0,0.005)::pR_t, 0.47, (1, 0.18, 2.4, 2, -1.161976, 1.91698)::pfs_t, (0.01, 10, 0.6)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5);
 
 drop type if exists plantation_t cascade;
 CREATE type plantation_t as (

@@ -237,9 +237,9 @@ var m3PG = {
     c.xPP = m3PGFunc.xPP(tree.y, c.PAR);
     c.PhysMod = m3PGFunc.PhysMod(c.fVPD, c.fSW, c.fAge);
     c.fNutr=m3PGFunc.fNutr(tree.fN0, manage.fertility);
-    c.NPP = m3PGFunc.NPP(p.StandAge, tree.fullCanAge, c.xPP, tree.k, p.LAI, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
+    c.NPP = m3PGFunc.NPP(p.coppiceAge, tree.fullCanAge, c.xPP, tree.k, p.LAI, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
 	
-    var NPP_target = m3PGFunc.NPP(p.StandAge, tree.fullCanAge, c.xPP, tree.k, tree.rootP.LAITarget, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
+    var NPP_target = m3PGFunc.NPP(p.coppiceAge, tree.fullCanAge, c.xPP, tree.k, tree.rootP.LAITarget, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
     c.RootP = m3PGFunc.coppice.RootP(c.NPP, NPP_target, p.WR, p.W,
 					 tree.pR.mx,tree.rootP.frac);
 
@@ -250,7 +250,7 @@ var m3PG = {
     c.Intcptn = m3PGFunc.Intcptn(c.LAI, tree.Intcptn);
     c.CanCond = m3PGFunc.CanCond(c.PhysMod, c.LAI, tree.Conductance);
     
-    c.pR = m3PGFunc.pR(c.PhysMod, manage.fertility,tree.pR);    
+      c.pR = m3PGFunc.pR(c.PhysMod,p.WR/p.W,manage.fertility,tree.pR);    
         c.litterfall=m3PGFunc.tdp(p.StandAge,tree.litterfall);
 
     c.Transp = m3PGFunc.Transp(weather.rad, weather.daylight, c.VPD, tree.BLcond, c.CanCond);

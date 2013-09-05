@@ -154,8 +154,20 @@ m3PGFunc.Irrig = function(irrigFrac, cur_Transp, cur_Intcptn, date_ppt){
 /**fSW
 TODO: get units and description
 */
-m3PGFunc.fSW = function(prev_ASW, maxAWS, swconst, swpower){
-   return 1 / (1 + Math.pow( (Math.max(0.00001 , (1 - (prev_ASW / 10 / maxAWS) ) / swconst) ) , swpower) );
+m3PGFunc.fSW = function(ASW, maxAWS, swconst, swpower) {
+    var fSW;
+    if (swconst == 0 || maxAWS==0) {
+	fSW=0;
+    } else {
+	var omr = 1 - (ASW/10)/maxAWS; // One Minus Ratio
+	if (omr < 0.001) {
+	    fSW=1;
+	} else {
+	    fSW=(1-Math.pow(omr,swpower))/(1+Math.pow(omr/swconst,swpower));
+	}
+    }
+//    log('f(ASW,max,S_c,S_p),omr=f('+ASW+','+maxAWS+','+swconst+','+swpower+')='+omr+','+fSW);
+    return fSW;
 }
 
 /**fNutr
@@ -179,23 +191,37 @@ m3PGFunc.PhysMod = function(cur_fVPD, cur_fSW, cur_fAge){
 units='gc,m/s' 
 description='Canopy Conductance'
 */
-m3PGFunc.CanCond = function(cur_PhysMod, cur_LAI, cond){
-   return Math.max(cond.mn , cond.mx * cur_PhysMod * Math.min(1 , cur_LAI / cond.lai) );
+m3PGFunc.CanCond = function(PhysMod, LAI, cond){
+   return Math.max(cond.mn , cond.mx * PhysMod * Math.min(1 , LAI / cond.lai) );
 }
 
 /**Transp
-units='mm/mon' 
+units='mm/mon' which is also kg/m2/mon
 description='Canopy Monthly Transpiration'
 */
-m3PGFunc.Transp = function(date_nrel, date_daylight, cur_VPD, BLcond, cur_CanCond, VPDconv, rhoAir, lambda, e20,days_per_month,Qa,Qb){
-    VPDconv = typeof VPDconv !== 'undefined' ? VPDconv : m3PGFunc.constant('VPDconv');
-    lambda = typeof lambda !== 'undefined' ? lambda : m3PGFunc.constant('lambda');
-    rhoAir = typeof rhoAir !== 'undefined' ? rhoAir : m3PGFunc.constant('rhoAir');
-    e20 = typeof e20 !== 'undefined' ? e20 : m3PGFunc.constant('e20');
-    days_per_month = typeof days_per_month !== 'undefined' ? days_per_month : m3PGFunc.constant('days_per_month');
-    Qa = typeof Qa !== 'undefined' ? Qa : m3PGFunc.constant('Qa');
-    Qb = typeof Qb !== 'undefined' ? Qb : m3PGFunc.constant('Qb');
-   return days_per_month * ( (e20 * (Qa + Qb * (date_nrel / date_daylight) ) + (rhoAir * lambda * VPDconv * cur_VPD * BLcond) ) / (1 + e20 + BLcond / cur_CanCond) ) * date_daylight * 3600 / lambda;
+m3PGFunc.Transp = function(date_nrel, date_daylight, cur_VPD, BLcond, cur_CanCond, days_per_month){
+    var VPDconv = m3PGFunc.constant('VPDconv');
+    var lambda = m3PGFunc.constant('lambda');
+    var rhoAir = m3PGFunc.constant('rhoAir');
+    var e20 = m3PGFunc.constant('e20');
+    var Qa = m3PGFunc.constant('Qa');
+    var Qb = m3PGFunc.constant('Qb');
+    var days_per_month = typeof days_per_month !== 'undefined' ? days_per_month : m3PGFunc.constant('days_per_month');
+
+//    netrad=-90 + 0.8 * (date_nrel * 277.778 / date_daylight);
+//    defTerm= 1.2 * 2460000 * 0.00622 * cur_VPD * 0.2);
+//    div = (1 + 2.2 + 0.2 / CanCond;
+//    transp 30.4 * ((2.2 * netrad + defTerm) / div) * date_daylight * 3600 / 2460000  
+    // date_daylight = hours
+    // nrel is in MJ/m^2/day convert to Wh/m^2/day
+   var netRad = Qa + Qb * ((date_nrel * 277.778) / date_daylight);
+    var defTerm = rhoAir * lambda * VPDconv * cur_VPD * BLcond;
+    var div = 1 + e20 + BLcond / cur_CanCond;
+    // Convert daylight to secs.
+    var Transp=  days_per_month * ( (e20 * netRad + defTerm ) / div ) * date_daylight * 3600 / lambda;
+//    log('R+V/D='+e20*netRad+'+'+defTerm+'/'+div)
+//    log('f(nrel,daylight,VPD,BL,cond): f('+date_nrel+','+date_daylight+','+cur_VPD+','+BLcond+','+cur_CanCond+')='+Transp);
+    return Transp;
 }
 
 /**NPP
@@ -215,9 +241,11 @@ m3PGFunc.NPP = function(prev_StandAge, fullCanAge, xPP, k, prev_LAI, fVPD, fSW, 
 /**pR
 TODO: units and description
 */
-m3PGFunc.pR = function(cur_PhysMod, FR,pR){
-  return (pR.mx * pR.mn) / 
+m3PGFunc.pR = function(cur_PhysMod, cur_pR,FR,pR){
+    var p =(pR.mx * pR.mn) / 
          (pR.mn + (pR.mx - pR.mn) * cur_PhysMod * (pR.m0 + (1 - pR.m0) * FR) );
+// This was added by quinn to limit root growth.
+    return p*Math.pow(p/cur_pR,2);
 }
 
 /*** FUNCTIONS FROM ANOTHER MAKEFILE solar.mk in alder:/home/quinn/qjhart.postgis-data/m3pg$ cat solar.mk */
@@ -229,8 +257,8 @@ description='Monthly PAR in mols / m^2 month'
 molPAR_MJ [mol/MJ] is a constant Conversion of solar radiation to PAR
 */
 m3PGFunc.PAR = function(date_rad, molPAR_MJ){
-    molPAR_MJ = typeof molPAR_MJ !== 'undefined' ? 
-    molPAR_MJ : m3PGFunc.constant('molPAR_MJ');
+    var molPAR_MJ = typeof molPAR_MJ !== 'undefined' ? 
+                    molPAR_MJ : m3PGFunc.constant('molPAR_MJ');
     return date_rad * m3PGFunc.constant('days_per_month') * molPAR_MJ;
 }
 
