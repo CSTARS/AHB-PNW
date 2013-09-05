@@ -1,12 +1,12 @@
 var model = {
 		
 		tree : {
-			description: "These specify growth parameters specific to the species of tree."
+			description: "These specify growth parameters specific to the species of tree.",
 			value : {
-				"k": {
-						units : "unitless",
-						description : "Radiation Extinction Coefficient.",
-						value : 0.5
+			k: {
+					units : "unitless",
+					description : "Radiation Extinction Coefficient.",
+					value : 0.5
 			},
 			fullCanAge : {
 				units : "[y]",
@@ -16,7 +16,7 @@ var model = {
 			kG : {
 				units : "[kPA^-1]",
 				description : "Determines the response of the canopy conductance to the vapor pressure deficit.",
-				value : 0.005,
+				value : 0.005
 			},
 			 alpha : {
 				 units : "[kg/mol ?]",
@@ -40,13 +40,13 @@ var model = {
 		        	   units:"[C]",
 					   description:"Specifies the maximum temperature of respiration",
 					   value : 40
-				  },
+				  }
 			  }            
 		  },
 		  BLcond : {
 			  units : "[]",
 			  description : "Canopy boundary layer conductance. Used in the calcuation of transpiration",
-			  value : 0.2,
+			  value : 0.2
 		 },
 		 fAge : {
 			 units : "fraction",
@@ -61,7 +61,7 @@ var model = {
 				    	value : 0
 				    },
 				    tm : {
-				    	 units "[y]",
+				    	 units : "[y]",
 				    	 description : "Time in years where value is the average of f0 and f1",
 				    	 value : 47.5
 				    },
@@ -84,12 +84,12 @@ var model = {
 					description : "Value at Initial Time",
 					value : 1
 				},
-				 f1:{
+				f1:{
 					description : "Value at Infinite Time",
 					value : 0
 				},
 				tm : {
-					units "[y]",
+					units : "[y]",
 					description : "Time in years where value is the average of f0 and f1",
 					value : 47.5
 				},
@@ -110,7 +110,7 @@ var model = {
 				},
 				mx : {
 					description : "Maximum value",
-					value : 0.2,
+					value : 0.2
 				},
 				 lai : {
 					units : "[m^2/m^2]",
@@ -144,7 +144,7 @@ var model = {
 		},
 		pfs : {
 			units :"fraction",
-			description: "This defines the foliage to stem (WF/WS) fraction in allocating aboveground biomass of the tree. This is calculated with a pair of allometric power equations.  The first relates basal diameter, (DOB) to total woody biomass, while the second relates DOB to pfs.  The parameterization of the relationship between DOB and woody biomass is inverted to determine the DOB from the modeled woody fraction.  This relation is plotted at: .  The model allocates the appropriate fraction of wood based on the Stocking density of the plantation. DOB rather than DBH is used for comparison of trees with a high stemCnt and rapid coppicing value."
+			description: "This defines the foliage to stem (WF/WS) fraction in allocating aboveground biomass of the tree. This is calculated with a pair of allometric power equations.  The first relates basal diameter, (DOB) to total woody biomass, while the second relates DOB to pfs.  The parameterization of the relationship between DOB and woody biomass is inverted to determine the DOB from the modeled woody fraction.  This relation is plotted at: .  The model allocates the appropriate fraction of wood based on the Stocking density of the plantation. DOB rather than DBH is used for comparison of trees with a high stemCnt and rapid coppicing value.",
 			value : {
 				    stemCnt : {
 				    	description : "Average number of stems per stump",
@@ -157,7 +157,7 @@ var model = {
 				    },
 				    stemP : {
 				    	description : "Power in relation of DOB to woody biomass.",
-				    	value : 2.4,
+				    	value : 2.4
 				    },
 				    pfsMx : {
 				    	description : "Maximum possible pfs value allowed",
@@ -168,11 +168,11 @@ var model = {
 				    	value : -1.161976
 				    },
 				    pfsC : {
-				    	units "[cm^-1]",
+				    	units : "[cm^-1]",
 				    	description : "Constant in relation of DOB to pfs.",
 				    	value : 1.91698
-				   },
-			 },
+				   }
+			 }
 		},
 		pR : {
 			units : "fraction",
@@ -194,8 +194,8 @@ var model = {
 					units : "[month^-1]",
 					description : "Specifies the monthly root turnover rate.",
 					value : 0.005
-				},
-			},
+				}
+			}
 		},
 		rootP : {
 				description:"These parameters specify root allocation to growth after coppicing.",
@@ -213,7 +213,7 @@ var model = {
 				    units : "[kg/kg]",
 				    description : "Specifies the efficiency in converting root biomass into aboveground biomass.",
 				    value : 0.5
-				},
+				}
 		},
 		litterfall:{
 				units : "fraction",
@@ -234,12 +234,12 @@ var model = {
 				    },
 				    n :{
 				    	description : "n>=1; Parameter specifing the rate of change around tm.  n=1 is approximately a linear change, as n increases, change becomes more localized around tm.",
-				    	value : 2.5,
-				    },
-
+				    	value : 2.5
+				    }
 				}
 		}
-	}
+			}
+	},
 	// end tree
 			
 	plantation : {
@@ -577,6 +577,7 @@ var model = {
 				coppice: false
 			},*/
 		}
+		
 		
 
 }
