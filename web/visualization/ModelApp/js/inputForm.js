@@ -170,7 +170,7 @@ app.inputForm = (function(){
 				input += _generateInputs(i+1, type, id, key, attrs.value[key]);
 			}
 		} else if ( typeof attrs.value == 'number' ) {
-			input += '<input type="number" class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
+			input += '<input type="number" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
 				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
 			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		}

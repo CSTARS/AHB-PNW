@@ -243,11 +243,6 @@ var model = {
 	                value: 4.4,
 	                units: "unitless",
 	                description: ""
-	            },
-	            initialStemsPerStump: {
-	                value: 4.4,
-	                units: "unitless",
-	                description: ""
 	            }
 	        }
 	    },
@@ -567,13 +562,21 @@ var model = {
 	                description: "Conversion of solar radiation to PAR"
 	            }
 	        }
-	    	//??
-	    	/*manage: {
-	            irrigFrac: -1,
-	            fertility: -1,
-	            coppice: false
-	        },
-	        */
+	    },
+	    manage : {
+	    	description : "",
+	    	value : {
+	    		irrigFrac : {
+	    			value : 1,
+	    			units : "",
+	    			description : ""
+	    		},
+	    		fertility : {
+	    			value : 0.7,
+	    			units : "",
+	    			description : ""
+	    		}
+	    	}
 	    }
 		
 

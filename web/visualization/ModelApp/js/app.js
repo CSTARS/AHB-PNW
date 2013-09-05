@@ -293,6 +293,22 @@ m3PGIO = {
 				// TODO: make sure all constants are set
 			}
 			
+			window.manage = {
+					coppice   : false
+			};
+			var eles = $(".manage");
+			for( var i = 0; i < eles.length; i++ ) {
+				var ele = $(eles[i]);
+				plantation[ele.attr("id").replace("input-manage-","")] = parseFloat(ele.val());
+			}
+			
+			eles = $(".plantation");
+			for( var i = 0; i < eles.length; i++ ) {
+				var ele = $(eles[i]);
+				plantation[ele.attr("id").replace("input-plantation-","")] = parseFloat(ele.val());
+			}
+			
+			
 			var treeInputs = $(".tree");
 			window.tree = {};
 			for( var i = 0; i < treeInputs.length; i++ ) {
@@ -307,18 +323,16 @@ m3PGIO = {
 				}
 			}
 			plantation.coppicedTree = window.tree;
-			plantation.seedlingTree = window.tree;
+			plantation.seedlingTree = $.extend(true, {}, window.tree);
+			plantation.seedlingTree.stemsPerStump = 1;
+			console.log(plantation);
 			
 			window.plantation_state = {};
 			for( var key in app.model.plantation_state.value ) {
 				window.plantation_state[key] = -1;
 			}
 			
-			window.manage = {
-			  irrigFrac : null,
-			  fertility : null,
-			  coppice   : null
-			};
+			
 
 		},
 		readWeather : function(weatherMap, plantingParams) {
