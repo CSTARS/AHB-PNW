@@ -1,13 +1,13 @@
 app.inputForm = (function(){
 	
 	var INPUT_TEMPLATE = 
-		'<div class="col-lg-6"><div class="form-group">'+
+		'<div class="form-group">'+
 			'<label for="{{id}}" class="col-lg-4 control-label">{{label}}</label>'+
 			'<div class="col-lg-8">'+
 				'<input type="{{type}}" class="form-control" id="{{id}}" style="width:200px;display:inline-block" value="{{value}}">&nbsp;&nbsp;{{units}}'+
 				'<p class="help-block">{{description}}</p>' +
 			'</div>'+
-		'</div></div>';
+		'</div>';
 	
 	var ARRAY_INPUT_TEMPLATE = 
 		'<div class="col-lg-6"><div class="form-group">'+
@@ -151,9 +151,29 @@ app.inputForm = (function(){
 		} else {
 			$("#select-weather-modal").modal('show');
 		}
+	}
+	
+	function _generateInputs(i, prefix, name, attrs) {
+		var id = prefix+'_'+name;
+		var input = '<div class="form-group" style="margin-left:'+(i*25)+'px">';
+		input += '<label for="'+id+'" class="control-label">'+name+'</label>';
+		input += '<div>';
+		if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		
-		
-		
+		if( typeof attrs.value == 'string' ) {
+			input += '<input type="text" class="form-control" id="'+id+'" style="width:200px;display:inline-block" value="'
+				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+		} else if ( typeof attrs.value == 'object' ) {
+			for( var key in attrs.value ) {
+				input += _generateInputs(i+1, id, key, attrs.value[key]);
+			}
+		} else if ( typeof attrs.value == 'number' ) {
+			input += '<input type="number" class="form-control" id="'+id+'" style="width:200px;display:inline-block" value="'
+				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+		}
+			
+		input += '</div></div>';
+		return input;
 	}
 	
 	function create(ele) {
@@ -166,16 +186,77 @@ app.inputForm = (function(){
 				
 				if( typeof config == 'object' ) {
 					_addInput({
-						model        : model,
-						label           : attr,
+						model       : model,
+						label       : attr,
 						description : config.description,
-						value          : config.value,
-						units           : config.units
+						value       : config.value,
+						units       : config.units
 					});
 				} else {
 					_addInput({
-						model        : model,
-						label           : attr
+						model       : model,
+						label       : attr
+					});
+				}
+			}
+		}
+		
+		
+		for( model in inputs ) {
+			if( model == "plantation_state" ) continue;
+			
+			tabHeader += '<li><a href="#inputs_'+model+'" id="tab_inputs_'+model+'" data-toggle="tab">'+model+'</a></li>';
+			var attributes = inputs[model];
+			
+			content += ' <div class="tab-pane" id="inputs_'+model+'">'
+			
+			var row1 = "";
+			var row2 = "<div class='col-lg-6>";
+
+			if( model == 'weather' ) {
+				content += _createWeatherInputs();
+			} else {
+				content += _generateInputs(0, '', model, app.model[model]);
+			}
+			content += '</div>';
+		}
+		content += '</div>';
+		tabHeader += "</ul>";
+		
+		ele.html(tabHeader+"<div class='form-horizontal'>"+content+"</div>");
+		
+		$('#input_tabs a').click(function (e) {
+			  e.preventDefault()
+			  $(this).tab('show')
+		});
+		$('#tab_inputs_weather').tab('show');
+		
+		$('#select-weather-location').on('click', _selectWeatherLocation);
+		
+		_setWeatherData();
+	}
+	
+	
+	/*function create(ele) {
+		var model, m, attr, config;
+		
+		for( model in app.model ) {
+			m = app.model[model];
+			for( attr in m ) {
+				config = m[attr];
+				
+				if( typeof config == 'object' ) {
+					_addInput({
+						model       : model,
+						label       : attr,
+						description : config.description,
+						value       : config.value,
+						units       : config.units
+					});
+				} else {
+					_addInput({
+						model       : model,
+						label       : attr
 					});
 				}
 			}
@@ -206,7 +287,7 @@ app.inputForm = (function(){
 					if( typeof attr.value == 'object' ) {
 						var arrInputs = "";
 						for( var key in attr.value ) {
-							arrInputs += key+' <input type="number" class="form-control" id="{'+model+"_"+attr.label+"_"+key+
+							arrInputs += key+' <input type="number" class="form-control" id="'+model+"_"+attr.label+"_"+key+
 													'" style="width:60px;display:inline-block">&nbsp;&nbsp;';
 						}
 						arrInputs += attr.units ? attr.units : '';
@@ -257,7 +338,7 @@ app.inputForm = (function(){
 		$('#select-weather-location').on('click', _selectWeatherLocation);
 		
 		_setWeatherData();
-	}
+	}*/
 	
 	return {
 		create : create
