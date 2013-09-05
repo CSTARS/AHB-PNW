@@ -25,7 +25,7 @@ var model = {
 	            fT: {
 	                description: "Specifies the parameters affecting temperature modifier, fT. A graph of how these parameters affect the temperature modifier is found here: https://www.desmos.com/calculator/69iwqtnl28",
 	                value: {
-	                    min: {
+	                    mn: {
 	                        units: "[C]",
 	                        description: "Specifies the minimum temperature of respiration",
 	                        value: 5
@@ -35,7 +35,7 @@ var model = {
 	                        description: "Specifies the optimum temperature of respiration",
 	                        value: 20
 	                    },
-	                    max: {
+	                    mx: {
 	                        units: "[C]",
 	                        description: "Specifies the maximum temperature of respiration",
 	                        value: 40
