@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
@@ -29,7 +30,7 @@
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/bootstrap-multiselect.js"></script>
 	<script src="js/app.js"></script>
-	<script src="js/drive.js"></script>
+	<script src="js/gdrive.js"></script>
 	<script src="js/inputForm.js"></script>
 	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	<script src="https://apis.google.com/js/client.js"></script>
@@ -58,7 +59,7 @@
 				app.loadSpreadsheetData(function(){
 					$("body").html("").load("app.html", function(){
 						app.init(function(){
-							app.drive.init();
+							app.gdrive.init();
 							app.runModel();
 						});
 					});

@@ -1,4 +1,4 @@
-app.drive = (function() {
+app.gdrive = (function() {
 
 	var MIME_TYPE = "application/vnd.ahb-3pg.run";
 	var TREE_MIME_TYPE = "application/vnd.ahb-3pg.tree";
@@ -18,9 +18,9 @@ app.drive = (function() {
 		});
 		_createLoginBtn();
 
-		$("#login-with-google").
+		//$("#login-with-google").
 
-		loadApi(function() {
+		_loadApi(function() {
 			setInterval(function() {
 				_checkToken();
 			}, 1000 * 5 * 60);
@@ -69,7 +69,7 @@ app.drive = (function() {
 						});
 
 		$("#login-header").html("").append(btn);
-	}
+	};
 
 	function _createLogoutBtn(name) {
 		var btn = $('<li class="dropdown">'
@@ -83,7 +83,7 @@ app.drive = (function() {
 		});
 
 		$("#login-header").html("").append(btn);
-	}
+	};
 
 	// tokens expire, every once in awhile check the current token hasn't
 	// if it has, then update
@@ -101,11 +101,11 @@ app.drive = (function() {
 				token = gapi.auth.getToken();
 			});
 		}
-	}
+	};
 
 	function checkSignedIn(callback) {
-		if (!token)
-			callback(false);
+		if (!token) callback(false);
+		
 		gapi.auth.authorize({
 			client_id : CLIENT_ID,
 			scope : OAUTH_SCOPES,
@@ -118,7 +118,7 @@ app.drive = (function() {
 			else
 				callback(false);
 		});
-	}
+	};
 
 	function signIn(callback) {
 		gapi.auth.authorize({
@@ -131,17 +131,17 @@ app.drive = (function() {
 			// you can check if login was successful based on token
 			callback(token);
 		});
-	}
+	};
 
 	function getToken() {
 		return token;
-	}
+	};
 
-	function loadApi(callback) {
+	function _loadApi(callback) {
 		gapi.client.load("drive", DRIVE_API_VERSION, function() {
 			callback();
 		});
-	}
+	};
 
 	function listFiles(query, callback) {
 		gapi.client.drive.files.list({
@@ -149,7 +149,7 @@ app.drive = (function() {
 		}).execute(function(resp) {
 			callback(resp);
 		});
-	}
+	};
 
 	function getFileMetadata(id, callback) {
 		gapi.client.drive.files.get({
@@ -157,7 +157,7 @@ app.drive = (function() {
 		}).execute(function(resp) {
 			callback(resp);
 		});
-	}
+	};
 
 	function getFile(id, downloadUrl, callback) {
 		$.ajax({
@@ -181,7 +181,7 @@ app.drive = (function() {
 				});
 			}
 		});
-	}
+	};
 
 	function saveFile(name, description, mimeType, json, callback) {
 		var boundary = '-------314159265358979323846';
@@ -225,7 +225,7 @@ app.drive = (function() {
 					message : "Failed to save"
 				});
 		});
-	}
+	};
 
 	return {
 		init : init,

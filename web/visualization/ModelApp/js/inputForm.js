@@ -61,7 +61,7 @@ app.inputForm = (function(){
 				if( j == 0 ) {
 					table += "<td>"+(i+1)+"</td>";
 				} else {
-					table += "<td><input class='form-control' id='weather-"+cols[j]+"-"+i+"' type='text' /></td>";
+					table += "<td><input class='form-control' id='input-weather-"+cols[j]+"-"+i+"' type='text' /></td>";
 				}
 			}
 			table += "</tr>";
@@ -91,7 +91,7 @@ app.inputForm = (function(){
 			
 			for( var i = 0; i < table.rows.length; i++ ) {
 				for( var j = 1; j < table.cols.length; j++ ) {
-					$("#weather-"+cols[j]+"-"+i).val(table.rows[i].c[j] ? table.rows[i].c[j].v : "");
+					$("#input-weather-"+cols[j]+"-"+i).val(table.rows[i].c[j] ? table.rows[i].c[j].v : "");
 				}
 			}
 			
@@ -103,7 +103,7 @@ app.inputForm = (function(){
 		q.send(function(response){
 			var table = JSON.parse(response.getDataTable().toJSON());
 			for( var i = 0; i < table.cols.length; i++ ) {
-				$("#soil-"+table.cols[i].id).val(table.rows[0].c[i].v);
+				$("#input-soil-"+table.cols[i].id).val(table.rows[0].c[i].v);
 			}
 			
 
@@ -142,7 +142,6 @@ app.inputForm = (function(){
 				fusionLayer.setMap(map);
 				
 				google.maps.event.addListener(map, 'click', function(e) {
-					console.log(e);
 					_queryWeatherData(e.latLng.lng(), e.latLng.lat())
 					$("#select-weather-modal").modal('hide');
 				});
@@ -154,22 +153,24 @@ app.inputForm = (function(){
 	}
 	
 	function _generateInputs(i, prefix, name, attrs) {
-		var id = prefix+'_'+name;
+		var id = prefix.length > 0 ? prefix+'-'+name : 'input-'+name;
 		var input = '<div class="form-group" style="margin-left:'+(i*25)+'px">';
 		input += '<label for="'+id+'" class="control-label">'+name+'</label>';
 		input += '<div>';
-		if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		
 		if( typeof attrs.value == 'string' ) {
 			input += '<input type="text" class="form-control" id="'+id+'" style="width:200px;display:inline-block" value="'
 				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		} else if ( typeof attrs.value == 'object' ) {
+			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 			for( var key in attrs.value ) {
 				input += _generateInputs(i+1, id, key, attrs.value[key]);
 			}
 		} else if ( typeof attrs.value == 'number' ) {
 			input += '<input type="number" class="form-control" id="'+id+'" style="width:200px;display:inline-block" value="'
 				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		}
 			
 		input += '</div></div>';
@@ -235,110 +236,7 @@ app.inputForm = (function(){
 		
 		_setWeatherData();
 	}
-	
-	
-	/*function create(ele) {
-		var model, m, attr, config;
-		
-		for( model in app.model ) {
-			m = app.model[model];
-			for( attr in m ) {
-				config = m[attr];
-				
-				if( typeof config == 'object' ) {
-					_addInput({
-						model       : model,
-						label       : attr,
-						description : config.description,
-						value       : config.value,
-						units       : config.units
-					});
-				} else {
-					_addInput({
-						model       : model,
-						label       : attr
-					});
-				}
-			}
-		}
-		
-		
-		for( model in inputs ) {
-			if( model == "plantation_state" ) continue;
-			
-			tabHeader += '<li><a href="#inputs_'+model+'" id="tab_inputs_'+model+'" data-toggle="tab">'+model+'</a></li>';
-			var attributes = inputs[model];
-			
-			content += ' <div class="tab-pane" id="inputs_'+model+'">'
-			
-			var row1 = "";
-			var row2 = "<div class='col-lg-6>";
 
-			if( model == 'weather' ) {
-				content += _createWeatherInputs();
-			} else {
-				
-				var row = "<div class='row'>";
-				var c = 0;
-				
-				for( var i = 0; i < attributes.length; i++) {
-					var attr = attributes[i];
-					
-					if( typeof attr.value == 'object' ) {
-						var arrInputs = "";
-						for( var key in attr.value ) {
-							arrInputs += key+' <input type="number" class="form-control" id="'+model+"_"+attr.label+"_"+key+
-													'" style="width:60px;display:inline-block">&nbsp;&nbsp;';
-						}
-						arrInputs += attr.units ? attr.units : '';
-						
-						row += ARRAY_INPUT_TEMPLATE
-							.replace(/{{id}}/g, model+"_"+attr.label)
-							.replace(/{{inputs}}/g, arrInputs)
-							.replace(/{{label}}/g, attr.label)
-							.replace(/{{description}}/g, attr.description ? attr.description : '');
-						
-						
-					} else {
-						var type = "number";
-						if( typeof attr.value == "string" ) type = "text";
-						
-						row += INPUT_TEMPLATE
-							.replace(/{{id}}/g, model+"_"+attr.label)
-							.replace(/{{label}}/g, attr.label)
-							.replace(/{{type}}/g, type)
-							.replace(/{{value}}/g, attr.value != -1 ? attr.value : '')
-							.replace(/{{units}}/g, attr.units ? attr.units : '')
-							.replace(/{{description}}/g, attr.description ? attr.description : '');
-					}
-					
-					c++;
-					if( c == 2 ) {
-						c = 0;
-						content += row+"</div>";
-						row = "<div class='row'>";
-					}
-				}
-				
-				if( c == 1) content += row+"</div>";
-			}
-			content += '</div>';
-		}
-		content += '</div>';
-		tabHeader += "</ul>";
-		
-		ele.html(tabHeader+"<div class='form-horizontal'>"+content+"</div>");
-		
-		$('#input_tabs a').click(function (e) {
-			  e.preventDefault()
-			  $(this).tab('show')
-		});
-		$('#tab_inputs_weather').tab('show');
-		
-		$('#select-weather-location').on('click', _selectWeatherLocation);
-		
-		_setWeatherData();
-	}*/
 	
 	return {
 		create : create

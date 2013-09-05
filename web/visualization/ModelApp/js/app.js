@@ -20,43 +20,51 @@ app.loadModelCode = function(version, callback) {
 	if( typeof version === 'function' ) callback = version;
 	if( !version || typeof version != 'string' ) version = "master";
 	
-	$.ajax({
-		url : "https://api.github.com/repos/CSTARS/AHB-PNW/contents/models/3pg/js/Model3PG.js?ref="+version,
-		success: function(data, status, xhr) {
-			// clean then base64 decode file content
-			// finally, eval js
+	app._requestModelCode("https://api.github.com/repos/CSTARS/AHB-PNW/contents/models/3pg/js/Model3PG.js?ref="+version, function(data){
+		// clean then base64 decode file content
+		// finally, eval js
+		eval(atob(data.content.replace(/[\s\n]/g,'')));
+		
+		// set m3PG object to window scope
+		window.m3PG = m3PG;
+		
+		app._requestModelCode("https://api.github.com/repos/CSTARS/AHB-PNW/contents/models/3pg/js/SingleRunFunctions.js?ref="+version, function(data){
 			eval(atob(data.content.replace(/[\s\n]/g,'')));
-			
-			// set m3PG object to window scope
-			window.m3PG = m3PG;
-			
-			$.ajax({
-				url : "https://api.github.com/repos/CSTARS/AHB-PNW/contents/models/3pg/js/SingleRunFunctions.js?ref="+version,
-				success: function(data, status, xhr) {
-					eval(atob(data.content.replace(/[\s\n]/g,'')));
-					window.m3PGFunc = m3PGFunc;
-					
-					$.ajax({
-						url : "https://api.github.com/repos/CSTARS/AHB-PNW/contents/models/3pg/js/DataModel.js?ref="+version,
-						success: function(data, status, xhr) {
-							var t = 1;
-							eval(atob(data.content.replace(/[\s\n]/g,'')));
-							app.model = model;
-							callback();
-						},
-						error : function() {
-							alert("Failed to load SingleRunFunctions.js from github");
-						}
-					});
-					
-				},
-				error : function() {
-					alert("Failed to load SingleRunFunctions.js from github");
-				}
+			window.m3PGFunc = m3PGFunc;
+				
+			app._requestModelCode("https://api.github.com/repos/CSTARS/AHB-PNW/contents/models/3pg/js/DataModel.js?ref="+version, function(data){
+				eval(atob(data.content.replace(/[\s\n]/g,'')));
+				app.model = model;
+				callback();
 			});
+		});
+	});
+}
+
+// github only allows 60 public requests per ip per hour.  so let's cache
+// code in localstorage for one hour
+app._requestModelCode = function(url, callback) {
+	// see if it's cached
+	if( localStorage[url] ) {
+		var time = localStorage["_timestamp_"+url];
+		// if the cache is less than an hour old, use cached copy
+		if( new Date().getTime() - parseInt(time) < 60000 ) {
+			console.log("Cache hit");
+			return callback(JSON.parse(localStorage[url]));
+		}
+	}
+	
+	$.ajax({
+		url : url,
+		success: function(data, status, xhr) {
+			// cache for later
+			localStorage[url] = JSON.stringify(data);
+			localStorage["_timestamp_"+url] = new Date().getTime();
+			callback(data);
 		},
 		error : function() {
-			alert("Failed to load Model3PG.js from github");
+			alert("Failed to load "+url+" from github");
+			callback();
 		}
 	});
 }
@@ -285,7 +293,7 @@ m3PGIO = {
 			}
 			return keyValMap;
 		},
-		readWeather : function(weatherMap, soilMap, dateMap) {
+		readWeather : function(weatherMap, plantingParams) {
 			// TODO: implement
 		    soilMap.maxaws = parseFloat($("#input-soil-maxaws").val());
 	        soilMap.swpower = parseFloat($("#input-soil-swpower").val());
@@ -293,19 +301,19 @@ m3PGIO = {
 	        
 	        var datePlanted = $("#input-date-datePlanted").val();
 	        if( datePlanted && datePlanted != "" ) {
-	        	dateMap.datePlanted = new Date($("#input-date-datePlanted").val());
+	        	plantingParams.datePlanted = new Date($("#input-date-datePlanted").val());
 	        } else {
-	        	dateMap.datePlanted = new Date();
+	        	plantingParams.datePlanted = new Date();
 	        }
 	        
 	        var dateCoppiced = $("#input-date-dateCoppiced").val();
 	        if( dateCoppiced && dateCoppiced != "" ) {
-	        	dateMap.dateCoppiced = new Date($("#input-date-dateCoppiced").val());
+	        	plantingParams.dateCoppiced = new Date($("#input-date-dateCoppiced").val());
 	        }
 	        
 	        var yearsPerCoppice = $("#input-date-yearsPerCoppice").val();
 	        if( yearsPerCoppice && yearsPerCoppice != "" ) {
-	        	dateMap.yearsPerCoppice = parseInt($("#input-date-yearsPerCoppice").val());
+	        	plantingParams.yearsPerCoppice = parseInt($("#input-date-yearsPerCoppice").val());
 	        }
 			
 			for( var i = 0; i < 12; i++ ) {
@@ -314,7 +322,7 @@ m3PGIO = {
 				};
 				for( var j = 1; j < app.inputs.weather.length; j++ ) {
 					var c = app.inputs.weather[j];
-					item[c] = parseFloat($("#input-weather-"+c+"-"+i).val());	
+					item[c] = parseFloat($("#weather-"+c+"-"+i).val());	
 				}
 				item.nrel = item.rad / 0.0036;
 				
