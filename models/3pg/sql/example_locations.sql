@@ -142,7 +142,7 @@ drop table if exists pixel;
 create table pixel as 
 with 
 s as (
-  select pid,(maxaws,swconst,swpower)::soil_t as soil 
+  select pid,(maxaws,swpower,swconst)::soil_t as soil 
   from pixel_sw join pixel_maxaws using (pid)
 ),
 d as (
