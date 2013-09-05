@@ -10,8 +10,7 @@ var model = {
 	            fullCanAge: {
 	                units: "[y]",
 	                description: "Year where tree reaches full Canopy Cover.",
-	                value: 0,
-	                
+	                value: 0  
 	            },
 	            kG: {
 	                units: "[kPA^-1]",
@@ -239,6 +238,16 @@ var model = {
 	                        value: 2.5
 	                    }
 	                }
+	            },
+	            stemsPerStump: {
+	                value: 4.4,
+	                units: "unitless",
+	                description: ""
+	            },
+	            initialStemsPerStump: {
+	                value: 4.4,
+	                units: "unitless",
+	                description: ""
 	            }
 	        }
 	    },
@@ -251,47 +260,27 @@ var model = {
 	                description: ""
 	            },
 	            StockingDensity: {
-	                value: -1,
+	                value: 2500,
 	                units: "",
 	                description: ""
 	            },
 	            SeedlingMass: {
-	                value: -1,
-	                units: "",
-	                description: ""
-	            },
-	            stemsPerStump: {
-	                value: -1,
-	                units: "",
-	                description: ""
-	            },
-	            initialStemsPerStump: {
-	                value: -1,
+	                value: 0.004,
 	                units: "",
 	                description: ""
 	            },
 	            pS: {
-	                value: -1,
+	                value: 0.1,
 	                units: "",
 	                description: ""
 	            },
 	            pF: {
-	                value: -1,
+	                value: 0,
 	                units: "",
 	                description: ""
 	            },
 	            pR: {
-	                value: -1,
-	                units: "",
-	                description: ""
-	            },
-	            seedlingTree: {
-	                value: -1,
-	                units: "",
-	                description: ""
-	            },
-	            coppicedTree: {
-	                value: -1,
+	                value: 0.9,
 	                units: "",
 	                description: ""
 	            }

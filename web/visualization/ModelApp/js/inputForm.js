@@ -79,6 +79,7 @@ app.inputForm = (function(){
 			_queryWeatherData(ll[0], ll[1]);
 		} else {
 			$("#current-weather-location").html("Not Set"); 
+			$("#current-soil-location").html("Not Set"); 
 		}
 	}
 	
@@ -108,7 +109,8 @@ app.inputForm = (function(){
 			
 
 		});
-		$("#current-weather-location").html(lng+", "+lat); 
+		$("#current-weather-location").html(lng+", "+lat);
+		$("#current-soil-location").html(lng+", "+lat);
 	}
 	
 	function _selectWeatherLocation() {
@@ -152,23 +154,23 @@ app.inputForm = (function(){
 		}
 	}
 	
-	function _generateInputs(i, prefix, name, attrs) {
+	function _generateInputs(i, type, prefix, name, attrs) {
 		var id = prefix.length > 0 ? prefix+'-'+name : 'input-'+name;
 		var input = '<div class="form-group" style="margin-left:'+(i*25)+'px">';
 		input += '<label for="'+id+'" class="control-label">'+name+'</label>';
 		input += '<div>';
 		
 		if( typeof attrs.value == 'string' ) {
-			input += '<input type="text" class="form-control" id="'+id+'" style="width:200px;display:inline-block" value="'
+			input += '<input type="text" class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
 				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
 			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		} else if ( typeof attrs.value == 'object' ) {
 			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 			for( var key in attrs.value ) {
-				input += _generateInputs(i+1, id, key, attrs.value[key]);
+				input += _generateInputs(i+1, type, id, key, attrs.value[key]);
 			}
 		} else if ( typeof attrs.value == 'number' ) {
-			input += '<input type="number" class="form-control" id="'+id+'" style="width:200px;display:inline-block" value="'
+			input += '<input type="number" class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
 				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
 			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		}
@@ -209,7 +211,12 @@ app.inputForm = (function(){
 			tabHeader += '<li><a href="#inputs_'+model+'" id="tab_inputs_'+model+'" data-toggle="tab">'+model+'</a></li>';
 			var attributes = inputs[model];
 			
-			content += ' <div class="tab-pane" id="inputs_'+model+'">'
+			content += ' <div class="tab-pane" id="inputs_'+model+'">';
+			
+			if( model == 'soil' ) {
+				content += "<div style='margin-top:10px'><a class='btn btn-primary' id='select-soil-location'><i class='icon-map-marker'></i> Select Location</a> "+
+					"<div class='pull-right'>Current Location: <span id='current-soil-location'></span></div></div>";
+			}
 			
 			var row1 = "";
 			var row2 = "<div class='col-lg-6>";
@@ -217,8 +224,10 @@ app.inputForm = (function(){
 			if( model == 'weather' ) {
 				content += _createWeatherInputs();
 			} else {
-				content += _generateInputs(0, '', model, app.model[model]);
+				content += _generateInputs(0, model, '', model, app.model[model]);
 			}
+			
+			
 			content += '</div>';
 		}
 		content += '</div>';
@@ -233,6 +242,7 @@ app.inputForm = (function(){
 		$('#tab_inputs_weather').tab('show');
 		
 		$('#select-weather-location').on('click', _selectWeatherLocation);
+		$('#select-soil-location').on('click', _selectWeatherLocation);
 		
 		_setWeatherData();
 	}

@@ -93,14 +93,13 @@ app.init = function(callback) {
 	var ele = $("#inputs-content");
 	app.inputForm.create(ele);
 	
+	$("#runbtn").on('click', function(){
+		if( $(this).hasClass("disabled") ) return;
+		$(this).addClass("disabled");
+		app.runModel();
+	});
+	
 	app.createInputs(function(){
-		
-		$(".minput").on('blur', function(){
-			app.runModel();
-		});
-		
-		$('a[data-toggle=tooltip]').tooltip({})
-		
 		callback();
 	});
 		
@@ -202,6 +201,7 @@ app.runVariation = function(index, rows, type,  variations) {
 
 
 app.showResults = function(rows) {
+	$("#runbtn").removeClass("disabled");
 	if( typeof rows[0][0] != "object" ) rows = [rows];
 	
 	app.showRawOutput(rows);
@@ -216,7 +216,7 @@ app.showResults = function(rows) {
 
 app.showChart = function(type, rows) {
 	var panel = $("<div />");
-	$("#chart").append(panel);
+	$("#chart-content").append(panel);
 	
 	var col = 0;
 	var data = [["month"]];
@@ -254,7 +254,7 @@ app.showChart = function(type, rows) {
 app.showRawOutput = function(data) {
 	
 	var tabs = $('<ul class="nav nav-tabs" id="rawOutputTabs"  data-tabs="tabs"></ul>');
-	var contents = $('<div class="tab-content"></div>');
+	var contents = $('<div class="tab-content" style="overflow:auto"></div>');
 	
 	var vType = $("#variationAnalysisInput").val();
 	var variations = $("#multiRunVarInputs").val().replace(/\s/g,'').split(",");
@@ -283,21 +283,50 @@ app.showRawOutput = function(data) {
 
 // using our own m3PGIO lib
 m3PGIO = {
-		readAllConstants : function(keyValMap) {
-			var constants = $(".const");
+		readAllConstants : function(plantation) {
 			
+			// is this how they are all read in? 
+			var constants = $(".constants");
 			for( var i = 0; i < constants.length; i++ ) {
 				var ele = $(constants[i]);
-				keyValMap[ele.attr("id").replace("input-const-","")] = parseFloat(ele.val());
+				//keyValMap[ele.attr("id").replace("input-constants-","")] = parseFloat(ele.val());
 				// TODO: make sure all constants are set
 			}
-			return keyValMap;
+			
+			var treeInputs = $(".tree");
+			window.tree = {};
+			for( var i = 0; i < treeInputs.length; i++ ) {
+				var ele = $(treeInputs[i]);
+				
+				var parts = ele.attr("id").replace("input-tree-","").split("-");
+				if( parts.length == 1 ) {
+					window.tree[parts[0]] = parseFloat(ele.val());
+				} else {
+					if( !window.tree[parts[0]] ) window.tree[parts[0]] = {};
+					window.tree[parts[0]][parts[1]] = parseFloat(ele.val());
+				}
+			}
+			plantation.coppicedTree = window.tree;
+			plantation.seedlingTree = window.tree;
+			
+			window.plantation_state = {};
+			for( var key in app.model.plantation_state.value ) {
+				window.plantation_state[key] = -1;
+			}
+			
+			window.manage = {
+			  irrigFrac : null,
+			  fertility : null,
+			  coppice   : null
+			};
+
 		},
 		readWeather : function(weatherMap, plantingParams) {
 			// TODO: implement
-		    soilMap.maxaws = parseFloat($("#input-soil-maxaws").val());
-	        soilMap.swpower = parseFloat($("#input-soil-swpower").val());
-	        soilMap.swconst = parseFloat($("#input-soil-swconst").val());
+			window.soil = {};
+			window.soil.maxAWS = parseFloat($("#input-soil-maxaws").val());
+			window.soil.swpower = parseFloat($("#input-soil-swpower").val());
+			window.soil.swconst = parseFloat($("#input-soil-swconst").val());
 	        
 	        var datePlanted = $("#input-date-datePlanted").val();
 	        if( datePlanted && datePlanted != "" ) {
@@ -322,7 +351,7 @@ m3PGIO = {
 				};
 				for( var j = 1; j < app.inputs.weather.length; j++ ) {
 					var c = app.inputs.weather[j];
-					item[c] = parseFloat($("#weather-"+c+"-"+i).val());	
+					item[c] = parseFloat($("#input-weather-"+c+"-"+i).val());	
 				}
 				item.nrel = item.rad / 0.0036;
 				
