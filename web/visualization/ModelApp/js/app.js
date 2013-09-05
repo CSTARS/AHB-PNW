@@ -299,7 +299,7 @@ m3PGIO = {
 			var eles = $(".manage");
 			for( var i = 0; i < eles.length; i++ ) {
 				var ele = $(eles[i]);
-				plantation[ele.attr("id").replace("input-manage-","")] = parseFloat(ele.val());
+				window.manage[ele.attr("id").replace("input-manage-","")] = parseFloat(ele.val());
 			}
 			
 			eles = $(".plantation");
@@ -325,7 +325,6 @@ m3PGIO = {
 			plantation.coppicedTree = window.tree;
 			plantation.seedlingTree = $.extend(true, {}, window.tree);
 			plantation.seedlingTree.stemsPerStump = 1;
-			console.log(plantation);
 			
 			window.plantation_state = {};
 			for( var key in app.model.plantation_state.value ) {
@@ -371,7 +370,8 @@ m3PGIO = {
 				
 				weatherMap[i] = item;
 			}
-			
+			console.log(weatherMap);
+			console.log(plantingParams);
 			return weatherMap;
 		},
 		dump : function(rows, sheet) {
