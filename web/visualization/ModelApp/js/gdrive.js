@@ -5,33 +5,72 @@ app.gdrive = (function() {
 	var DRIVE_API_VERSION = "v2";
 
 	var CLIENT_ID = "962079416283-mn2f8g2avn4t091f4chlfjac5juc5rmr.apps.googleusercontent.com";
+	var APP_ID = "344190713465";
 
 	var OAUTH_SCOPES = 'https://www.googleapis.com/auth/drive.file '
 			+ 'https://www.googleapis.com/auth/drive.install '
 			+ 'https://www.googleapis.com/auth/userinfo.profile';
 
 	var token = "";
+	
+	var loadedFile = null;
+	var fileList = [];
+	var client = null;
 
 	function init() {
 		$("#save-modal").modal({
 			show : false
 		});
+		$("#load-modal").modal({
+			show : false
+		});
 		
-		$("#save-new-btn").on('click', function() {
-			var name = $("#save-name-input").val();
-			if( name.length == 0 ) alert("Please provide a name");
-			
-			saveFile(name, 
-					$("#save-description-input").val(), 
-					MIME_TYPE, 
+		$("#save-update-btn").on('click', function() {
+			updateFile(loadedFile, 
 					m3PGIO.exportSetup(), 
 					function(resp){
-						if( resp.error ) alert("Save to drive failed");
+						if( resp.error ) alert("Update file failed");
 						else alert("Success");
 						$("#save-modal").modal('hide');
+						_updateFileList();
 					}
 			);
 		});
+		
+		$("#save-new-btn").on('click', function() {
+			var name = $("#save-name-input").val();
+			if( name.length == 0 ) {
+				alert("Please provide a name");
+				return;
+			}
+			
+			saveFile(name,
+					$("#save-description-input").val(),
+					MIME_TYPE, 
+					m3PGIO.exportSetup(), 
+					function(resp) {
+						if( resp.error ) alert("Save to drive failed");
+						else alert("Success");
+						$("#save-modal").modal('hide');
+						_updateFileList();
+						loadedFile = resp.id;
+					}
+			);
+		});
+		
+		$("#share-btn").on('click', function(){
+			if( client == null ) {
+				gapi.load('drive-share', function(){
+				 	client = new gapi.drive.share.ShareClient(APP_ID);
+		    		client.setItemIds([loadedFile]);
+				 	client.showSettingsDialog();
+				 });
+			} else {
+				client.setItemIds([loadedFile]);
+			 	client.showSettingsDialog();
+			}
+		});
+		
 		
 		_createLoginBtn();
 
@@ -59,7 +98,7 @@ app.gdrive = (function() {
 		var btn = $('<li class="dropdown">'
 				+ '<a class="dropdown-toggle" data-toggle="dropdown">Login<b class="caret"></b></a>'
 				+ '<ul class="dropdown-menu">'
-				+ '<li><a id="login-with-google">Login with Google</a></li>'
+				+ '<li><a id="login-with-google"><i class="icon-signin"></i> Login with Google</a></li>'
 				+ '</ul></li>')
 
 		btn.find('#login-with-google').on('click',function() {
@@ -72,6 +111,7 @@ app.gdrive = (function() {
 	};
 	
 	function _setUserInfo() {
+		// load user name
 		$.ajax({
 			url : "https://www.googleapis.com/oauth2/v1/userinfo",
 			beforeSend : function(request) {
@@ -89,18 +129,75 @@ app.gdrive = (function() {
 			error : function() {
 			}
 		});
+		
+		// load user files
+		_updateFileList();
+	}
+	
+	function _updateFileList() {
+		$("#gdrive-file-list").html("Loading...");
+		listFiles("mimeType = '"+MIME_TYPE+"'", function(resp){
+			if( !resp.result.items ) return $("#gdrive-file-list").html("<li>No Files</li>");
+			if( resp.result.items.length == 0 ) return $("#gdrive-file-list").html("<li>No Files</li>");
+			$("#gdrive-file-list").html("");
+			
+			fileList = resp.result.items;
+			for( var i = 0; i < resp.result.items.length; i++ ) {
+				var item = resp.result.items[i];
+				var d = new Date(item.modifiedDate);
+				$("#gdrive-file-list").append(
+					$("<li><a id='"+item.id+"' url='"+item.downloadUrl+"' style='cursor:pointer'>"+item.title+"</a><br />" +
+					  "<span style='color:#888'>"+item.description+"</span></li>"+
+					  "<span style='font-style:italic;font-size:11px;'>Last Modified: "+d.toDateString()+" "+d.toLocaleTimeString()+" by "+item.lastModifyingUserName+"</span><br />"
+					  )
+				);
+			}
+			
+			$("#gdrive-file-list a").on('click', function(){
+				var id = $(this).attr("id");
+				getFile(id, $(this).attr("url"), function(file) {
+					if( file == null ) return alert("failed to load file");
+					loadedFile = id;
+					$("#load-modal").modal('hide');
+					m3PGIO.loadSetup(id, file);
+					alert("File Loaded");
+				});
+			});
+		});
 	}
 
 	function _createLogoutBtn(name) {
 		var btn = $('<li class="dropdown">'
 				+ '<a class="dropdown-toggle" data-toggle="dropdown">' + name
 				+ '<b class="caret"></b></a>' + '<ul class="dropdown-menu">'
-				+ '<li><a id="save">Save</a></li>' 
-				+ '<li><a id="logout">Logout</a></li>' 
+				+ '<li><a id="save"><i class="icon-cloud-upload"></i> Save / <i class="icon-share"></i> Share</a></li>' 
+				+ '<li><a id="load"><i class="icon-cloud-download"></i> Load</a></li>' 
+				+ '<li><a id="logout"><i class="icon-signout"></i> Logout</a></li>' 
 				+ '</ul></li>')
 
 		btn.find('#save').on('click', function() {
+			if( loadedFile != null) {
+				var file = {};
+				for( var i = 0; i < fileList.length; i++ ) {
+					if( fileList[i].id = loadedFile) {
+						file = fileList[i];
+						break;
+					}
+				}
+				$("#save-update-panel").show();
+				var d = new Date(file.modifiedDate);
+				$("#save-update-panel-inner").html(file.title+"<br />" +
+					  "<span style='color:#888'>"+file.description+"</span><br />"+
+					  "<span style='font-style:italic;font-size:11px;'>Last Modified: "+d.toDateString()+" "+d.toLocaleTimeString()+" by "+file.lastModifyingUserName+"</span>")
+			} else {
+				$("#save-update-panel").hide();
+			}
+			
 			$("#save-modal").modal('show');
+		});
+		
+		btn.find('#load').on('click', function() {
+			$("#load-modal").modal('show');
 		});
 				
 		btn.find('#logout').on('click', function() {
@@ -252,6 +349,46 @@ app.gdrive = (function() {
 				});
 		});
 	};
+	
+	function updateFile(fileId, json, callback) {
+		var boundary = '-------314159265358979323846';
+		var delimiter = "\r\n--" + boundary + "\r\n";
+		var close_delim = "\r\n--" + boundary + "--";
+	
+		 var metadata = {};
+	
+	    var base64Data = btoa(JSON.stringify(json));
+	    var multipartRequestBody =
+	    	delimiter +
+	        'Content-Type: application/json\r\n\r\n' +
+	        JSON.stringify(metadata) +
+	        delimiter +
+	        'Content-Type: ' + MIME_TYPE + '\r\n' +
+	        'Content-Transfer-Encoding: base64\r\n' +
+	        '\r\n' +
+	        base64Data +
+	        close_delim;
+	
+	    var request = gapi.client.request({
+	        'path': '/upload/drive/v2/files/'+fileId,
+	        'method': 'PUT',
+	        'params': {'uploadType': 'multipart'},
+	        'headers': {
+	          'Content-Type': 'multipart/mixed; boundary="' + boundary + '"'
+	        },
+	        'body': multipartRequestBody});
+	    
+	    request.execute(function(resp){
+	    	if( resp.id ) {
+	    		callback(resp);
+	    	} else {
+	    		callback({
+					error : true,
+					message : "Failed to update"
+				});
+	    	}
+	    });
+	}
 
 	return {
 		init : init,

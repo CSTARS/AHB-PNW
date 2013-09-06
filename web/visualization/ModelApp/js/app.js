@@ -166,6 +166,7 @@ app.runComplete = function(rows) {
 	app.runCallback = null;
 }
 
+app._currentDefaultVariation = "";
 app.runModel = function() {
 	
 	var variation = $("#variationAnalysisInput").val();
@@ -179,13 +180,13 @@ app.runModel = function() {
 		m3PG.run(parseInt($("#monthsToRun").val()));
 		
 	} else {
-
-		app.runVariation(0, [], variation, $("#multiRunVarInputs").val().replace(/\s/g,'').split(","));
-		
+		app.runVariation(0, [], variation, $("#multiRunVarInputs").val().replace(/\s/g,'').split(","));		
 	}
 }
 
 app.runVariation = function(index, rows, type,  variations) {
+	// save the default value
+	if( index == 0 ) app._currentDefaultVariation = $("#input-"+type.replace(/\./g,'-')).val();
 	$("#input-"+type.replace(/\./g,'-')).val(variations[index]);
 	
 	app.runCallback = function(data) {
@@ -193,7 +194,7 @@ app.runVariation = function(index, rows, type,  variations) {
 		index++;
 		if( variations.length == index ) {
 			// reset the constant to the first value
-			$("input-const-"+type).val(variations[0]);
+			$("#input-"+type.replace(/\./g,'-')).val(app._currentDefaultVariation);
 			app.showResults(rows);
 		} else {
 			app.runVariation(index, rows, type, variations);
@@ -291,7 +292,6 @@ app.showRawOutput = function(data) {
 // using our own m3PGIO lib
 m3PGIO = {
 		readAllConstants : function(plantation) {
-			console.log(1);
 			this.readFromInputs();
 			
 			for( var key in window.plantation ) plantation[key] = window.plantation[key];
@@ -301,7 +301,6 @@ m3PGIO = {
 			
 		},
 		readWeather : function(weatherMap, plantingParams) {
-			console.log(2);
 	        var datePlanted = $("#input-date-datePlanted").val();
 	        if( datePlanted && datePlanted != "" ) {
 	        	plantingParams.datePlanted = new Date($("#input-date-datePlanted").val());
@@ -401,16 +400,87 @@ m3PGIO = {
 				soil             : window.soil,
 				plantingParams   : window.plantingParam,
 				plantation_state : window.plantation_state,
+				plantingParams   : window.plantingParams,
 				config           : {
 					variationAnalysisInput : $("#variationAnalysisInput").val(),
 					multiRunVarInputs      : $("#multiRunVarInputs").val(),
 					chartTypeInput         : $("#chartTypeInput").val(),
 					monthsToRun            : $("#monthsToRun").val(),
-					currentLocation        : $("#current-weather-location").val(),
+					currentLocation        : $("#current-weather-location").html(),
 					version                : qs("version") ? qs("version") : "master"
 				} 
 			}
 			
 			return ex;
+		},
+		loadSetup : function(fileid, setup) {
+			// first, if the version is off, we need to reload the entire app
+			if( setup.config.version ) {
+				var cversion = qs("version") ? qs("version") : "master";
+				if( cversion != setup.config.version ) {
+					window.location = window.location.href.replace(/#.*/,'')+"?version="+setup.config.version+"&file="+fileid;
+				}
+			}
+			
+			
+			// load condig
+			if( setup.config.chartTypeInput ) {
+				var chartTypeSelector = $("#chartTypeInput");
+				$('option', chartTypeSelector).each(function(element) {
+					chartTypeSelector.multiselect('deselect', $(this).val());
+				});
+				for( var i = 0; i < setup.config.chartTypeInput.length; i++ ) {
+					chartTypeSelector.multiselect('select', setup.config.chartTypeInput[i]);
+				}
+			}
+			if( setup.config.currentLocation ) {
+				$("#current-weather-location").html(setup.config.currentLocation);
+			}
+			var configs = ["variationAnalysisInput", "multiRunVarInputs", "monthsToRun"];
+			for( var i = 0; i < configs.length; i++ ) {
+				if( setup.config[configs[i]] ) $("#"+configs[i]).val(setup.config[configs[i]]);
+			}
+			if( $("#variationAnalysisInput").val() == 'None' ) $("#multiRunVarInputs-outer").hide();
+			else $("#multiRunVarInputs-outer").show();
+
+			// load weather
+			for( var i = 0; i < setup.weather.length; i++ ) {
+				for( var key in setup.weather[i] ) {
+					if( key == 'month' ) continue;
+					if( setup.weather[i][key] != null ) $("#input-weather-"+key+"-"+i).val(setup.weather[i][key])
+					else $("#input-weather-"+key+"-"+i).val("");
+				}
+			}
+			
+			// load tree
+			for( var rootKey in setup.tree ) {
+				if( typeof setup.tree[rootKey] != 'object' ) {
+					$("#input-tree-"+rootKey).val(setup.tree[rootKey]);
+				} else {
+					for( var childKey in setup.tree[rootKey] ) {
+						$("#input-tree-"+rootKey+"-"+childKey).val(setup.tree[rootKey][childKey]);
+					}
+				}
+			}
+			
+			// load planting params
+			if( setup.plantingParams ) {
+				for( var key in setup.plantingParams ) {
+					if( typeof setup.plantingParams[key] == 'string' ) $("#input-date-"+key).val(setup.plantingParams[key].replace(/T.*/,''));
+					else $("#input-date-"+key).val(setup.plantingParams[key]);
+				}
+			}
+			
+			
+			// load rest
+			var inputs = ["plantation","soil","manage"];
+			for( var i = 0; i < inputs.length; i++ ) {
+				for( var key in setup[inputs[i]] ) {
+					if( key == 'maxAWS') $("input-soil-maxaws").val(setup.soil.maxAWS);
+					else $("#input-"+inputs[i]+"-"+key).val(setup[inputs[i]][key]);
+				}
+			}
+			
+			app.runModel();
 		}
 };

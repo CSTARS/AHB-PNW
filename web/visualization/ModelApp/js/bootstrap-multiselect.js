@@ -448,7 +448,9 @@
             $option.attr('selected', 'selected').prop('selected', true);
 
             this.updateButtonText();
-            this.options.onChange($option, checked);
+            
+            // TODO: wtf is checked?
+            //this.options.onChange($option, checked);
         },
 
         // Deselect an option by its value.

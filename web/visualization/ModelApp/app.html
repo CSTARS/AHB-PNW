@@ -118,14 +118,39 @@
 		Save to Google Drive
       </div>
       <div class="modal-body">
+      		<div class="well" style="display:none" id="save-update-panel">
+      			<div id="save-update-panel-inner"></div>
+      			<a class="btn btn-success" id="save-update-btn"><i class="icon-save"></i> Update Current File</a>
+      			<a class="btn btn-primary pull-right" id="share-btn"><i class="icon-share"></i> share</a>
+      		</div>
      		Name: <input type="text" class="form-control" id="save-name-input" /><br />
      		Description: <textarea class="form-control" id="save-description-input" ></textarea>
+     		
       </div>
       <div class="modal-footer">
-      	<a class="btn btn-success pull-right" id="save-new-btn" >Save</a>
+      	<a class="btn btn-success pull-right" id="save-new-btn" style="margin-left:10px" ><i class="icon-cloud-upload"></i> Save New File</a>
      	<a class="btn btn-default pull-right" data-dismiss="modal" >Cancel</a>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" id="load-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		Load from Google Drive
+      </div>
+      <div class="modal-body">
+     		Files:
+     		<ul id="gdrive-file-list">
+     			<li>Loading...</li>
+     		</ul>
+      </div>
+      <div class="modal-footer">
+     	<a class="btn btn-default pull-right" data-dismiss="modal" >Cancel</a>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
