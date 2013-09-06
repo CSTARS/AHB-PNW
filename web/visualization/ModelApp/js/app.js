@@ -50,7 +50,7 @@ app._requestModelCode = function(url, callback) {
 	if( localStorage[url] ) {
 		var time = localStorage["_timestamp_"+url];
 		// if the cache is less than an hour old, use cached copy
-		if( new Date().getTime() - parseInt(time) < 60000 ) {
+		if( new Date().getTime() - parseInt(time) < 60000*60 ) {
 			console.log("Cache hit");
 			return callback(JSON.parse(localStorage[url]));
 		}
