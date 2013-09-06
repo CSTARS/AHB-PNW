@@ -95,7 +95,7 @@ app.init = function(callback) {
 	
 	$("#runbtn").on('click', function(){
 		if( $(this).hasClass("disabled") ) return;
-		$(this).addClass("disabled");
+		$(this).addClass("disabled").html("Running...");
 		app.runModel();
 	});
 	
@@ -184,9 +184,6 @@ app.runModel = function() {
 }
 
 app.runVariation = function(index, rows, type,  variations) {
-	console.log(type.replace(/\./g,'-'));
-	console.log(variations[index]);
-	console.log($("#input-"+type.replace(/\./g,'-')));
 	$("#input-"+type.replace(/\./g,'-')).val(variations[index]);
 	
 	app.runCallback = function(data) {
@@ -206,7 +203,6 @@ app.runVariation = function(index, rows, type,  variations) {
 
 
 app.showResults = function(rows) {
-	$("#runbtn").removeClass("disabled");
 	if( typeof rows[0][0] != "object" ) rows = [rows];
 	
 	app.showRawOutput(rows);
@@ -216,6 +212,10 @@ app.showResults = function(rows) {
 	for( var i = 0; i < types.length; i++ ){
 		app.showChart(types[i], rows);
 	}
+	
+	setTimeout(function(){
+		$("#runbtn").removeClass("disabled").html("<i class='icon-play'></i> Play");
+	},250);
 	
 }
 

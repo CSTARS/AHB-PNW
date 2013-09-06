@@ -147,6 +147,10 @@ app.inputForm = (function(){
 					_queryWeatherData(e.latLng.lng(), e.latLng.lat())
 					$("#select-weather-modal").modal('hide');
 				});
+				google.maps.event.addListener(fusionLayer, 'click', function(e) {
+					_queryWeatherData(e.latLng.lng(), e.latLng.lat())
+					$("#select-weather-modal").modal('hide');
+				});
 				
 			},500);
 		} else {
