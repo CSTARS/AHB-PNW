@@ -245,6 +245,16 @@ app.inputForm = (function(){
 		$('#select-soil-location').on('click', _selectWeatherLocation);
 		
 		_setWeatherData();
+		
+		// now add variation analysis data
+		var variationModels = ["tree", "plantation", "manage"];
+		for( var i = 0; i < variationModels.length; i++ ) {
+			var eles = $("."+variationModels[i]);
+			for( var j = 0; j < eles.length; j++ ) {
+				var val = $(eles[j]).attr("id").replace("input-","").replace(/-/g,".");
+				$("#variationAnalysisInput").append("<option value='"+val+"'>"+val+"</option>");
+			}
+		}
 	}
 
 	

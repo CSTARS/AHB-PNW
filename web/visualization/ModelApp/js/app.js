@@ -113,7 +113,8 @@ app.createInputs = function(callback) {
 	
 	var chartTypeSelector = $("#chartTypeInput");
 	for( var i = 0; i < app.outputs.length; i++ ) {
-		chartTypeSelector.append($("<option value='"+app.outputs[i]+"' "+(i==0 ? 'selected' : '')+">"+app.outputs[i]+"</option>"));
+		var val = app.outputs[i];
+		chartTypeSelector.append($("<option value='"+val+"' "+(val=='WR'||val=='WS'||val=='WF'?'selected':'')+">"+val+"</option>"));
 	}
 	
 	// multiselect
@@ -138,6 +139,8 @@ app.createInputs = function(callback) {
         }
       }
     });
+	// fix bootstrap 3 style
+	$("button.multiselect.dropdown-toggle.btn").addClass("btn-default");
 	
 	var variationAnalysisInput = $("#variationAnalysisInput");
 	variationAnalysisInput.on('change', function(){
@@ -149,7 +152,7 @@ app.createInputs = function(callback) {
 		}
 		
 		$("#multiRunVarInputs-outer").show();
-		$("#multiRunVarInputs").val($("#input-const-"+val).val());
+		$("#multiRunVarInputs").val($("#input-"+val.replace(/\./g,"-")).val());
 	});
 	
 	callback();
@@ -181,8 +184,7 @@ app.runModel = function() {
 }
 
 app.runVariation = function(index, rows, type,  variations) {
-	
-	$("#input-const-"+type).val(variations[index]);
+	$("#input-"+type.replace(/\./g,'-')).val(variations[index]);
 	
 	app.runCallback = function(data) {
 		rows.push(data);
