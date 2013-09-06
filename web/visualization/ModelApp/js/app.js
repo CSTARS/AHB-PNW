@@ -476,7 +476,7 @@ m3PGIO = {
 			var inputs = ["plantation","soil","manage"];
 			for( var i = 0; i < inputs.length; i++ ) {
 				for( var key in setup[inputs[i]] ) {
-					if( key == 'maxAWS') $("input-soil-maxaws").val(setup.soil.maxAWS);
+					if( key == 'maxAWS') $("#input-soil-maxaws").val(setup.soil.maxAWS);
 					else $("#input-"+inputs[i]+"-"+key).val(setup[inputs[i]][key]);
 				}
 			}
