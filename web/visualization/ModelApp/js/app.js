@@ -184,6 +184,9 @@ app.runModel = function() {
 }
 
 app.runVariation = function(index, rows, type,  variations) {
+	console.log(type.replace(/\./g,'-'));
+	console.log(variations[index]);
+	console.log($("#input-"+type.replace(/\./g,'-')));
 	$("#input-"+type.replace(/\./g,'-')).val(variations[index]);
 	
 	app.runCallback = function(data) {
