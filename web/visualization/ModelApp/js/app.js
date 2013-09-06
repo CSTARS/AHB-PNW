@@ -11,7 +11,9 @@ app.loadModelCode = function(version, callback) {
 	if( app.devmode ) {
 		$.getScript("jslib/Model3PG.js", function(){
 			$.getScript("jslib/SingleRunFunctions.js", function(){
-				callback();
+				$.getScript("jslib/DataModel.js", function(){
+					callback();
+				});
 			});
 		});
 		return;
@@ -289,63 +291,17 @@ app.showRawOutput = function(data) {
 // using our own m3PGIO lib
 m3PGIO = {
 		readAllConstants : function(plantation) {
+			console.log(1);
+			this.readFromInputs();
 			
-			// is this how they are all read in? 
-			var constants = $(".constants");
-			for( var i = 0; i < constants.length; i++ ) {
-				var ele = $(constants[i]);
-				//keyValMap[ele.attr("id").replace("input-constants-","")] = parseFloat(ele.val());
-				// TODO: make sure all constants are set
-			}
-			
-			window.manage = {
-					coppice   : false
-			};
-			var eles = $(".manage");
-			for( var i = 0; i < eles.length; i++ ) {
-				var ele = $(eles[i]);
-				window.manage[ele.attr("id").replace("input-manage-","")] = parseFloat(ele.val());
-			}
-			
-			eles = $(".plantation");
-			for( var i = 0; i < eles.length; i++ ) {
-				var ele = $(eles[i]);
-				plantation[ele.attr("id").replace("input-plantation-","")] = parseFloat(ele.val());
-			}
-			
-			
-			var treeInputs = $(".tree");
-			window.tree = {};
-			for( var i = 0; i < treeInputs.length; i++ ) {
-				var ele = $(treeInputs[i]);
-				
-				var parts = ele.attr("id").replace("input-tree-","").split("-");
-				if( parts.length == 1 ) {
-					window.tree[parts[0]] = parseFloat(ele.val());
-				} else {
-					if( !window.tree[parts[0]] ) window.tree[parts[0]] = {};
-					window.tree[parts[0]][parts[1]] = parseFloat(ele.val());
-				}
-			}
+			for( var key in window.plantation ) plantation[key] = window.plantation[key];
 			plantation.coppicedTree = window.tree;
 			plantation.seedlingTree = $.extend(true, {}, window.tree);
 			plantation.seedlingTree.stemsPerStump = 1;
 			
-			window.plantation_state = {};
-			for( var key in app.model.plantation_state.value ) {
-				window.plantation_state[key] = -1;
-			}
-			
-			
-
 		},
 		readWeather : function(weatherMap, plantingParams) {
-			// TODO: implement
-			window.soil = {};
-			window.soil.maxAWS = parseFloat($("#input-soil-maxaws").val());
-			window.soil.swpower = parseFloat($("#input-soil-swpower").val());
-			window.soil.swconst = parseFloat($("#input-soil-swconst").val());
-	        
+			console.log(2);
 	        var datePlanted = $("#input-date-datePlanted").val();
 	        if( datePlanted && datePlanted != "" ) {
 	        	plantingParams.datePlanted = new Date($("#input-date-datePlanted").val());
@@ -362,6 +318,7 @@ m3PGIO = {
 	        if( yearsPerCoppice && yearsPerCoppice != "" ) {
 	        	plantingParams.yearsPerCoppice = parseInt($("#input-date-yearsPerCoppice").val());
 	        }
+	        window.plantingParams = plantingParams;
 			
 			for( var i = 0; i < 12; i++ ) {
 				var item = {
@@ -375,12 +332,85 @@ m3PGIO = {
 				
 				weatherMap[i] = item;
 			}
-			console.log(weatherMap);
-			console.log(plantingParams);
+			
+			window.weather = weatherMap;
+			
 			return weatherMap;
 		},
 		dump : function(rows, sheet) {
 		    // set the raw output
 			app.runComplete(rows);
+		},
+		readFromInputs : function() {
+			// read soil
+			window.soil = {};
+			window.soil.maxAWS = parseFloat($("#input-soil-maxaws").val());
+			window.soil.swpower = parseFloat($("#input-soil-swpower").val());
+			window.soil.swconst = parseFloat($("#input-soil-swconst").val());
+			
+			// read manage
+			window.manage = {
+					coppice   : false
+			};
+			var eles = $(".manage");
+			for( var i = 0; i < eles.length; i++ ) {
+				var ele = $(eles[i]);
+				window.manage[ele.attr("id").replace("input-manage-","")] = parseFloat(ele.val());
+			}
+			
+			// read plantation
+			window.plantation = {};
+			eles = $(".plantation");
+			for( var i = 0; i < eles.length; i++ ) {
+				var ele = $(eles[i]);
+				window.plantation[ele.attr("id").replace("input-plantation-","")] = parseFloat(ele.val());
+			}
+			
+			
+			// read tree
+			var treeInputs = $(".tree");
+			window.tree = {};
+			for( var i = 0; i < treeInputs.length; i++ ) {
+				var ele = $(treeInputs[i]);
+				
+				var parts = ele.attr("id").replace("input-tree-","").split("-");
+				if( parts.length == 1 ) {
+					window.tree[parts[0]] = parseFloat(ele.val());
+				} else {
+					if( !window.tree[parts[0]] ) window.tree[parts[0]] = {};
+					window.tree[parts[0]][parts[1]] = parseFloat(ele.val());
+				}
+			}
+			
+			// read plantation state
+			window.plantation_state = {};
+			for( var key in app.model.plantation_state.value ) {
+				window.plantation_state[key] = -1;
+			}
+			
+		},
+		exportSetup : function() {
+			this.readFromInputs();
+			this.readWeather([], {});
+			
+			var ex = {
+				weather          : window.weather,
+				tree             : window.tree,
+				plantation       : window.plantation,
+				manage           : window.manage,
+				soil             : window.soil,
+				plantingParams   : window.plantingParam,
+				plantation_state : window.plantation_state,
+				config           : {
+					variationAnalysisInput : $("#variationAnalysisInput").val(),
+					multiRunVarInputs      : $("#multiRunVarInputs").val(),
+					chartTypeInput         : $("#chartTypeInput").val(),
+					monthsToRun            : $("#monthsToRun").val(),
+					currentLocation        : $("#current-weather-location").val(),
+					version                : qs("version") ? qs("version") : "master"
+				} 
+			}
+			
+			return ex;
 		}
 };

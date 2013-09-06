@@ -13,14 +13,41 @@ app.gdrive = (function() {
 	var token = "";
 
 	function init() {
-		$("#google-login").modal({
+		$("#save-modal").modal({
 			show : false
 		});
+		
+		$("#save-new-btn").on('click', function() {
+			var name = $("#save-name-input").val();
+			if( name.length == 0 ) alert("Please provide a name");
+			
+			saveFile(name, 
+					$("#save-description-input").val(), 
+					MIME_TYPE, 
+					m3PGIO.exportSetup(), 
+					function(resp){
+						if( resp.error ) alert("Save to drive failed");
+						else alert("Success");
+						$("#save-modal").modal('hide');
+					}
+			);
+		});
+		
 		_createLoginBtn();
 
-		//$("#login-with-google").
+		
 
 		_loadApi(function() {
+			// try a quick login
+			gapi.auth.authorize({
+				client_id : CLIENT_ID,
+				scope : OAUTH_SCOPES,
+				immediate : true
+			}, function() {
+				token = gapi.auth.getToken();
+				if( token ) _setUserInfo();
+			});
+			
 			setInterval(function() {
 				_checkToken();
 			}, 1000 * 5 * 60);
@@ -35,48 +62,47 @@ app.gdrive = (function() {
 				+ '<li><a id="login-with-google">Login with Google</a></li>'
 				+ '</ul></li>')
 
-		btn
-				.find('#login-with-google')
-				.on(
-						'click',
-						function() {
-							$("#google-login").modal('hide');
-							signIn(function(token) {
-								$
-										.ajax({
-											url : "https://www.googleapis.com/oauth2/v1/userinfo",
-											beforeSend : function(request) {
-												request
-														.setRequestHeader(
-																"Authorization",
-																'Bearer '
-																		+ token.access_token);
-											},
-											success : function(data, status,
-													xhr) {
-												try {
-													data = JSON.parse(data);
-												} catch (e) {
-												}
-
-												_createLogoutBtn(data.name);
-
-											},
-											error : function() {
-											}
-										});
-							});
-						});
+		btn.find('#login-with-google').on('click',function() {
+			signIn(function(token) {
+				_setUserInfo();
+			});
+		});
 
 		$("#login-header").html("").append(btn);
 	};
+	
+	function _setUserInfo() {
+		$.ajax({
+			url : "https://www.googleapis.com/oauth2/v1/userinfo",
+			beforeSend : function(request) {
+				request.setRequestHeader("Authorization",'Bearer '+ token.access_token);
+			},
+			success : function(data, status,xhr) {
+				try {
+					data = JSON.parse(data);
+				} catch (e) {
+				}
+
+				_createLogoutBtn(data.name);
+
+			},
+			error : function() {
+			}
+		});
+	}
 
 	function _createLogoutBtn(name) {
 		var btn = $('<li class="dropdown">'
 				+ '<a class="dropdown-toggle" data-toggle="dropdown">' + name
 				+ '<b class="caret"></b></a>' + '<ul class="dropdown-menu">'
-				+ '<li><a id="logout">Logout</a></li>' + '</ul></li>')
+				+ '<li><a id="save">Save</a></li>' 
+				+ '<li><a id="logout">Logout</a></li>' 
+				+ '</ul></li>')
 
+		btn.find('#save').on('click', function() {
+			$("#save-modal").modal('show');
+		});
+				
 		btn.find('#logout').on('click', function() {
 			token = null;
 			_createLoginBtn();
@@ -191,7 +217,7 @@ app.gdrive = (function() {
 		var metadata = {
 			'title' : name,
 			'description' : description,
-			'mimeType' : mimiType,
+			'mimeType' : mimeType,
 		// parents : [{id: folderId}] TODO
 		};
 
