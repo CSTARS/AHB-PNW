@@ -170,13 +170,28 @@ app.gdrive = (function() {
 	}
 	
 	function load(id) {
-		getFileMetadata(id, function(file){
-			getFile(id, file.downloadUrl, function(file) {
-				if( file == null ) return alert("failed to load file");
-				loadedFile = id;
-				m3PGIO.loadSetup(id, file);
+		if( !token ) {
+			signIn(function(token) {
+				_setUserInfo();
+				
+				getFileMetadata(id, function(file){
+					getFile(id, file.downloadUrl, function(file) {
+						if( file == null ) return alert("failed to load file");
+						loadedFile = id;
+						m3PGIO.loadSetup(id, file);
+					});
+				});
+				
 			});
-		});
+		} else {
+			getFileMetadata(id, function(file){
+				getFile(id, file.downloadUrl, function(file) {
+					if( file == null ) return alert("failed to load file");
+					loadedFile = id;
+					m3PGIO.loadSetup(id, file);
+				});
+			});
+		}
 	}
 
 	function _createLogoutBtn(name) {

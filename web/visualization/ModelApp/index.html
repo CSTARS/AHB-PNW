@@ -63,6 +63,13 @@
 							app.gdrive.init(function(){
 								var file = qs("file");
 								if( file ) app.gdrive.load(file);
+								
+								// see if we are loading for google drive
+								var state = qs("state");
+								if( state ) {
+									state = JSON.parse(state);
+									app.gdrive.load(state.ids[0]);
+								}
 							});
 						});
 					});
