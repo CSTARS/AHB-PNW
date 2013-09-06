@@ -179,7 +179,7 @@ app.gdrive = (function() {
 			if( loadedFile != null) {
 				var file = {};
 				for( var i = 0; i < fileList.length; i++ ) {
-					if( fileList[i].id = loadedFile) {
+					if( fileList[i].id == loadedFile) {
 						file = fileList[i];
 						break;
 					}
