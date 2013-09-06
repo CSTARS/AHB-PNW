@@ -99,10 +99,14 @@ app.gdrive = (function() {
 
 	function _createLoginBtn() {
 		var btn = $('<li class="dropdown">'
-				+ '<a class="dropdown-toggle" data-toggle="dropdown">Login<b class="caret"></b></a>'
+				+ '<a class="dropdown-toggle" style="cursor:pointer">Login<b class="caret"></b></a>'
 				+ '<ul class="dropdown-menu">'
 				+ '<li><a id="login-with-google"><i class="icon-signin"></i> Login with Google</a></li>'
-				+ '</ul></li>')
+				+ '</ul></li>');
+
+		btn.find('a.dropdown-toggle').on('click', function(){
+			$(this).parent().toggleClass('open');
+		});
 
 		btn.find('#login-with-google').on('click',function() {
 			signIn(function(token) {
@@ -196,12 +200,16 @@ app.gdrive = (function() {
 
 	function _createLogoutBtn(name) {
 		var btn = $('<li class="dropdown">'
-				+ '<a class="dropdown-toggle" data-toggle="dropdown">' + name
+				+ '<a class="dropdown-toggle" style="cursor:pointer">' + name
 				+ '<b class="caret"></b></a>' + '<ul class="dropdown-menu">'
 				+ '<li><a id="save"><i class="icon-cloud-upload"></i> Save / <i class="icon-share"></i> Share</a></li>' 
 				+ '<li><a id="load"><i class="icon-cloud-download"></i> Load</a></li>' 
 				+ '<li><a id="logout"><i class="icon-signout"></i> Logout</a></li>' 
-				+ '</ul></li>')
+				+ '</ul></li>');
+		
+		btn.find('a.dropdown-toggle').on('click', function(){
+			$(this).parent().toggleClass('open');
+		});
 
 		btn.find('#save').on('click', function() {
 			if( loadedFile != null) {

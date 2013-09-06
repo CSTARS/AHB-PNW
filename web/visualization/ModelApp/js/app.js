@@ -288,7 +288,6 @@ app.showRawOutput = function(data) {
 	}
 }
 
-
 // using our own m3PGIO lib
 m3PGIO = {
 		readAllConstants : function(plantation) {
