@@ -4,12 +4,11 @@ app.gdrive = (function() {
 	var TREE_MIME_TYPE = "application/vnd.ahb-3pg.tree";
 	var DRIVE_API_VERSION = "v2";
 
-	var CLIENT_ID = "344190713465-ne9r1bnhqhc8mkjp4o0keesdtkvn6olb.apps.googleusercontent.com";
+	var CLIENT_ID = "344190713465.apps.googleusercontent.com";
 	var APP_ID = "344190713465";
 
 	var OAUTH_SCOPES = 'https://www.googleapis.com/auth/drive.file '
 			+ 'https://www.googleapis.com/auth/drive.install '
-			+ 'https://www.googleapis.com/auth/drive.appdata '
 			+ 'https://www.googleapis.com/auth/userinfo.profile';
 
 	var token = "";
