@@ -9,6 +9,7 @@ app.gdrive = (function() {
 
 	var OAUTH_SCOPES = 'https://www.googleapis.com/auth/drive.file '
 			+ 'https://www.googleapis.com/auth/drive.install '
+			+ 'https://www.googleapis.com/auth/drive.appdata '
 			+ 'https://www.googleapis.com/auth/userinfo.profile';
 
 	var token = "";
@@ -61,6 +62,7 @@ app.gdrive = (function() {
 		$("#share-btn").on('click', function(){
 			if( client == null ) {
 				gapi.load('drive-share', function(){
+					console.log(APP_ID);
 				 	client = new gapi.drive.share.ShareClient(APP_ID);
 		    		client.setItemIds([loadedFile]);
 				 	client.showSettingsDialog();
