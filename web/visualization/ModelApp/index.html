@@ -60,7 +60,10 @@
 				app.loadSpreadsheetData(function(){
 					$("body").html("").load("app.html", function(){
 						app.init(function(){
-							app.gdrive.init();
+							app.gdrive.init(function(){
+								var file = qs("file");
+								if( file ) app.gdrive.load(file);
+							});
 						});
 					});
 				});

@@ -17,7 +17,7 @@ app.gdrive = (function() {
 	var fileList = [];
 	var client = null;
 
-	function init() {
+	function init(callback) {
 		$("#save-modal").modal({
 			show : false
 		});
@@ -85,6 +85,7 @@ app.gdrive = (function() {
 			}, function() {
 				token = gapi.auth.getToken();
 				if( token ) _setUserInfo();
+				if( callback ) callback();
 			});
 			
 			setInterval(function() {
@@ -146,7 +147,7 @@ app.gdrive = (function() {
 				var item = resp.result.items[i];
 				var d = new Date(item.modifiedDate);
 				$("#gdrive-file-list").append(
-					$("<li><a id='"+item.id+"' url='"+item.downloadUrl+"' style='cursor:pointer'>"+item.title+"</a><br />" +
+					$("<li><a id='"+item.id+"' url='"+item.downloadUrl+"' style='cursor:pointer'><i class='icon-file'></i> "+item.title+"</a><br />" +
 					  "<span style='color:#888'>"+item.description+"</span></li>"+
 					  "<span style='font-style:italic;font-size:11px;'>Last Modified: "+d.toDateString()+" "+d.toLocaleTimeString()+" by "+item.lastModifyingUserName+"</span><br />"
 					  )
@@ -162,6 +163,16 @@ app.gdrive = (function() {
 					m3PGIO.loadSetup(id, file);
 					alert("File Loaded");
 				});
+			});
+		});
+	}
+	
+	function load(id) {
+		getFileMetadata(id, function(file){
+			getFile(id, file.downloadUrl, function(file) {
+				if( file == null ) return alert("failed to load file");
+				loadedFile = id;
+				m3PGIO.loadSetup(id, file);
 			});
 		});
 	}
@@ -276,7 +287,7 @@ app.gdrive = (function() {
 
 	function getFileMetadata(id, callback) {
 		gapi.client.drive.files.get({
-			'fileId' : fileId
+			'fileId' : id
 		}).execute(function(resp) {
 			callback(resp);
 		});
@@ -397,6 +408,7 @@ app.gdrive = (function() {
 		getToken : getToken,
 		listFiles : listFiles,
 		getFileMetadata : getFileMetadata,
+		load : load,
 
 		MIME_TYPE : MIME_TYPE
 	}
