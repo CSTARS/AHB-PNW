@@ -169,19 +169,24 @@ app.runComplete = function(rows) {
 app._currentDefaultVariation = "";
 app.runModel = function() {
 	
-	var variation = $("#variationAnalysisInput").val();
-	var runCount = 0;
-	
-	if( variation == "" || variation == "None" ) {
+	// let UI process for a sec before we tank it
+	// TODO: this should be preformed w/ a webworker
+	setTimeout(function(){
+		var variation = $("#variationAnalysisInput").val();
+		var runCount = 0;
 		
-		app.runCallback = function(rows) {
-			app.showResults(rows);
+		if( variation == "" || variation == "None" ) {
+			
+			app.runCallback = function(rows) {
+				app.showResults(rows);
+			}
+			m3PG.run(parseInt($("#monthsToRun").val()));
+			
+		} else {
+			app.runVariation(0, [], variation, $("#multiRunVarInputs").val().replace(/\s/g,'').split(","));		
 		}
-		m3PG.run(parseInt($("#monthsToRun").val()));
-		
-	} else {
-		app.runVariation(0, [], variation, $("#multiRunVarInputs").val().replace(/\s/g,'').split(","));		
-	}
+	}, 250);
+	
 }
 
 app.runVariation = function(index, rows, type,  variations) {
@@ -217,7 +222,7 @@ app.showResults = function(rows) {
 	}
 	
 	setTimeout(function(){
-		$("#runbtn").removeClass("disabled").html("<i class='icon-play'></i> Play");
+		$("#runbtn").removeClass("disabled").html("<i class='icon-play'></i> Run");
 	},250);
 	
 }

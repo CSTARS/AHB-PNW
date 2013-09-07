@@ -108,6 +108,7 @@ app.gdrive = (function() {
 		});
 
 		btn.find('#login-with-google').on('click',function() {
+			btn.toggleClass('open');
 			signIn(function(token) {
 				_setUserInfo();
 			});
@@ -211,6 +212,7 @@ app.gdrive = (function() {
 		});
 
 		btn.find('#save').on('click', function() {
+			btn.toggleClass('open');
 			if( loadedFile != null) {
 				var file = {};
 				for( var i = 0; i < fileList.length; i++ ) {
@@ -232,10 +234,12 @@ app.gdrive = (function() {
 		});
 		
 		btn.find('#load').on('click', function() {
+			btn.toggleClass('open');
 			$("#load-modal").modal('show');
 		});
 				
 		btn.find('#logout').on('click', function() {
+			btn.toggleClass('open');
 			token = null;
 			_createLoginBtn();
 		});
