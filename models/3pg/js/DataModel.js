@@ -248,19 +248,19 @@ var model = {
 	    },
 	    //endtree
 	    plantation: {
-	        description: "TODO",
+	        description: "Greenwood PG Values (default)",
 	        value: {
 	            type: {
 	                value: "",
 	                description: ""
 	            },
 	            StockingDensity: {
-	                value: 2500,
+	                value: 3587,
 	                units: "",
 	                description: ""
 	            },
 	            SeedlingMass: {
-	                value: 0.004,
+	                value: 0.0004,
 	                units: "",
 	                description: ""
 	            },
