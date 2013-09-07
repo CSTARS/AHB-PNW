@@ -15,12 +15,12 @@ var model = {
 	            kG: {
 	                units: "[kPA^-1]",
 	                description: "Determines the response of the canopy conductance to the vapor pressure deficit.",
-	                value: 0.005
+	                value: 0.5
 	            },
 	            alpha: {
 	                units: "[kg/mol ?]",
 	                description: "Canopy quantum efficiency.",
-	                value: 0.05
+	                value: 0.06
 	            },
 	            fT: {
 	                description: "Specifies the parameters affecting temperature modifier, fT. A graph of how these parameters affect the temperature modifier is found here: https://www.desmos.com/calculator/69iwqtnl28",
@@ -81,20 +81,20 @@ var model = {
 	                value: {
 	                    f0: {
 	                        description: "Value at Initial Time",
-	                        value: 1
+	                        value: 10.8
 	                    },
 	                    f1: {
 	                        description: "Value at Infinite Time",
-	                        value: 0
+	                        value: 10.8
 	                    },
 	                    tm: {
 	                        units: "[y]",
 	                        description: "Time in years where value is the average of f0 and f1",
-	                        value: 47.5
+	                        value: 1
 	                    },
 	                    n: {
 	                        description: "n>=1; Parameter specifing the rate of change around tm.  n=1 is approximately a linear change, as n increases, change becomes more localized around tm.",
-	                        value: 3.5
+	                        value: 2
 	                    }
 	                }
 	            },
@@ -109,7 +109,7 @@ var model = {
 	                    },
 	                    mx: {
 	                        description: "Maximum value",
-	                        value: 0.2
+	                        value: 0.02
 	                    },
 	                    lai: {
 	                        units: "[m^2/m^2]",
@@ -212,7 +212,7 @@ var model = {
 		                efficiency: {
 		                    units: "[kg/kg]",
 		                    description: "Specifies the efficiency in converting root biomass into aboveground biomass.",
-		                    value: 0.5
+		                    value: 0.75
 		                }
 	                }
 	            },

@@ -9,6 +9,7 @@ app.loadModelCode = function(version, callback) {
 	// load script from a this server
 	// scripts should be in /jslib
 	if( app.devmode ) {
+		console.log("DevMode: Loading local scripts");
 		$.getScript("jslib/Model3PG.js", function(){
 			$.getScript("jslib/SingleRunFunctions.js", function(){
 				$.getScript("jslib/DataModel.js", function(){
