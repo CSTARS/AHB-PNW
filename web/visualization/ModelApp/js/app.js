@@ -301,8 +301,17 @@ m3PGIO = {
 			
 			for( var key in window.plantation ) plantation[key] = window.plantation[key];
 			plantation.coppicedTree = window.tree;
+			
+			// setup seedling Tree
+			// TODO: hardcoded for now, this shouldn't be
 			plantation.seedlingTree = $.extend(true, {}, window.tree);
 			plantation.seedlingTree.stemsPerStump = 1;
+			plantation.seedlingTree.pfs.stemCnt = 1;
+			plantation.seedlingTree.rootP = {
+				LAITarget: 10,
+				efficiency: 0.6,
+				frac: 0.01
+			}
 			
 		},
 		readWeather : function(weatherMap, plantingParams) {
