@@ -102,12 +102,13 @@ app.init = function(callback) {
 		app.runModel();
 	});
 	
+	
+	
 	app.createInputs(function(){
 		callback();
 	});
 		
 }
-
 
 app.createInputs = function(callback) {
 	var ele = $("#inputs-content");

@@ -117,6 +117,9 @@ app.inputForm = (function(){
 		if( !map ) {
 			$("#select-weather-modal").modal({});
 			
+			$("#locate-button").on('click', _getLocation);
+			
+			
 			// wait for the modal to init
 			setTimeout(function(){
 				map = new google.maps.Map($("#gmap")[0], {
@@ -155,6 +158,21 @@ app.inputForm = (function(){
 			},500);
 		} else {
 			$("#select-weather-modal").modal('show');
+		}
+	}
+	
+	function _getLocation() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(showPosition);
+			$("#locate-button").addClass("btn-warning");
+		} else{
+			window.alert("Geolocation is not supported by this browser.");
+		}
+		function showPosition(position) { 
+			$("#locate-button").removeClass("btn-warn").addClass("btn-success");
+			map.setZoom(10);
+			map.setCenter(new google.maps.LatLng(position.coords.latitude, position.coords.longitude));
+			//_queryWeatherData(position.coords.longitude, position.coords.latitude);
 		}
 	}
 	
