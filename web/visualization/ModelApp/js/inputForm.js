@@ -158,6 +158,11 @@ app.inputForm = (function(){
 			},500);
 		} else {
 			$("#select-weather-modal").modal('show');
+			
+			// we seem to be hanging sometimes....
+			setTimeout(function(){
+				google.maps.event.trigger(map, "resize");
+			}, 500);
 		}
 	}
 	
