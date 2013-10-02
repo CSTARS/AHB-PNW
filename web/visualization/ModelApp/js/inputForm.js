@@ -184,7 +184,9 @@ app.inputForm = (function(){
 	function _generateInputs(i, type, prefix, name, attrs) {
 		var id = prefix.length > 0 ? prefix+'-'+name : 'input-'+name;
 		var input = '<div class="form-group" style="margin-left:'+(i*25)+'px">';
-		input += '<label for="'+id+'" class="control-label">'+name+'</label>';
+		input += '<label for="'+id+'" class="control-label">'+name +'</label>';
+		if( typeof attrs.value == 'number' )  input += ' <a style="cursor:pointer" onclick="app.setVariationFromLink($(this));" param="'+id+'"><i class="icon-cogs"></i></a>';
+		
 		input += '<div>';
 		
 		if( typeof attrs.value == 'string' ) {

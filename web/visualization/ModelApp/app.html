@@ -1,19 +1,25 @@
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div class="navbar navbar-default navbar-fixed-top" role="navigation" style="z-index:5">
 	<div class="navbar-header">  
     	<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-main">
       	  <span class="icon-bar"></span>
       	  <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
+        <button id="configuration-btn-sm" class="navbar-toggle" type="button">
+            <i class="icon-cogs"></i>
+        </button>
+        <button id="runbtn-sm" class="navbar-toggle" type="button">
+            <i class="icon-play"></i>
+        </button>
         <a class="navbar-brand">AHB - 3PG Model</a>
     </div>
         
     <div class="navbar-collapse collapse navbar-main">
       <ul class="nav navbar-nav">
-        <li><a href="#inputs">Inputs</a></li>
-        <li><a href="#configuration">Configuration</a></li>
-        <li><a href="#output">Raw Output</a></li>
-        <li><a href="#chart">Charts</a></li>
+        <li><a href="#inputs"><i class="icon-angle-right"></i> Inputs</a></li>
+        <li><a id="configuration-btn" style="cursor:pointer"><i class="icon-cogs"></i> Configuration</a></li>
+        <li><a href="#chart"><i class="icon-bar-chart"></i> Charts</a></li>
+        <li><a href="#output"><i class="icon-table"></i> Raw Output</a></li>
         <li><button id="runbtn" class="btn btn-success" style="margin-top:5px"><i class="icon-play"></i> Run</button></li>
       </ul>
 
@@ -23,75 +29,94 @@
     </div>
 </div>
 
+<div id="configuration" class="config-overlay">
 
-<div class="" id="root" style="padding: 50px 15px">
+    <div class="row"><div class="col-md-6">
+    
+	     <h4>Run Time</h4>
+	     <div>
+	         <table class="table">
+	             <tr>
+	                 <td>Number of months to run 3PG Model </td>
+	                 <td> <input  class="minput form-control" type="text" id="monthsToRun" value="120" style="height:40px;width:200px" /></td>
+	             </tr>
+	         </table>
+	     </div>
+	     
+	     <h4>Chart Options</h4>
+	    <div>
+	        <table class="table">
+	            <tr>
+	                <td style="width:50%">Output variable(s) to chart </td>
+	                <td> <select class="minput form-control" id="chartTypeInput" multiple="multiple"></select></td>
+	            </tr>
+	            <tr>
+	                <td style="width:50%">Variation analysis parameter </td>
+	                <td> <select class="minput" id="variationAnalysisInput"><option>None</option></select></td>
+	            </tr>
+	            <tr id="multiRunVarInputs-outer" style="display:none">
+	                <td>Variation parameter values to compare (comma separate)<br />
+	                    <span style="color:#888;font-size:11px">The model will be run one time for each specified input</span>
+	                </td>
+	                <td> <textarea class="minput form-control" id="multiRunVarInputs"></textarea></td>
+	            </tr>
+	        </table>
+	    </div>
+     
+   </div><div class="col-md-6">
+   
+	   <h4>Dates</h4>
+	     <div>
+	         <table class="table">
+	             <tr><td>Date Planted</td><td><input type="date" class="minput form-control" id="input-date-datePlanted" style="height:40px;width:200px" /></td></tr>
+	             <tr><td>Date Coppiced</td><td><input type="date" class="minput form-control" id="input-date-dateCoppiced" style="height:40px;width:200px" /></td></tr>
+	             <tr><td>Coppice Interval Years</td><td><input type="text" class="minput form-control" id="input-date-yearsPerCoppice" style="height:40px;width:200px" /></td></tr>
+	         </table>
+	     </div>
+   
+   </div></div>
+   
+    
+   <div style="margin-bottom:10px;text-align:center">
+    <a class="btn btn-primary" id="config-hide-btn" style="width:100px" >Close</a>
+   </div>
+     
+</div>
 
-	<section id="inputs">
-                <div class="page-header">
-                        <h1>Inputs</h1>
-                </div>
-               <div id="inputs-content"></div>
-    </section>
 
-	<section id="configuration">
-                <div class="page-header">
-                        <h1>Configuration</h1>
-                </div>
-               <div id="configuration-content">
-               		<h4>Run Time</h4>
-			        	<div>
-			        		<table class="table table-striped">
-			        			<tr>
-			        				<td>Number of months to run 3PG Model </td>
-			        				<td> <input  class="minput form-control" type="text" id="monthsToRun" value="120" style="height:40px;width:200px" /></td>
-			        			</tr>
-			        		</table>
-			        	</div>
-			        	<h4>Chart Options</h4>
-			        	<div>
-			        		<table class="table table-striped">
-			        			<tr>
-			        				<td style="width:50%">Output variable(s) to chart </td>
-			        				<td> <select class="minput form-control" id="chartTypeInput" multiple="multiple"></select></td>
-			        			</tr>
-			        			<tr>
-			        				<td style="width:50%">Variation analysis parameter </td>
-			        				<td> <select class="minput" id="variationAnalysisInput"><option>None</option></select></td>
-			        			</tr>
-			        			<tr id="multiRunVarInputs-outer" style="display:none">
-			        				<td>Variation parameter values to compare (comma separate)<br />
-			        					<span style="color:#888;font-size:11px">The model will be run one time for each specified input</span>
-			        				</td>
-			        				<td> <textarea class="minput form-control" id="multiRunVarInputs"></textarea></td>
-			        			</tr>
-			        		</table>
-			        	</div>
-			        	
-			        	<h4>Dates</h4>
-			        	<div>
-			        		<table class="table table-striped">
-			        			<tr><td>Date Planted</td><td><input type="date" class="minput form-control" id="input-date-datePlanted" style="height:40px;width:200px" /></td></tr>
-			        			<tr><td>Date Coppiced</td><td><input type="date" class="minput form-control" id="input-date-dateCoppiced" style="height:40px;width:200px" /></td></tr>
-			        			<tr><td>Coppice Interval Years</td><td><input type="text" class="minput form-control" id="input-date-yearsPerCoppice" style="height:40px;width:200px" /></td></tr>
-			        		</table>
-			        	</div>
+<div class="" id="root" style="padding: 50px 5px">
 
-               		</div>
-    </section>
+    <div class="row"><div class="col-md-6">
+    
+		<section id="inputs">
+	                <div class="page-header">
+	                        <h1>Inputs</h1>
+	                </div>
+	               <div id="inputs-content"></div>
+	    </section>
+    
+    </div><div class="col-md-6">
+    
+	    <section id="chart">
+	                <div class="page-header">
+	                        <h1>Charts</h1>
+	                </div>
+	               <div id="chart-content">
+	                   <div style="text-align:center;"><i class="icon-bar-chart blank-icon"></i></div>
+	               </div>
+	    </section>
+    
+    </div></div>
     
     <section id="output">
-                <div class="page-header">
-                        <h1>Raw Output</h1>
-                </div>
-               <div id="output-content" style="overflow:hidden"></div>
-    </section>
+            <div class="page-header">
+                    <h1>Raw Output</h1>
+            </div>
+           <div id="output-content" style="overflow:hidden">
+                    <div style="text-align:center;"><i class="icon-table blank-icon"></i></div>
+           </div>
+     </section>
     
-    <section id="chart">
-                <div class="page-header">
-                        <h1>Charts</h1>
-                </div>
-               <div id="chart-content"></div>
-    </section>
 </div>
 
 <div class="modal fade" id="select-weather-modal">
