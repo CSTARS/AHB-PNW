@@ -128,15 +128,27 @@ app.init = function(callback) {
     $("#input-date-dateCoppiced").val(new Date(new Date().getTime()+(86400000*2*365)).toISOString().replace(/T.*/,''));
     $("#input-date-yearsPerCoppice").val(3);
     
+    $(window).resize(function(){
+        _resizeConfig();
+    });
     $('#configuration-btn, #config-hide-btn, #configuration-btn-sm').on('click', function(){
         if( $("#configuration").hasClass("open") ) {
-            $('#configuration').animate({top: -500},600,'swing').removeClass("open");
+            $('#configuration').animate({top: $("#configuration").height()*-1},500).removeClass("open");
         } else {
-            $('#configuration').animate({top: 50},600,'swing').addClass("open");
+            $('#configuration').animate({top: 50},500).addClass("open");
         }
     });
-    
+    _resizeConfig();
 }
+
+function _resizeConfig(){
+    if( !$("#configuration").hasClass("open") ) {
+        $("#configuration").css("top",$("#configuration").height()*-1);
+    }
+    if( $("#configuration").height() -50 > $(window).height() ) $("#configuration").css("height", $(window).height()-50)
+    else $("#configuration").css("height", 'auto');
+}
+
 
 app.createInputs = function(callback) {
     var ele = $("#inputs-content");
@@ -191,8 +203,12 @@ app.createInputs = function(callback) {
 }
 
 app.setVariationFromLink = function(ele) {
-    $("#variationAnalysisInput").val(ele.attr("param").replace('input-','').replace(/-/g,'.'));
-    $("#variationAnalysisInput").trigger("change");
+    var param = ele.attr("param").replace('input-','').replace(/-/g,'.');
+    if( $("#variationAnalysisInput").val() != param ) {
+        $("#variationAnalysisInput").val(param);
+        $("#variationAnalysisInput").trigger("change");
+    }
+    
     
     if( !$("#configuration").hasClass("open") ) 
         $('#configuration-btn').trigger('click');
@@ -210,7 +226,21 @@ app.runComplete = function(rows) {
 
 app._currentDefaultVariation = "";
 app.runModel = function() {
-
+    // make sure all the weather is set.  #1 thing people will mess up
+    for ( var i = 0; i < 12; i++) {
+        for ( var j = 1; j < app.inputs.weather.length; j++) {
+            var c = app.inputs.weather[j];
+            var val = parseFloat($("#input-weather-" + c + "-" + i).val());
+            if( !val && val != 0 ) {
+                alert("Missing weather data: "+c+" for month "+i+"\n\n"+
+                       "Did you select a location and/or did you fill out all weather fields?");
+                $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
+                return;
+            }
+        }
+    }
+    
+    
     // let UI process for a sec before we tank it
     // TODO: this should be preformed w/ a webworker
     setTimeout(function() {
@@ -268,7 +298,7 @@ app.showResults = function(rows) {
     }
 
     setTimeout(function() {
-        $("#runbtn").removeClass("disabled").html(
+        $("#runbtn, #runbtn-sm").removeClass("disabled").html(
                 "<i class='icon-play'></i> Run");
     }, 250);
 
@@ -310,9 +340,17 @@ app.showChart = function(type, rows) {
     }
 
     var dt = google.visualization.arrayToDataTable(data);
+    var options = {
+            vAxis : {
+                title : type
+            },
+            hAxis : {
+                title : "Month"
+            }
+    }
 
     var chart = new google.visualization.LineChart(panel[0]);
-    chart.draw(dt, {});
+    chart.draw(dt, options);
 }
 
 app.showRawOutput = function(data) {

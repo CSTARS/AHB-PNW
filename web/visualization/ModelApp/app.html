@@ -17,10 +17,11 @@
     <div class="navbar-collapse collapse navbar-main">
       <ul class="nav navbar-nav">
         <li><a href="#inputs"><i class="icon-angle-right"></i> Inputs</a></li>
-        <li><a id="configuration-btn" style="cursor:pointer"><i class="icon-cogs"></i> Configuration</a></li>
+        
         <li><a href="#chart"><i class="icon-bar-chart"></i> Charts</a></li>
         <li><a href="#output"><i class="icon-table"></i> Raw Output</a></li>
-        <li><button id="runbtn" class="btn btn-success" style="margin-top:5px"><i class="icon-play"></i> Run</button></li>
+        <li><button id="configuration-btn" class="btn btn-primary" style="margin:7px 4px"><i class="icon-cogs"></i> Config</Button></li>
+        <li><button id="runbtn" class="btn btn-success" style="margin:7px 4px"><i class="icon-play"></i> Run</button></li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right"  id="login-header">
@@ -66,13 +67,19 @@
    </div><div class="col-md-6">
    
 	   <h4>Dates</h4>
-	     <div>
-	         <table class="table">
-	             <tr><td>Date Planted</td><td><input type="date" class="minput form-control" id="input-date-datePlanted" style="height:40px;width:200px" /></td></tr>
-	             <tr><td>Date Coppiced</td><td><input type="date" class="minput form-control" id="input-date-dateCoppiced" style="height:40px;width:200px" /></td></tr>
-	             <tr><td>Coppice Interval Years</td><td><input type="text" class="minput form-control" id="input-date-yearsPerCoppice" style="height:40px;width:200px" /></td></tr>
-	         </table>
-	     </div>
+	    <div>
+	        <table class="table">
+	            <tr><td>Date Planted</td><td><input type="date" class="minput form-control" id="input-date-datePlanted" style="height:40px;width:200px" /></td></tr>
+	            <tr><td>Date Coppiced</td><td><input type="date" class="minput form-control" id="input-date-dateCoppiced" style="height:40px;width:200px" /></td></tr>
+	            <tr><td>Coppice Interval Years</td><td><input type="text" class="minput form-control" id="input-date-yearsPerCoppice" style="height:40px;width:200px" /></td></tr>
+	        </table>
+	    </div>
+	     
+	   <h4>Location</h4>
+	     <div style="border-top:1px solid #ddd;padding:8px;height:60px">
+	       <span id='current-location' style="color:#888"></span>
+	       <a class='btn btn-default pull-right' id='select-weather-location'><i class='icon-map-marker'></i> Select Location</a>
+         </div>
    
    </div></div>
    
@@ -86,7 +93,7 @@
 
 <div class="" id="root" style="padding: 50px 5px">
 
-    <div class="row"><div class="col-md-6">
+    <div class="row"><div class="col-md-5">
     
 		<section id="inputs">
 	                <div class="page-header">
@@ -95,7 +102,7 @@
 	               <div id="inputs-content"></div>
 	    </section>
     
-    </div><div class="col-md-6">
+    </div><div class="col-md-7">
     
 	    <section id="chart">
 	                <div class="page-header">

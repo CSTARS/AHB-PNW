@@ -20,6 +20,7 @@
 	top: -600px;
 	box-shadow: 0 0 10px #888;
 	padding: 0 15px;
+	overflow: auto;
 }
 
 .blank-icon {
