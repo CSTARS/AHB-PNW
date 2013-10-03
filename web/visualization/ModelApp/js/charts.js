@@ -150,6 +150,8 @@ app.charts = (function() {
     return {
         init : init,
         setData : setData,
+        select : select,
+        unselect : unselect,
         selectAll : selectAll,
         unselectAll : unselectAll,
         updateCharts : updateCharts,
