@@ -1,5 +1,12 @@
 app.charts = (function() {
     
+    var sliderPopup = $(
+            "<div class='slide-popup'>" +
+                "<i class='icon-remove-circle pull-right slide-popup-close' onclick='app.charts.hidePopup()'></i>"+
+                "<div id='carousel' class='owl-carousel owl-theme' style='margin-top:15px'></div>" +
+    		"</div>");
+    var sliderPopupBg = $("<div class='slide-popup-bg'>&nbsp;</div>");
+    
     var changes = false;
     var chartTypeSelector, chartCheckboxes, cData;
     
@@ -86,21 +93,55 @@ app.charts = (function() {
     
     function updateCharts(data) {
         if( data ) setData(data);
-        
         $("#chart-content").html("");
+        
+        if( !cData ) return;
+        $("#show-chartspopup-btn").show();
+        
         var types = chartTypeSelector.val();
         for ( var i = 0; i < types.length; i++) {
-            _showChart(types[i]);
+            _showMainChart(types[i]);
         }
     }
     
-    function _showChart(type) {
+    function showPopup() {
+        sliderPopup.find(".owl-theme").html("");
+        var types = chartTypeSelector.val();
+        for ( var i = 0; i < types.length; i++) {
+            _showPopupChart(types[i]);
+        }
+        $('body').scrollTop(0).css('overflow','hidden').append(sliderPopupBg).append(sliderPopup);
+        $('#carousel').owlCarousel({
+            
+            navigation : true, // Show next and prev buttons
+            slideSpeed : 300,
+            paginationSpeed : 400,
+            singleItem:true
+        });
+    }
+    
+    function hidePopup() {
+        sliderPopupBg.remove();
+        sliderPopup.remove();
+        $('body').css('overflow','auto');
+    }
+    
+    function _showMainChart(type) {
         var panel = $("<div />");
         var outerPanel = $("<div>"+
         	"<a class='btn btn-xs btn-default' style='position:absolute;z-index:10;margin:0 0 -20px 20px' onclick='app.charts.remove($(this))' type='"+type+"'>" +
         	"<i class='icon-remove'></i> "+type+"</a></div>");
         $("#chart-content").append(outerPanel.append(panel));
-
+        _createChart(type, panel);
+    }
+    
+    function _showPopupChart(type) {
+        var panel = $("<div class='item'></div>");
+        sliderPopup.find(".owl-theme").append(panel);
+        _createChart(type, panel, [$(window).width()*.90, ($(window).height()*.90)-125]);
+    }
+    
+    function _createChart(type, panel, size) {
         var col = 0;
         var data = [ [ "month" ] ];
 
@@ -141,6 +182,10 @@ app.charts = (function() {
                     title : "Month"
                 }
         }
+        if( size ) {
+            options.width = size[0];
+            options.height = size[1];
+        }
 
         var chart = new google.visualization.LineChart(panel[0]);
         chart.draw(dt, options);
@@ -155,7 +200,9 @@ app.charts = (function() {
         selectAll : selectAll,
         unselectAll : unselectAll,
         updateCharts : updateCharts,
-        remove : remove
+        remove : remove,
+        showPopup: showPopup,
+        hidePopup: hidePopup
     }
     
 })();

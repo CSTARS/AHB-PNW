@@ -28,3 +28,58 @@
 	font-size: 200px;
 	text-shadow: 1px 1px #888;
 }
+
+.slide-popup {
+	background: white;
+    border: 1px solid #888;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    z-index:1000;
+    width:90%;
+    height:90%;
+    border-radius:16px;
+}
+
+.slide-popup-bg {
+    position: absolute;
+    top: 0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color:rgba(0,0,0,.8);
+    z-index:999;
+}
+
+.slide-popup-close {
+	font-size:30px;
+	color:#869791;
+	cursor:pointer;
+	position:absolute;
+    top: 4px;
+    right: 7px;
+    z-index:1001;
+    opacity:.5;
+}
+
+.slide-popup-close:hover {
+	 opacity:1;
+}
+
+#show-chartspopup-btn {
+	font-size:25px;
+	margin: 15px 20px 0 0;
+	display:none;
+	color: #ddd;
+	cursor:pointer;
+}
+#show-chartspopup-btn:hover {
+	color: #888;
+}
+
+
+#owl-demo .item div{
+    display: block;
+    width: 100%;
+    height: auto;
+}
