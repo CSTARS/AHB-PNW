@@ -275,8 +275,7 @@ app.showRawOutput = function(data) {
     var contents = $('<div class="tab-content" style="overflow:auto"></div>');
 
     var vType = $("#variationAnalysisInput").val();
-    var variations = $("#multiRunVarInputs").val().replace(/\s/g, '')
-            .split(",");
+    var variations = $("#multiRunVarInputs").val().replace(/\s/g, '').split(",");
 
     for ( var i = 0; i < data.length; i++) {
         tabs.append($('<li '+(i == 0 ? 'class="active"' : "")+'><a href="#rawout'
@@ -454,17 +453,13 @@ m3PGIO = {
 
         // load config
         if (setup.config.chartTypeInput) {
-            var chartTypeSelector = $("#chartTypeInput");
-            $('option', chartTypeSelector).each(function(element) {
-                chartTypeSelector.multiselect('deselect', $(this).val());
-            });
+            app.charts.unselectAll();
             for ( var i = 0; i < setup.config.chartTypeInput.length; i++) {
-                chartTypeSelector.multiselect('select',
-                        setup.config.chartTypeInput[i]);
+                app.charts.select(setup.config.chartTypeInput[i]);
             }
         }
         if (setup.config.currentLocation) {
-            $("#current-weather-location").html(setup.config.currentLocation);
+            $("#current-location").html(setup.config.currentLocation);
         }
         var configs = [ "variationAnalysisInput", "multiRunVarInputs",
                 "monthsToRun" ];
