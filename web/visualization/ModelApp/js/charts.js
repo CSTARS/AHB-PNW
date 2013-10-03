@@ -97,7 +97,7 @@ app.charts = (function() {
     function _showChart(type) {
         var panel = $("<div />");
         var outerPanel = $("<div>"+
-        	"<a class='btn btn-xs btn-default' style='position:absolute;z-index:10;margin:0 0 -20px 10px' onclick='app.charts.remove($(this))' type='"+type+"'>" +
+        	"<a class='btn btn-xs btn-default' style='position:absolute;z-index:10;margin:0 0 -20px 20px' onclick='app.charts.remove($(this))' type='"+type+"'>" +
         	"<i class='icon-remove'></i> Remove "+type+"</a></div>");
         $("#chart-content").append(outerPanel.append(panel));
 

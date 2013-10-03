@@ -203,7 +203,7 @@ app.runModel = function() {
             var val = parseFloat($("#input-weather-" + c + "-" + i).val());
             if( !val && val != 0 ) {
                 alert("Missing weather data: "+c+" for month "+i+"\n\n"+
-                       "Did you select a location (Config) and/or did you fill out all weather fields?");
+                       "Did you select a location (Config) and/or are all weather/soil fields filled out?");
                 $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
                 return;
             }
