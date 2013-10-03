@@ -153,37 +153,7 @@ function _resizeConfig(){
 app.createInputs = function(callback) {
     var ele = $("#inputs-content");
 
-    var chartTypeSelector = $("#chartTypeInput");
-    for ( var i = 0; i < app.outputs.length; i++) {
-        var val = app.outputs[i];
-        chartTypeSelector.append($("<option value='" + val + "' "
-                + (val == 'WR' || val == 'WS' || val == 'WF' ? 'selected' : '')
-                + ">" + val + "</option>"));
-    }
-
-    // multiselect
-    chartTypeSelector.multiselect({
-        buttonClass : 'btn',
-        buttonWidth : 'auto',
-        buttonContainer : '<div class="btn-group" />',
-        maxHeight : false,
-        buttonText : function(options) {
-            if (options.length == 0) {
-                return 'None selected <b class="caret"></b>';
-            } else if (options.length > 3) {
-                return options.length + ' selected  <b class="caret"></b>';
-            } else {
-                var selected = '';
-                options.each(function() {
-                    selected += $(this).text() + ', ';
-                });
-                return selected.substr(0, selected.length - 2)
-                        + ' <b class="caret"></b>';
-            }
-        }
-    });
-    // fix bootstrap 3 style
-    $("button.multiselect.dropdown-toggle.btn").addClass("btn-default");
+    app.charts.init();
 
     var variationAnalysisInput = $("#variationAnalysisInput");
     variationAnalysisInput.on('change', function() {
@@ -233,7 +203,7 @@ app.runModel = function() {
             var val = parseFloat($("#input-weather-" + c + "-" + i).val());
             if( !val && val != 0 ) {
                 alert("Missing weather data: "+c+" for month "+i+"\n\n"+
-                       "Did you select a location and/or did you fill out all weather fields?");
+                       "Did you select a location (Config) and/or did you fill out all weather fields?");
                 $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
                 return;
             }
@@ -290,67 +260,13 @@ app.showResults = function(rows) {
         rows = [ rows ];
 
     app.showRawOutput(rows);
-
-    $("#chart-content").html("");
-    var types = $("#chartTypeInput").val();
-    for ( var i = 0; i < types.length; i++) {
-        app.showChart(types[i], rows);
-    }
+    app.charts.updateCharts(rows)
 
     setTimeout(function() {
         $("#runbtn, #runbtn-sm").removeClass("disabled").html(
                 "<i class='icon-play'></i> Run");
     }, 250);
 
-}
-
-app.showChart = function(type, rows) {
-    var panel = $("<div />");
-    $("#chart-content").append(panel);
-
-    var col = 0;
-    var data = [ [ "month" ] ];
-
-    var vType = $("#variationAnalysisInput").val();
-    var variations = $("#multiRunVarInputs").val().replace(/\s/g, '')
-            .split(",");
-
-    for ( var i = 0; i < rows.length; i++) {
-        data[0].push(type
-                + " "
-                + (vType != "None" ? "(" + vType + "=" + variations[i] + ")"
-                        : ""));
-    }
-
-    for ( var i = 0; i < rows[0][0].length; i++) {
-        if (rows[0][0][i] == type) {
-            col = i;
-            break;
-        }
-    }
-
-    for ( var i = 1; i < rows[0].length; i++) {
-        if (typeof rows[0][i][col] === 'string')
-            continue;
-        var row = [ i ];
-        for ( var j = 0; j < rows.length; j++) {
-            row.push(rows[j][i][col]);
-        }
-        data.push(row);
-    }
-
-    var dt = google.visualization.arrayToDataTable(data);
-    var options = {
-            vAxis : {
-                title : type
-            },
-            hAxis : {
-                title : "Month"
-            }
-    }
-
-    var chart = new google.visualization.LineChart(panel[0]);
-    chart.draw(dt, options);
 }
 
 app.showRawOutput = function(data) {

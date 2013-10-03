@@ -171,11 +171,15 @@ app.inputForm = (function(){
 				fusionLayer.setMap(map);
 				
 				google.maps.event.addListener(map, 'click', function(e) {
-					_queryWeatherData(e.latLng.lng(), e.latLng.lat())
+					_queryWeatherData(e.latLng.lng(), e.latLng.lat(), function() {
+		                app.runModel();
+		            });
 					$("#select-weather-modal").modal('hide');
 				});
 				google.maps.event.addListener(fusionLayer, 'click', function(e) {
-					_queryWeatherData(e.latLng.lng(), e.latLng.lat())
+					_queryWeatherData(e.latLng.lng(), e.latLng.lat(), function() {
+		                app.runModel();
+		            });
 					$("#select-weather-modal").modal('hide');
 				});
 				
@@ -317,8 +321,7 @@ app.inputForm = (function(){
 		});
 		$('#tab_inputs_weather').tab('show');
 		
-		$('#select-weather-location').on('click', _selectWeatherLocation);
-		$('#select-soil-location').on('click', _selectWeatherLocation);
+		$('.select-weather-location').on('click', _selectWeatherLocation);
 		
 		_setWeatherData();
 		

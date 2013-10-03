@@ -15,7 +15,7 @@
 	position: fixed;
 	display: block;
 	background: rgba(250,250,250,.95);
-	z-index: 2;
+	z-index: 100;
 	width: 100%;
 	top: -600px;
 	box-shadow: 0 0 10px #888;
