@@ -28,15 +28,17 @@ app.charts = (function() {
             if( i % 2 == 0 ) {
                 c1.append($('<div class="checkbox"><label><input type="checkbox"'
                         + (val == 'WR' || val == 'WS' || val == 'WF' ? 'checked="checked"' : '')
-                        + ' value="'+val+'"> '+val+'</label></div>'));
+                        + ' value="'+val+'"> '+_createDescription(val)+'</div>'));
             } else {
                 c2.append($('<div class="checkbox"><label><input type="checkbox"'
                         + (val == 'WR' || val == 'WS' || val == 'WF' ? 'checked="checked"' : '')
-                        + ' value="'+val+'"> '+val+'</label></div>'));
+                        + ' value="'+val+'"> '+_createDescription(val)+'</div>'));
             }
-            
-            
         }
+        
+        chartCheckboxes.find(".fn-toggle").on('click',function(){
+            $("#"+$(this).attr("datatarget")).toggle('slow');
+        });
         
         chartCheckboxes.find("input[type=checkbox]").on('change', function(){
             if( $(this).is(":checked") ) select($(this).attr("value"));
@@ -57,6 +59,35 @@ app.charts = (function() {
                
             }
         });
+    }
+    
+    // make sure and end label tag
+    function _createDescription(val) {
+        if( !app.output_definitions[val] ) return "<b>"+val+"</b></label>";
+        
+        var desc = app.output_definitions[val];
+        var label = desc.label && desc.label.length > 0 ? " - "+desc.label : "";
+        var units = desc.units && desc.units.length > 0 ? " ["+desc.units+"]" : "";
+        
+        var label = "<b>"+val+"</b><span style='font-size:12px'>"+label+units+"</span></label>";
+        var hasDesc = desc.description && desc.description.length > 0;
+        if( hasDesc ) {
+            label += "<div style='font-size:11px;color:#888;font-style:italic'>"+desc.description;
+        }
+        
+        var fName = desc.altFnName || val;
+        if( m3PGFunc[fName] || m3PGFunc.coppice[fName] || desc.fn ) {
+            if( !hasDesc ) label += "<div style='font-size:11px'>";
+            label += " <a style='font-style:normal;cursor:pointer' datatarget='fn-desc-"+val+"' class='fn-toggle'>fn()</a></div>";
+            
+            label += "<div id='fn-desc-"+val+"' style='display:none;font-size:11px;overflow:auto' class='well well-sm'>"+
+                        (m3PGFunc[fName]||m3PGFunc.coppice[fName]||desc.fn).toString().replace(/ /g,'&nbsp;').replace(/\n/g,'<br />')+"</div>";
+        } else if ( hasDesc ) {
+            label += "</div>"
+        }
+        
+        // TODO: add fn well
+        return label+"<br />"
     }
     
     function select(val) {
@@ -138,7 +169,7 @@ app.charts = (function() {
     function _showPopupChart(type) {
         var panel = $("<div class='item'></div>");
         sliderPopup.find(".owl-theme").append(panel);
-        _createChart(type, panel, [$(window).width()*.90, ($(window).height()*.90)-125]);
+        _createChart(type, panel, [$(window).width()*.85, ($(window).height()*.90)-125]);
     }
     
     function _createChart(type, panel, size) {
@@ -174,6 +205,16 @@ app.charts = (function() {
         }
 
         var dt = google.visualization.arrayToDataTable(data);
+        
+        
+        if( app.output_definitions[type] ) {
+            var desc = app.output_definitions[type];
+            var label = desc.label && desc.label.length > 0 ? " - "+desc.label : "";
+            var units = desc.units && desc.units.length > 0 ? " ["+desc.units+"]" : "";
+            type = type+label+units;
+        }
+        
+        
         var options = {
                 vAxis : {
                     title : type
