@@ -211,7 +211,7 @@ app.inputForm = (function(){
 	
 	function _generateInputs(i, type, prefix, name, attrs) {
 		var id = prefix.length > 0 ? prefix+'-'+name : 'input-'+name;
-		var input = '<div class="form-group" style="margin-left:'+(i*25)+'px">';
+		var input = '<div class="form-group" style="margin-left:'+(i*20)+'px;margin-top:0px;margin-right:5px">';
 		
 		var treebody = "";
 		
