@@ -169,7 +169,7 @@ app.charts = (function() {
     function _showPopupChart(type) {
         var panel = $("<div class='item'></div>");
         sliderPopup.find(".owl-theme").append(panel);
-        _createChart(type, panel, [$(window).width()*.85, ($(window).height()*.90)-125]);
+        _createChart(type, panel, [$(window).width()*.88, ($(window).height()*.90)-125]);
     }
     
     function _createChart(type, panel, size) {
@@ -181,10 +181,8 @@ app.charts = (function() {
                 .split(",");
 
         for ( var i = 0; i < cData.length; i++) {
-            data[0].push(type
-                    + " "
-                    + (vType != "None" ? "(" + vType + "=" + variations[i] + ")"
-                            : ""));
+            if( vType != "None" ) data[0].push(vType + "=" + variations[i])
+            else data[0].push(type);
         }
 
         for ( var i = 0; i < cData[0][0].length; i++) {
