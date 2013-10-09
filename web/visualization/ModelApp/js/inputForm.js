@@ -215,16 +215,17 @@ app.inputForm = (function(){
 		
 		var treebody = "";
 		
-		if( !(i == 1 && type == 'tree') ) {
+		if( !(i == 1 /*&& type == 'tree'*/) ) {
 		    if( i != 0 ) input += '<label for="'+id+'" class="control-label">'+name +'</label>';
 		    input += '<div>';
 		}
 
-		if( typeof attrs.value == 'string' ) {
-			input += '<input type="text" class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
-				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
-			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
-		} else if ( typeof attrs.value == 'object' && i == 1 && type == 'tree' ) {
+		//if( typeof attrs.value == 'string' ) {
+		//	input += '<input type="text" class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
+		//		+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+		//	if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
+		//} else 
+        if ( typeof attrs.value == 'object' && i == 1  ) { // && type == 'tree' ) {
 		    for( var key in attrs.value ) {
                 treebody += _generateInputs(i+1, type, id, key, attrs.value[key]);
             }
@@ -233,19 +234,19 @@ app.inputForm = (function(){
             for( var key in attrs.value ) {
                 input += _generateInputs(i+1, type, id, key, attrs.value[key]);
             }
-		} else if ( typeof attrs.value == 'number' && i == 1 && type == 'tree' ) {
+		} else if ( (typeof attrs.value == 'number' || typeof attrs.value == 'string')  && i == 1 ) { // && type == 'tree' ) {
 		    
 		    treebody += 
 		        '<input type="text" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
                 +attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
 		    
-		} else if ( typeof attrs.value == 'number' ) {
+		} else if (  typeof attrs.value == 'string' || typeof attrs.value == 'number' ) {
 			input += '<input type="text" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
 				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
 			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		}
 			
-		if( !(i == 1 && type == 'tree') ) {
+		if( !(i == 1 /*&& type == 'tree'*/) ) {
 		    input += '</div></div>';
 		} else {
 		    input += TREE_PANEL_TEMPLATE
@@ -298,9 +299,9 @@ app.inputForm = (function(){
 			if( model == 'weather' ) {
 				content += _createWeatherInputs();
 			} else {
-			    if( model == 'tree' ) content += treeHeader;
+			    /*if( model == 'tree' )*/ content += treeHeader;
 				content += _generateInputs(0, model, '', model, app.model[model]);
-				if( model == 'tree' ) content += '</div>';
+				/*if( model == 'tree' )*/ content += '</div>';
 			}
 			
 			

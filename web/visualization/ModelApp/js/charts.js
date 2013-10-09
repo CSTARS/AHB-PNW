@@ -8,6 +8,7 @@ app.charts = (function() {
     var sliderPopupBg = $("<div class='slide-popup-bg'>&nbsp;</div>");
     
     var changes = false;
+    var resizeTimer = -1;
     var chartTypeSelector, chartCheckboxes, cData;
     
     function init() {
@@ -119,9 +120,37 @@ app.charts = (function() {
         });
         
     }
+
+    function print(chartContainer) { 
+	    var disp_setting="toolbar=yes,location=no,directories=yes,menubar=yes,"; 
+        disp_setting+="scrollbars=yes,width=800, height=600, left=25, top=25";
+        
+  	    var svg = chartContainer.find("svg");
+        var html = chartContainer.find("div").html();
+        
+        var docprint=window.open("","",disp_setting); 
+        docprint.document.open();
+        docprint.document.write('<html><head><title></title>');
+        docprint.document.write('</head><body marginwidth="0" marginheight="0" onLoad="self.print()"><center>');
+        docprint.document.write(html);
+        docprint.document.write('</center></body></html>'); 
+        docprint.document.close(); 
+        docprint.focus(); 
+
+    }
+    
     
     function setData(data) {
         cData = data;
+    }
+
+    // basically redraw everything
+    function resize() {
+        if( resizeTimer != -1 ) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            resizeTimer = -1;
+            updateCharts();
+        },300);
     }
     
     function updateCharts(results) {
@@ -170,8 +199,17 @@ app.charts = (function() {
     
     function _showPopupChart(type) {
         var panel = $("<div class='item'></div>");
+
+        var printBtn = $("<a class='btn btn-sm btn-default' style='margin-left:16px'><i class='icon-print'></i> Print</a>").on('click',function(){
+           print(chartPanel);  
+        });
+        panel.append(printBtn);
+        
+        var chartPanel = $("<div></div>");
+        panel.append(chartPanel);
+
         sliderPopup.find(".owl-theme").append(panel);
-        _createChart(type, panel, [$(window).width()*.88, ($(window).height()*.90)-125]);
+        _createChart(type, chartPanel, [$(window).width()*.88, ($(window).height()*.90)-125]);
     }
     
     function _createChart(type, panel, size) {
@@ -250,7 +288,8 @@ app.charts = (function() {
         updateCharts : updateCharts,
         remove : remove,
         showPopup: showPopup,
-        hidePopup: hidePopup
+        hidePopup: hidePopup,
+        resize : resize
     }
     
 })();

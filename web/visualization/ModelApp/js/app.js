@@ -282,9 +282,13 @@ app.init = function(callback) {
 }
 
 function _resizeConfig(){
+    app.charts.resize();
+    
     if( !$("#configuration").hasClass("open") ) {
         $("#configuration").css("top",$("#configuration").height()*-1);
+        return;
     }
+    
     if( $("#configuration").height() -50 > $(window).height() ) $("#configuration").css("height", $(window).height()-50)
     else $("#configuration").css("height", 'auto');
 }
@@ -339,7 +343,7 @@ app.runModel = function() {
                 return;
         }
         // show what we are doing
-        $("#variationAnalysisStatus").html("<b>"+params.join(", ")+"</b>");
+        $("#variationAnalysisStatus").html("<b>"+(params.length == 0 ? "None" : params.join(", "))+"</b>");
 
         if ( params.length == 0 ) {
 
