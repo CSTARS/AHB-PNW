@@ -183,7 +183,7 @@ app.charts = (function() {
             for( var i = 0; i < cData.length; i++ ) {
                 var label = "";
                 for( var key in cData[i].inputs ) {
-                    label += key+"="+cData[i].inputs[key]+", "; 
+                    label += key.replace(/.*\./,'')+"="+cData[i].inputs[key]+" \n"; 
                 }
                 label = label.replace(/,\s$/,'');
                 data[0].push(label);

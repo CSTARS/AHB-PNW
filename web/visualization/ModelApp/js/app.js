@@ -626,7 +626,7 @@ m3PGIO = {
             for( var i = 0; i < parts.length-1; i++ ) {
                 param = param[parts[i]];
             }
-            param[key] = window.variations[key].join(", ");
+            param[parts[parts.length-1]] = window.variations[key].join(", ");
         }        
 
         return ex;
