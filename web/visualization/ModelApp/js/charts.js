@@ -55,6 +55,8 @@ app.charts = (function() {
             if( changes && cData ) {
                 setTimeout(function(){
                     updateCharts();
+                    // update raw data as well
+                    app.showRawOutput(cData);
                 },400);
                
             }
@@ -122,8 +124,8 @@ app.charts = (function() {
         cData = data;
     }
     
-    function updateCharts(data) {
-        if( data ) setData(data);
+    function updateCharts(results) {
+        if( results ) setData(results);
         $("#chart-content").html("");
         
         if( !cData ) return;
@@ -176,28 +178,35 @@ app.charts = (function() {
         var col = 0;
         var data = [ [ "month" ] ];
 
-        var vType = $("#variationAnalysisInput").val();
-        var variations = $("#multiRunVarInputs").val().replace(/\s/g, '')
-                .split(",");
-
-        for ( var i = 0; i < cData.length; i++) {
-            if( vType != "None" ) data[0].push(vType + "=" + variations[i])
-            else data[0].push(type);
+        // set the first column
+        if( !cData[0].singleRun ) {
+            for( var i = 0; i < cData.length; i++ ) {
+                var label = "";
+                for( var key in cData[i].inputs ) {
+                    label += key+"="+cData[i].inputs[key]+", "; 
+                }
+                label = label.replace(/,\s$/,'');
+                data[0].push(label);
+            }
+        } else {
+            data[0].push(type);
         }
 
-        for ( var i = 0; i < cData[0][0].length; i++) {
-            if (cData[0][0][i] == type) {
+        // find the column we want to chart
+        for ( var i = 0; i < cData[0].output[0].length; i++) {
+            if (cData[0].output[0][i] == type) {
                 col = i;
                 break;
             }
         }
 
-        for ( var i = 1; i < cData[0].length; i++) {
-            if (typeof cData[0][i][col] === 'string')
+        // create the [][] array for the google chart
+        for ( var i = 1; i < cData[0].output.length; i++) {
+            if (typeof cData[0].output[i][col] === 'string')
                 continue;
             var row = [ i ];
             for ( var j = 0; j < cData.length; j++) {
-                row.push(cData[j][i][col]);
+                row.push(cData[j].output[i][col]);
             }
             data.push(row);
         }

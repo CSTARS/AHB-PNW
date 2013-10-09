@@ -210,7 +210,6 @@ app._requestModelCode = function(url, callback) {
         var time = localStorage["_timestamp_" + url];
         // if the cache is less than an hour old, use cached copy
         if (new Date().getTime() - parseInt(time) < 60000 * 60) {
-            console.log("Cache hit");
             return callback(JSON.parse(localStorage[url]));
         }
     }
@@ -296,38 +295,9 @@ app.createInputs = function(callback) {
 
     app.charts.init();
 
-    var variationAnalysisInput = $("#variationAnalysisInput");
-    variationAnalysisInput.on('change', function() {
-        var val = variationAnalysisInput.val();
-
-        if (val == "" || val == "None") {
-            $("#multiRunVarInputs-outer").hide();
-            return;
-        }
-
-        $("#multiRunVarInputs-outer").show();
-        $("#multiRunVarInputs").val(
-                $("#input-" + val.replace(/\./g, "-")).val());
-    });
 
     callback();
 }
-
-app.setVariationFromLink = function(ele) {
-    var param = ele.attr("param").replace('input-','').replace(/-/g,'.');
-    if( $("#variationAnalysisInput").val() != param ) {
-        $("#variationAnalysisInput").val(param);
-        $("#variationAnalysisInput").trigger("change");
-    }
-    
-    
-    if( !$("#configuration").hasClass("open") ) 
-        $('#configuration-btn').trigger('click');
-    
-    $("#multiRunVarInputs").focus();
-}
-
-
 
 app.runComplete = function(rows) {
     if (app.runCallback)
@@ -355,10 +325,23 @@ app.runModel = function() {
     // let UI process for a sec before we tank it
     // TODO: this should be preformed w/ a webworker
     setTimeout(function() {
-        var variation = $("#variationAnalysisInput").val();
-        var runCount = 0;
+        // read everything so the variations are set
+        window.variations = {};
+        m3PGIO.readFromInputs();
 
-        if (variation == "" || variation == "None") {
+        // make sure we are only setting 2 variation parameters
+        var params = [];
+        for( var key in window.variations ) params.push(key);
+        if( params.length > 2 ) {
+                alert("There is a limit of 2 variation parameters per run.  Currently you are varying "+
+                      "the following parameters:\n\n -"+params.join("\n -"));
+                $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
+                return;
+        }
+        // show what we are doing
+        $("#variationAnalysisStatus").html("<b>"+params.join(", ")+"</b>");
+
+        if ( params.length == 0 ) {
 
             app.runCallback = function(rows) {
                 app.showResults(rows);
@@ -366,42 +349,70 @@ app.runModel = function() {
             m3PG.run(parseInt($("#monthsToRun").val()));
 
         } else {
-            app.runVariation(0, [], variation, $("#multiRunVarInputs").val()
-                    .replace(/\s/g, '').split(","));
+            // set variation order
+            var runs = [];
+            for( var i = 0; i < window.variations[params[0]].length; i++ ) {
+                var obj = {
+                    inputs : {},
+                    output : null
+                }
+                obj.inputs[params[0]] = window.variations[params[0]][i]; 
+                if( params.length > 1 ) {
+                    for( var j = 0; j < window.variations[params[1]].length; j++ ) {
+                        var t = $.extend(true, {}, obj);
+                        t.inputs[params[1]] = window.variations[params[1]][j];
+                        runs.push(t);
+                    }
+                } else {
+                    runs.push(obj);
+                }
+            }
+            
+            app.runVariation(0, runs);
         }
     }, 250);
 
 }
 
-app.runVariation = function(index, rows, type, variations) {
-    // save the default value
-    if (index == 0)
-        app._currentDefaultVariation = $("#input-" + type.replace(/\./g, '-'))
-                .val();
-    $("#input-" + type.replace(/\./g, '-')).val(variations[index]);
+app.runVariation = function(index, runs) {
+    // set input variables for run
+    var run = runs[index];
+    for( var key in run.inputs ) {
+        $("#input-"+key.replace(/\./g, '-')).val(run.inputs[key]);
+    }
+
+    // TODO: show the setup in the 'config' dropdown
 
     app.runCallback = function(data) {
-        rows.push(data);
+        runs[index].output = data;
+        
         index++;
-        if (variations.length == index) {
+        if (runs.length == index) {
             // reset the constant to the first value
-            $("#input-" + type.replace(/\./g, '-')).val(
-                    app._currentDefaultVariation);
-            app.showResults(rows);
+            for( var key in window.variations ) {
+                $("#input-"+key.replace(/\./g, '-')).val(window.variations[key].join(", "));
+            }
+            app.showResults(runs);
         } else {
-            app.runVariation(index, rows, type, variations);
+            app.runVariation(index, runs);
         }
     }
 
     m3PG.run(parseInt($("#monthsToRun").val()));
 }
 
-app.showResults = function(rows) {
-    if (typeof rows[0][0] != "object")
-        rows = [ rows ];
 
-    app.showRawOutput(rows);
-    app.charts.updateCharts(rows)
+app.showResults = function(result) {
+    if( result[0] instanceof Array ) {
+        result = [{
+            singleRun : true,
+            inputs : {},
+            output : result
+        }]
+    }
+
+    app.showRawOutput(result);
+    app.charts.updateCharts(result);
 
     setTimeout(function() {
         $("#runbtn, #runbtn-sm").removeClass("disabled").html(
@@ -410,18 +421,25 @@ app.showResults = function(rows) {
 
 }
 
-app.showRawOutput = function(data) {
+app.showRawOutput = function(results) {
+    // selected in the charts output
+    var vars = $("#chartTypeInput").val();
+
 
     var tabs = $('<ul class="nav nav-tabs" id="rawOutputTabs"  data-tabs="tabs"></ul>');
     var contents = $('<div class="tab-content" style="overflow:auto"></div>');
 
-    var vType = $("#variationAnalysisInput").val();
-    var variations = $("#multiRunVarInputs").val().replace(/\s/g, '').split(",");
+    for ( var i = 0; i < results.length; i++) {
+        var label = "";
+        if( !results[i].singleRun ) {
+            for( var key in results[i].inputs ) {
+                label += key+"="+results[i].inputs[key]+", "; 
+            }
+            label = label.replace(/,\s$/,'');
+        }
 
-    for ( var i = 0; i < data.length; i++) {
         tabs.append($('<li '+(i == 0 ? 'class="active"' : "")+'><a href="#rawout'
-                +i+'" data-toggle="tab">Output '+(vType == 'None' ? '' : '(' 
-                +vType+'='+variations[i]+')')+'</a></li>'));
+                +i+'" data-toggle="tab">Output '+label+'</a></li>'));
         
         contents.append($('<div class="tab-pane ' + (i == 0 ? 'active' : "")
                 + '" id="rawout' + i + '"></div>'));
@@ -429,16 +447,23 @@ app.showRawOutput = function(data) {
     $("#output-content").html("").append(tabs).append(contents);
     $("#rawOutputTabs").tab();
 
+
+    // find the rows we care about
+    var chartRows = [];
+    for( var i = 0; i < results[0].output[0].length; i++ ) {
+        if( vars.indexOf(results[0].output[0][i]) > -1 ) chartRows.push(i);
+    }
+
     var table, row;
-    for ( var i = 0; i < data.length; i++) {
+    for ( var i = 0; i < results.length; i++) {
 
         table = "<table class='table table-striped'>";
-        for( var j = 0; j < data[i].length; j++ ){
-            row = data[i][j];
+        for( var j = 0; j < results[i].output.length; j++ ){
+            row = results[i].output[j];
             table += "<tr>";
-            for( var z = 0; z < row.length; z++ ) {
-                if( j == 0 ) table += "<th>"+row[z]+"</th>";
-                else table += "<td>"+row[z]+"</td>";
+            for( var z = 0; z < chartRows.length; z++ ) {
+                if( j == 0 ) table += "<th>"+row[chartRows[z]]+"</th>";
+                else table += "<td>"+row[chartRows[z]]+"</td>";
             }
             table += "</tr>";
         }
@@ -493,7 +518,7 @@ m3PGIO = {
             };
             for ( var j = 1; j < app.inputs.weather.length; j++) {
                 var c = app.inputs.weather[j];
-                item[c] = parseFloat($("#input-weather-" + c + "-" + i).val());
+                item[c] = this._readVal($("#input-weather-" + c + "-" + i));
             }
             item.nrel = item.rad / 0.0036;
 
@@ -508,12 +533,27 @@ m3PGIO = {
         // set the raw output
         app.runComplete(rows);
     },
+    // read a value from the input
+    // it has a ',' is set for variation
+    _readVal : function(ele) {
+        var val = ele.val();
+        if( val.match(/.*,.*/) ) {
+            val = val.replace(/\s/g,'').split(",");
+            var id = ele.attr("id").replace(/^input-/,'').replace(/-/g,'.');
+            window.variations[id] = [];
+            for( var i = 0; i < val.length; i++ ) {
+                window.variations[id].push(parseFloat(val[i]));
+            }
+            return window.variations[id][0];
+        }
+        return parseFloat(val);
+    },
     readFromInputs : function() {
         // read soil
         window.soil = {};
-        window.soil.maxAWS = parseFloat($("#input-soil-maxaws").val());
-        window.soil.swpower = parseFloat($("#input-soil-swpower").val());
-        window.soil.swconst = parseFloat($("#input-soil-swconst").val());
+        window.soil.maxAWS = this._readVal($("#input-soil-maxaws"));
+        window.soil.swpower = this._readVal($("#input-soil-swpower"));
+        window.soil.swconst = this._readVal($("#input-soil-swconst"));
 
         // read manage
         window.manage = {
@@ -522,7 +562,7 @@ m3PGIO = {
         var eles = $(".manage");
         for ( var i = 0; i < eles.length; i++) {
             var ele = $(eles[i]);
-            window.manage[ele.attr("id").replace("input-manage-", "")] = parseFloat(ele.val());
+            window.manage[ele.attr("id").replace("input-manage-", "")] = this._readVal(ele);
         }
 
         // read plantation
@@ -530,7 +570,7 @@ m3PGIO = {
         eles = $(".plantation");
         for ( var i = 0; i < eles.length; i++) {
             var ele = $(eles[i]);
-            window.plantation[ele.attr("id").replace("input-plantation-", "")] = parseFloat(ele.val());
+            window.plantation[ele.attr("id").replace("input-plantation-", "")] = this._readVal(ele);
         }
 
         // read tree
@@ -541,11 +581,11 @@ m3PGIO = {
 
             var parts = ele.attr("id").replace("input-tree-", "").split("-");
             if (parts.length == 1) {
-                window.tree[parts[0]] = parseFloat(ele.val());
+                window.tree[parts[0]] = this._readVal(ele);
             } else {
                 if (!window.tree[parts[0]])
                     window.tree[parts[0]] = {};
-                window.tree[parts[0]][parts[1]] = parseFloat(ele.val());
+                window.tree[parts[0]][parts[1]] = this._readVal(ele);
             }
         }
 
@@ -557,6 +597,7 @@ m3PGIO = {
 
     },
     exportSetup : function() {
+        window.variations = {};
         this.readFromInputs();
         this.readWeather([], {});
 
@@ -570,8 +611,6 @@ m3PGIO = {
             plantation_state : window.plantation_state,
             plantingParams : window.plantingParams,
             config : {
-                variationAnalysisInput : $("#variationAnalysisInput").val(),
-                multiRunVarInputs : $("#multiRunVarInputs").val(),
                 chartTypeInput : $("#chartTypeInput").val(),
                 monthsToRun : $("#monthsToRun").val(),
                 currentLocation : $("#current-weather-location").html(),
@@ -579,8 +618,19 @@ m3PGIO = {
             }
         }
 
+        // by default the read function set the variations variables but only
+        // returns the first, set the variation params to their correct values
+        for( var key in window.variations ) {
+            var parts = key.split(".");
+            var param = ex;
+            for( var i = 0; i < parts.length-1; i++ ) {
+                param = param[parts[i]];
+            }
+            param[key] = window.variations[key].join(", ");
+        }        
+
         return ex;
-    },
+    },    
     loadSetup : function(fileid, setup) {
         // first, if the version is off, we need to reload the entire app
         if (setup.config.version) {
@@ -602,16 +652,11 @@ m3PGIO = {
         if (setup.config.currentLocation) {
             $("#current-location").html(setup.config.currentLocation);
         }
-        var configs = [ "variationAnalysisInput", "multiRunVarInputs",
-                "monthsToRun" ];
+        var configs = ["monthsToRun"];
         for ( var i = 0; i < configs.length; i++) {
             if (setup.config[configs[i]])
                 $("#" + configs[i]).val(setup.config[configs[i]]);
         }
-        if ($("#variationAnalysisInput").val() == 'None')
-            $("#multiRunVarInputs-outer").hide();
-        else
-            $("#multiRunVarInputs-outer").show();
 
         // load weather
         for ( var i = 0; i < setup.weather.length; i++) {

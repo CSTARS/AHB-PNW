@@ -217,9 +217,6 @@ app.inputForm = (function(){
 		
 		if( !(i == 1 && type == 'tree') ) {
 		    if( i != 0 ) input += '<label for="'+id+'" class="control-label">'+name +'</label>';
-		    if( typeof attrs.value == 'number' && type != 'constants' )  {
-	            input += ' <i class="icon-cogs" style="cursor:pointer;color:#428bca" onclick="app.setVariationFromLink($(this));" param="'+id+'"></i>';
-	        }
 		    input += '<div>';
 		}
 
@@ -239,12 +236,11 @@ app.inputForm = (function(){
 		} else if ( typeof attrs.value == 'number' && i == 1 && type == 'tree' ) {
 		    
 		    treebody += 
-		        '<i class="icon-cogs" style="cursor:pointer;color:#428bca" onclick="app.setVariationFromLink($(this));" param="'+id+'"></i>&nbsp;&nbsp;&nbsp;'+
-		        '<input type="number" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
+		        '<input type="text" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
                 +attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
 		    
 		} else if ( typeof attrs.value == 'number' ) {
-			input += '<input type="number" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
+			input += '<input type="text" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
 				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
 			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		}
@@ -325,15 +321,6 @@ app.inputForm = (function(){
 		
 		_setWeatherData();
 		
-		// now add variation analysis data
-		var variationModels = ["tree", "plantation", "manage"];
-		for( var i = 0; i < variationModels.length; i++ ) {
-			var eles = $("."+variationModels[i]);
-			for( var j = 0; j < eles.length; j++ ) {
-				var val = $(eles[j]).attr("id").replace("input-","").replace(/-/g,".");
-				$("#variationAnalysisInput").append("<option value='"+val+"'>"+val+"</option>");
-			}
-		}
 	}
 
 	

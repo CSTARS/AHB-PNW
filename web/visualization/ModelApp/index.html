@@ -54,22 +54,26 @@
 </head>
 <body>
 
-	<div id="status">Loading...</div>
+    <div style="text-align:center;margin-top:25px;font-size:18px">
+        <div><i class="icon-spinner icon-spin"></i> Loading...</div>
+        <div><img src="images/logo_196.png" style="margin:20px 0;box-shadow:0 0 5px #bbb;border-radius:8px;border:1px solid #ccc" /></div>
+    	<div id="status" style="font-size:14px"></div>
+    </div>
 
 
 	<script type="text/javascript">
 
-		$("#status").html("Loading visualization package...");
+		$("#status").html("Visualization package");
 		google.load('visualization', '1.0', {'packages':['corechart','table']});
 		google.setOnLoadCallback(function(){
-			$("#status").html("Loading 3pg model...");
+			$("#status").html("3pg model");
 			
 			var version = qs("version");
 			var devmode = qs("devmode");
 			if( devmode ) app.devmode = true;
 			
 			app.loadModelCode(version, function(){
-				$("#status").html("Loading 3pg data...");
+				$("#status").html("3pg data");
 				app.loadSpreadsheetData(function(){
 					$("body").html("").load("app.html", function(){
 						app.init(function(){
