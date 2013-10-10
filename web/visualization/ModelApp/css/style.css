@@ -83,3 +83,11 @@
     width: 100%;
     height: auto;
 }
+
+.navbar-brand img {
+    width: 32px;
+    height: 32px;
+    margin: -16px 5px -14px 0;
+    border-radius: 4px;
+    box-shadow: 0 0 3px #888;
+}
