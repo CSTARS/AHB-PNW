@@ -173,9 +173,10 @@ app.charts = (function() {
     
     function updateCharts(results) {
         if( results ) setData(results);
+        if( !cData ) return;
+        
         $("#chart-content").html("");
         
-        if( !cData ) return;
         $("#show-chartspopup-btn").show();
         
         var types = chartTypeSelector.val();
