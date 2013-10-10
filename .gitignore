@@ -1,3 +1,2 @@
-web/visualization/WeatherApp/node_modules
-models/data_harvest/paris_weather/node_modules
-web/visualization/ModelApp/node_modules
+*node_modules
+*DS_STORE

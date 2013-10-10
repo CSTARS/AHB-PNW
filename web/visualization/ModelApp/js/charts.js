@@ -1,4 +1,7 @@
 app.charts = (function() {
+ 
+    // only draw charts if width has changed
+    var cWidth = 0;
     
     var sliderPopup = $(
             "<div class='slide-popup'>" +
@@ -7,8 +10,12 @@ app.charts = (function() {
     		"</div>");
     var sliderPopupBg = $("<div class='slide-popup-bg'>&nbsp;</div>");
     
+    // only draw charts if someone has click a checkbox
     var changes = false;
+
+    // when sizing, wait a ~300ms before triggering redraw
     var resizeTimer = -1;
+
     var chartTypeSelector, chartCheckboxes, cData;
     
     function init() {
@@ -60,6 +67,14 @@ app.charts = (function() {
                     app.showRawOutput(cData);
                 },400);
                
+            }
+        });
+
+        $(".chart-type-toggle").on('click', function(){
+            if( !$(this).hasClass("active") ) {
+                $(".chart-type-toggle.active").removeClass("active");
+                $(this).toggleClass("active");
+                updateCharts();
             }
         });
     }
@@ -146,6 +161,9 @@ app.charts = (function() {
 
     // basically redraw everything
     function resize() {
+        if( cWidth == $(window).width() ) return;
+         cWidth = $(window).width();
+
         if( resizeTimer != -1 ) clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {
             resizeTimer = -1;
@@ -168,13 +186,14 @@ app.charts = (function() {
     
     function showPopup() {
         sliderPopup.find(".owl-theme").html("");
+        $('body').scrollTop(0).css('overflow','hidden').append(sliderPopupBg).append(sliderPopup);
+        
         var types = chartTypeSelector.val();
         for ( var i = 0; i < types.length; i++) {
             _showPopupChart(types[i]);
         }
-        $('body').scrollTop(0).css('overflow','hidden').append(sliderPopupBg).append(sliderPopup);
-        $('#carousel').owlCarousel({
-            
+        
+        $('#carousel').owlCarousel({    
             navigation : true, // Show next and prev buttons
             slideSpeed : 300,
             paginationSpeed : 400,
@@ -189,12 +208,15 @@ app.charts = (function() {
     }
     
     function _showMainChart(type) {
+        var chartType = $(".chart-type-toggle.active").attr("value");
         var panel = $("<div />");
         var outerPanel = $("<div>"+
-        	"<a class='btn btn-xs btn-default' style='position:absolute;z-index:10;margin:0 0 -20px 20px' onclick='app.charts.remove($(this))' type='"+type+"'>" +
+        	"<a class='btn btn-xs btn-default' style='"+(chartType != "timeline" ? "position:absolute;z-index:10;margin:0 0 -20px 20px" : "margin-bottom:5px")+
+            "' onclick='app.charts.remove($(this))' type='"+type+"'>" +
         	"<i class='icon-remove'></i> "+type+"</a></div>");
+        if( chartType == "timeline" ) outerPanel.css("margin-bottom","20px");
         $("#chart-content").append(outerPanel.append(panel));
-        _createChart(type, panel);
+        _createChart(type, chartType, panel);
     }
     
     function _showPopupChart(type) {
@@ -209,12 +231,19 @@ app.charts = (function() {
         panel.append(chartPanel);
 
         sliderPopup.find(".owl-theme").append(panel);
-        _createChart(type, chartPanel, [$(window).width()*.88, ($(window).height()*.90)-125]);
+        _createChart(type, 'line', chartPanel, [Math.round($(window).width()*.88), Math.round(($(window).height()*.90)-125)]);
     }
     
-    function _createChart(type, panel, size) {
+    function _createChart(type, chartType, panel, size) {
         var col = 0;
-        var data = [ [ "month" ] ];
+        //var data = [ [ "month" ] ];
+        var dt = new google.visualization.DataTable();
+        
+        if( chartType == 'timeline' ) {
+            dt.addColumn('date', 'Month');        
+        } else {
+            dt.addColumn('number', 'Month');        
+        }
 
         // set the first column
         if( !cData[0].singleRun ) {
@@ -224,10 +253,11 @@ app.charts = (function() {
                     label += key.replace(/.*\./,'')+"="+cData[i].inputs[key]+" \n"; 
                 }
                 label = label.replace(/,\s$/,'');
-                data[0].push(label);
+                dt.addColumn('number', label);        
+                //data[0].push(label);
             }
         } else {
-            data[0].push(type);
+            dt.addColumn('number', type);        
         }
 
         // find the column we want to chart
@@ -238,18 +268,30 @@ app.charts = (function() {
             }
         }
 
+        var cDate = new Date($("#input-date-datePlanted").val());
+
+        var data = [];
         // create the [][] array for the google chart
         for ( var i = 1; i < cData[0].output.length; i++) {
-            if (typeof cData[0].output[i][col] === 'string')
-                continue;
-            var row = [ i ];
+            if (typeof cData[0].output[i][col] === 'string') continue;
+            
+            var row = [];
+            if( chartType == "timeline" ) {
+                // add on month
+                cDate
+                row.push(new Date(cDate.getYear()+1900, cDate.getMonth()+i, cDate.getDate()));
+            } else {
+                row.push(i);
+            }
+
             for ( var j = 0; j < cData.length; j++) {
                 row.push(cData[j].output[i][col]);
             }
             data.push(row);
         }
 
-        var dt = google.visualization.arrayToDataTable(data);
+        dt.addRows(data);
+        //var dt = google.visualization.arrayToDataTable(data);
         
         
         if( app.output_definitions[type] ) {
@@ -268,13 +310,24 @@ app.charts = (function() {
                     title : "Month"
                 }
         }
+
         if( size ) {
             options.width = size[0];
             options.height = size[1];
+        } else {
+            options.width = panel.width();
+            options.height = options.width*.4;
         }
+        panel.width(options.width).height(options.height);
 
-        var chart = new google.visualization.LineChart(panel[0]);
-        chart.draw(dt, options);
+        if( chartType == 'timeline' ) {
+            options.displayAnnotations = true;
+            var chart = new google.visualization.AnnotatedTimeLine(panel[0]);
+            chart.draw(dt, options);
+        } else {
+            var chart = new google.visualization.LineChart(panel[0]);
+            chart.draw(dt, options);
+        }
     }
     
     
