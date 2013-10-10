@@ -3,6 +3,17 @@ app.charts = (function() {
     // only draw charts if width has changed
     var cWidth = 0;
     
+    // there is no way to get the colors for the legends (to make your own)
+    // this post: 
+    // gives these values.  This is a HACK, if they ever change, we need to update
+    var googleChartColors = ["#3366cc","#dc3912","#ff9900","#109618","#990099","#0099c6",
+                            "#dd4477","#66aa00","#b82e2e","#316395","#994499","#22aa99",
+                            "#aaaa11","#6633cc","#e67300","#8b0707","#651067","#329262",
+                            "#5574a6","#3b3eac","#b77322","#16d620","#b91383","#f4359e",
+                            "#9c5935","#a9c413","#2a778d","#668d1c","#bea413","#0c5922"
+                            ,"#743411"];
+
+    // template for the popup
     var sliderPopup = $(
             "<div class='slide-popup'>" +
                 "<i class='icon-remove-circle pull-right slide-popup-close' onclick='app.charts.hidePopup()'></i>"+
@@ -175,10 +186,36 @@ app.charts = (function() {
         if( results ) setData(results);
         if( !cData ) return;
         
-        $("#chart-content").html("");
+        
         
         $("#show-chartspopup-btn").show();
         
+        // create a legend if there is more than one run
+        var legend = "";
+        if( !cData[0].singleRun ) {
+            var c1 = "";
+            var c2 = "";
+            for( var i = 0; i < cData.length; i++ ) {
+                var ele = "<div style='min-height:40px;margin-bottom:10px'><div class='legend-square' style='background-color:"+googleChartColors[i]+"'>&nbsp;</div>";
+                for( var mType in cData[i].inputs ) {
+                    ele += "<div class='legend-text'>"+mType+"="+cData[i].inputs[mType]+"</div>";
+                }
+
+                if( i % 2 == 0 ) c1 += ele + "</div>"
+                else c2 += ele + "</div>"
+            }
+            legend = "<div><a id='legend-panel-toggle' style='margin-left:5px;cursor:pointer'>Legend</a></div>"+
+                     "<div style='border-bottom:1px solid #eee;padding-bottom:5px;margin-bottom:15px'>"+
+                     "<div class='row' id='legend-panel'><div class='col-md-6'>"+c1+"</div>"+
+                     "<div class='col-md-6'>"+c2+"</div>"+
+                     "</div></div>";
+        }
+        $("#chart-content").html(legend);
+        $("#legend-panel-toggle").on('click', function(){
+            $("#legend-panel").toggle("slow");
+        });
+
+
         var types = chartTypeSelector.val();
         for ( var i = 0; i < types.length; i++) {
             _showMainChart(types[i]);
@@ -309,6 +346,9 @@ app.charts = (function() {
                 },
                 hAxis : {
                     title : "Month"
+                },
+                legend : {
+                    position : "none"
                 }
         }
 

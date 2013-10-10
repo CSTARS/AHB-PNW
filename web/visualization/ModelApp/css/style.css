@@ -91,3 +91,16 @@
     border-radius: 4px;
     box-shadow: 0 0 3px #888;
 }
+
+.legend-square {
+    float:left;
+    width: 24px;
+    height: 24px;
+    margin: 5px 10px 5px 5px;
+    border-radius: 4px;
+}
+   
+.legend-text {
+    font-size: 18px;
+    margin-left: 40px;
+}
