@@ -429,6 +429,68 @@ app.showRawOutput = function(results) {
     // selected in the charts output
     var vars = $("#chartTypeInput").val();
 
+     // find the rows we care about
+    var chartRows = {};
+    for( var i = 0; i < results[0].output[0].length; i++ ) {
+        if( vars.indexOf(results[0].output[0][i]) > -1 ) chartRows[results[0].output[0][i]] = i;
+    }
+
+    var tabs = $('<ul class="nav nav-tabs" id="rawOutputTabs"  data-tabs="tabs"></ul>');
+    var contents = $('<div class="tab-content" style="overflow:auto"></div>');
+
+    for ( var i = 0; i < vars.length; i++) {
+        tabs.append($('<li '+(i == 0 ? 'class="active"' : "")+'><a href="#rawout'
+                +vars[i]+'" data-toggle="tab">'+vars[i]+'</a></li>'));
+        
+        contents.append($('<div class="tab-pane ' + (i == 0 ? 'active' : "")
+                + '" id="rawout' + vars[i] + '"></div>'));
+    }
+
+    $("#output-content").html("").append(tabs).append(contents);
+    $("#rawOutputTabs").tab();
+   
+    var table, row;
+    for( var key in chartRows ) {
+        table = "<table class='table table-striped'>";
+
+        for( var j = 0; j < results[0].output.length; j++ ){
+
+            // set header row
+            if( j == 0 ) {
+                table += "<tr><th>Month</th>";
+                for( var z = 0; z < results.length; z++ ) {
+                    table += "<th>";
+                    var c = 0;
+                    for( var mType in results[z].inputs ) {
+                        table += "<div>"+mType+"="+results[z].inputs[mType]+"</div>";
+                        c++;
+                    }
+                    if( c == 0 ) table += key;
+                    table += "</th>";
+                }
+
+                table += "</tr>";
+            }
+
+            // ignore string rows
+            if( typeof results[0].output[j][chartRows[key]] == 'string' ) continue;
+
+
+            table += "<tr><td>"+j+"</td>";
+            for( var z = 0; z < results.length; z++ ) {
+                table += "<td>"+results[z].output[j][chartRows[key]]+"</td>";
+            }
+            table += "</tr>";        
+        }
+         $("#rawout" + key).html(table+"</table>");
+    }
+}
+
+
+/*app.showRawOutput = function(results) {
+    // selected in the charts output
+    var vars = $("#chartTypeInput").val();
+
 
     var tabs = $('<ul class="nav nav-tabs" id="rawOutputTabs"  data-tabs="tabs"></ul>');
     var contents = $('<div class="tab-content" style="overflow:auto"></div>');
@@ -474,7 +536,7 @@ app.showRawOutput = function(results) {
 
         $("#rawout" + i).html(table+"</table>");
     }
-}
+}*/
 
 // using our own m3PGIO lib
 m3PGIO = {
