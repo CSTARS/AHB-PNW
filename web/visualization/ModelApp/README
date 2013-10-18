@@ -1,0 +1,44 @@
+===Yeoman Application Install Notes===
+
+Install Node (http://nodejs.org/)
+
+Install yeoman (http://yeoman.io/)
+npm install -g yo
+
+The webapplication framework has already been generated, but for reference, to setup a new base application:
+npm install -g generator-webapp
+yo webapp
+
+Install Compass (http://compass-style.org/).  Required for css goodness.
+- first install ruby.  On OSX w/ homebrew (http://brew.sh/): brew install ruby
+- gem update --system
+- gem install compass
+
+
+
+
+===Add 3rd resources to project===
+Use bower to add any 3rd party resource (http://bower.io/)
+*Note: installed w/ yeoman
+
+bower search font-awesome
+bower install font-awesome --save       # save to bower.json
+grunt bower                             # injects dependency into requirejs config
+
+
+
+
+
+===Application Workflow===
+Use grunt (http://gruntjs.com/)
+*Note: installed w/ yeoman
+
+grunt test                        # test app
+grunt server                      # preview app
+grunt                             # build application for deployment
+
+
+
+===Modify Application===
+Javascript resources are managed w/ requirejs (http://requirejs.org/)
+

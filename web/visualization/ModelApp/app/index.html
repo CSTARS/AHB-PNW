@@ -1,0 +1,60 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description" content="">
+
+    <title>AHB - 3PG Model</title>
+    
+    <link rel="shortcut icon" sizes="196x196" href="logo_196.png">
+    <link rel="shortcut icon" sizes="128x128" href="logo_128.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="logo_128.png">
+    <link rel="apple-touch-icon-precomposed" sizes="128x128" href="logo_128.png">
+
+
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script src="https://apis.google.com/js/client.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script>
+        var chartsLoaded = false;
+        var chartsCallback = null;
+       	google.load('visualization', '1.0', {'packages':['corechart','annotatedtimeline']});
+		google.setOnLoadCallback(function(){
+            chartsLoaded = true;
+            if( chartsCallback ) chartsCallback();
+        });
+    </script>
+	
+     <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+	 <!-- build:css({.tmp,app}) styles/main.css -->
+     <link rel="stylesheet" href="styles/main.css">
+	 <link rel="stylesheet" type="text/css" href="styles/style.css" />
+     <link rel="stylesheet" href="bower_components/owlcarousel/owl-carousel/owl.carousel.css">
+     <link rel="stylesheet" href="bower_components/owlcarousel/owl-carousel/owl.theme.css">
+     <!-- endbuild -->
+</head>
+<body>
+ <!--[if lt IE 10]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+
+    <div style="text-align:center;margin-top:25px;font-size:18px">
+        <div><i class="icon-spinner icon-spin"></i> Loading...</div>
+        <div><img src="logo_196.png" style="margin:20px 0;box-shadow:0 0 5px #bbb;border-radius:8px;border:1px solid #ccc" /></div>
+    	<div id="status" style="font-size:14px">Visualization package</div>
+    </div>
+
+    <!-- build:js scripts/main.js -->
+    <script data-main="scripts/main" src="bower_components/requirejs/require.js"></script>
+    <!-- endbuild -->
+
+</body>
+</html>
