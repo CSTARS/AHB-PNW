@@ -5,32 +5,49 @@ var jsdom = require("jsdom");
 var http = require('http');
 var fs = require('fs');
 
-var start = 87;
-var stop = 98;
+//for paris
+//var start = 1987;
+//var stop = 1998;
+//var location = "Paris_Le_Bourget";
+//var id = "71500";
+
+// for belgium
+var start = 1995;
+var stop = 2010;
+var location = "Antwerpen_Deurne";
+var id = "64500";
 
 var total = 0;
 var requests = 0;
 var data = [];
 var attrs = ["year","month"];
 
+var ct = 0;
+var t = new Date().getTime();
 for( var year = start; year <= stop; year++ ) {
 	for( var month = 1; month <= 12; month++ ) {
 		requests++;
-		get("19"+year, month+"");
+		get(year+"", month+"");
 	}
 }
 
 function get(year, month) {
-	if( month.length == 1 ) month = "0"+month;
-	console.log("loading: "+year+" / "+month);
-	request.get(
-	    'http://www.tutiempo.net/en/Climate/Paris_Le_Bourget/'+month+'-'+year+'/71500.htm',
-	    function (error, response, body) {
-	        if (!error && response.statusCode == 200) {
-	            parse(year, month, body);
-	        }
-	    }
-	);
+    setTimeout(function() {
+        if( month.length == 1 ) month = "0"+month;
+        console.log("loading: "+year+" / "+month);
+        request.get(
+            'http://www.tutiempo.net/en/Climate/'+location+'/'+month+'-'+year+'/'+id+'.htm',
+            function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    parse(year, month, body);
+                } else {
+                    console.log("Error with "+month+"-"+year);
+                    total++;
+                }
+            }
+        );
+    }, 500*ct);
+    ct++;
 }
 
 function parse(year, month, html) {
@@ -96,7 +113,7 @@ function writeFile() {
 		}
 	}
 
-	fs.writeFile("./paris_weather.csv", csv, function(err) {
+	fs.writeFile("./"+location+".csv", csv, function(err) {
     		if(err) {
         		console.log(err);
     		} else {
