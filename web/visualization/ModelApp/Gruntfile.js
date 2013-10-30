@@ -12,6 +12,7 @@ module.exports = function (grunt) {
     require('time-grunt')(grunt);
     // load all grunt tasks
     require('load-grunt-tasks')(grunt);
+    grunt.loadNpmTasks('grunt-phonegap');
 
     grunt.initConfig({
         // configurable paths
@@ -281,6 +282,27 @@ module.exports = function (grunt) {
                         'styles/{,*/}*.css',
                      ]
             },
+            phonegap : {
+                files: [{
+                    expand : true,
+                    cwd: '.',
+                    dest: './phonegap/3pg-model/www',
+                    src : [
+                        './dist/**'
+                    ]
+                }]
+            },
+            // phonegap doesn't handle icons for local builds, this is a hack to fix
+            phonegapIcons : {
+                files: [{
+                    expand : true,
+                    cwd: './phonegap/3pg-model/icons/android',
+                    dest: './phonegap_build/platforms/android',
+                    src : [
+                        'res/{,*/}/*.*',
+                    ]
+                }]
+            }
         },
         modernizr: {
             devFile: '<%= yeoman.app %>/bower_components/modernizr/modernizr.js',
@@ -315,12 +337,24 @@ module.exports = function (grunt) {
             all: {
                 rjsConfig: '<%= yeoman.app %>/scripts/main.js'
             }
-        }
+        },
+        phonegap: {
+            config: {
+              root: 'phonegap/3pg-model/www',
+              config: 'phonegap/3pg-model/www/config.xml',
+              cordova: 'phonegap/3pg-model/.cordova',
+              path: 'phonegap_build',
+              //plugins: ['/local/path/to/plugin', 'http://example.com/path/to/plugin.git'],
+              plugins: [],
+              platforms: ['android'],
+              verbose: true
+            }
+        },
     });
 
     grunt.registerTask('server', function (target) {
         if (target === 'dist') {
-            return grunt.task.run(['build', 'connect:dist:keepalive']);
+           return grunt.task.run(['build', 'connect:dist:keepalive']);
         }
 
         grunt.task.run([
@@ -353,6 +387,10 @@ module.exports = function (grunt) {
         'copy:dist',
         'rev',
         'usemin',
+        'copy:phonegap',
+        'phonegap:build',
+        'copy:phonegapIcons',
+        'phonegap:run'
     ]);
 
     grunt.registerTask('default', [
@@ -361,4 +399,5 @@ module.exports = function (grunt) {
         'test',
         'build'
     ]);
+
 };

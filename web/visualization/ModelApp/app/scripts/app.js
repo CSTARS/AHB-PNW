@@ -170,21 +170,6 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
 
     var loadModelCode = function(version, callback) {
 
-        // TODO: figure this out w/ require.js
-        // load script from a this server
-        // scripts should be in /jslib
-        /*if (app.devmode) {
-            console.log("DevMode: Loading local scripts");
-            $.getScript("jslib/Model3PG.js", function() {
-                $.getScript("jslib/SingleRunFunctions.js", function() {
-                    $.getScript("jslib/DataModel.js", function() {
-                        callback();
-                    });
-                });
-            });
-            return;
-        }*/
-
         if (typeof version === 'function') callback = version;
         if (!version || typeof version != 'string') version = "master";
 
@@ -249,22 +234,6 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
         });
     };
 
-    // not required anymore
-    /*var loadSpreadsheetData = function(callback) {
-
-        var rootUrl = "https://docs.google.com/spreadsheet/tq?key=" + app.spreadsheet.id + "&gid=";
-        var loadCount = 0;
-
-        var metadataQuery = new google.visualization.Query(rootUrl + app.spreadsheet.worksheets.metadata);
-        metadataQuery.setQuery('');
-
-        metadataQuery.send(function(response) {
-            app.spreadsheet.dataTables["metadata"] = response;
-            callback();
-        });
-
-    }*/
-
     var init = function(callback) {
 
         var ele = $("#inputs-content");
@@ -304,11 +273,11 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
     
         if( !$("#configuration").hasClass("open") ) {
             $("#configuration").css("top",$("#configuration").height()*-1);
-            return;
         }
-    
-        if( $("#configuration").height() -50 > $(window).height() ) $("#configuration").css("height", $(window).height()-50)
+        
+        if( $("#configuration").height() - 50 > $(window).height() ) $("#configuration").css("height", $(window).height()-50)
         else $("#configuration").css("height", 'auto');
+
     }
 
 

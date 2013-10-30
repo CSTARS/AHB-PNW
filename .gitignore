@@ -2,3 +2,9 @@
 *DS_STORE
 *.swp
 *.swo
+
+web/visualization/ModelApp/.tmp
+web/visualization/ModelApp/.sass-cache
+web/visualization/ModelApp/dist
+web/visualization/ModelApp/phonegap_build
+web/visualization/ModelApp/phonegap/3pg-model/www/dist
