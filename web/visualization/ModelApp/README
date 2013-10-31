@@ -42,3 +42,17 @@ grunt                             # build application for deployment
 ===Modify Application===
 Javascript resources are managed w/ requirejs (http://requirejs.org/)
 
+
+
+
+===Phone Gap===
+Create native mobile apps from js source (http://phonegap.com/)
+
+make sure you have added phonegap and resources are installed
+$ sudo npm install -g phonegap
+
+docs are located here, most of the phonegap config should be setup
+http://docs.phonegap.com/en/3.0.0/guide_cli_index.md.html
+
+make sure the ChildBrowser plugin is installed
+$ phonegap local plugin add https://github.com/phonegap-build/ChildBrowser.git

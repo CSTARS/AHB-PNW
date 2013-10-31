@@ -12,8 +12,10 @@
 }
 
 .config-overlay {
-	position: fixed;
-	display: block;
+    /* Nicer but buggy on small screens */
+	/* position: fixed; */
+	position: absolute;
+    display: block;
 	background: rgba(250,250,250,.95);
 	z-index: 100;
 	width: 100%;

@@ -20,9 +20,7 @@ define(["require"],function(require) {
                 "<i class='icon-remove-circle pull-right slide-popup-close'></i>"+
                 "<div id='carousel' class='owl-carousel owl-theme' style='margin-top:15px'></div>" +
     		"</div>");
-    sliderPopup.find('.slide-popup-close').on('click',function(){
-            hidePopup();
-    });
+
     var sliderPopupBg = $("<div class='slide-popup-bg'>&nbsp;</div>");
     
     // only draw charts if someone has click a checkbox
@@ -216,8 +214,8 @@ define(["require"],function(require) {
             }
             legend = "<div><a id='legend-panel-toggle' style='margin-left:5px;cursor:pointer'>Legend</a></div>"+
                      "<div style='border-bottom:1px solid #eee;padding-bottom:5px;margin-bottom:15px'>"+
-                     "<div class='row' id='legend-panel'><div class='col-md-6'>"+c1+"</div>"+
-                     "<div class='col-md-6'>"+c2+"</div>"+
+                     "<div class='row' id='legend-panel'><div class='col-sm-6'>"+c1+"</div>"+
+                     "<div class='col-sm-6'>"+c2+"</div>"+
                      "</div></div>";
         }
         $("#chart-content").html(legend);
@@ -235,6 +233,11 @@ define(["require"],function(require) {
     function showPopup() {
         sliderPopup.find(".owl-theme").html("");
         $('body').scrollTop(0).css('overflow','hidden').append(sliderPopupBg).append(sliderPopup);
+
+        // this could case badness....  why doesn't it live when removed from DOM?
+        sliderPopup.find('.slide-popup-close').on('click',function(){
+            hidePopup();
+        });
         
         var types = chartTypeSelector.val();
         for ( var i = 0; i < types.length; i++) {

@@ -59,6 +59,16 @@ module.exports = function (grunt) {
                     ]
                 }
             },
+            server: {
+              options: {
+                keepalive: true,
+                port: 9001,
+                base: [
+                        '.tmp',
+                        '<%= yeoman.app %>'
+                    ]
+              }
+            },
             test: {
                 options: {
                     base: [
@@ -81,6 +91,7 @@ module.exports = function (grunt) {
                     dot: true,
                     src: [
                         '.tmp',
+                        './phonegap/3pg-model/www/dist',
                         '<%= yeoman.dist %>/*',
                         '!<%= yeoman.dist %>/.git*'
                     ]
@@ -345,7 +356,7 @@ module.exports = function (grunt) {
               cordova: 'phonegap/3pg-model/.cordova',
               path: 'phonegap_build',
               //plugins: ['/local/path/to/plugin', 'http://example.com/path/to/plugin.git'],
-              plugins: [],
+              plugins: ['org.apache.cordova.inappbrowser'],
               platforms: ['android'],
               verbose: true
             }
@@ -361,8 +372,9 @@ module.exports = function (grunt) {
             'clean:server',
             'concurrent:server',
             'autoprefixer',
-            'connect:livereload',
-            'watch'
+            'connect:server'
+            //'connect:livereload',
+            //'watch'
         ]);
     });
 
@@ -389,8 +401,9 @@ module.exports = function (grunt) {
         'usemin',
         'copy:phonegap',
         'phonegap:build',
-        'copy:phonegapIcons',
-        'phonegap:run'
+        // if this is your first time building, you will need to run 
+        // build again or icons will not show :/
+        'copy:phonegapIcons'
     ]);
 
     grunt.registerTask('default', [

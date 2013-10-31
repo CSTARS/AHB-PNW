@@ -1,20 +1,21 @@
 <div class="navbar navbar-default navbar-fixed-top" role="navigation" style="z-index:200">
 	<div class="navbar-header">  
-    	<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-main">
-      	  <span class="icon-bar"></span>
-      	  <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
+    	  <button class="btn btn-default visible-xs" style="float:right;margin:8px" type="button" data-toggle="collapse" data-target=".navbar-main">
+            <i class="icon-reorder"></i>
         </button>
-        <button id="configuration-btn-sm" class="navbar-toggle" type="button">
+        <button class="btn btn-primary visible-xs" style="float:right;margin:8px" type="button">
             <i class="icon-cogs"></i>
         </button>
-        <button id="runbtn-sm" class="navbar-toggle" type="button">
+        <button class="btn btn-success visible-xs" style="float:right;margin:8px" type="button">
             <i class="icon-play"></i>
         </button>
 
-        <a class="navbar-brand">
+        <a class="navbar-brand hidden-xs">
             <img src="logo_128.png" style="width:24px;height:24px" border="0">
             <span>AHB - 3PG Model</span>
+        </a>
+        <a class="navbar-brand visible-xs">
+            <img src="logo_128.png" style="width:24px;height:24px" border="0">
         </a>
     </div>
         
@@ -38,13 +39,13 @@
             </a>
         </li>
         <li>
-            <button id="configuration-btn" class="btn btn-primary" style="margin:7px 4px">
+            <button id="configuration-btn" class="btn btn-primary hidden-xs" style="margin:7px 4px">
                 <span class="hidden-sm"><i class="icon-cogs"></i> Config</span>
                 <span class="visible-sm"><i class="icon-cogs"></i></span>
             
         </button></li>
         <li>
-            <button id="runbtn" class="btn btn-success" style="margin:7px 4px">
+            <button id="runbtn" class="btn btn-success hidden-xs" style="margin:7px 4px">
                 <i class="icon-play"></i> Run
             </button>
         </li>

@@ -1,16 +1,10 @@
-define([],function() {
+define(["Oauth"],function(Oauth) {
 
 	var MIME_TYPE = "application/vnd.ahb-3pg.run";
 	var TREE_MIME_TYPE = "application/vnd.ahb-3pg.tree";
 	var DRIVE_API_VERSION = "v2";
-
-	var CLIENT_ID = "344190713465.apps.googleusercontent.com";
-	var APP_ID = "344190713465";
-
-	var OAUTH_SCOPES = 'https://www.googleapis.com/auth/drive.file '
-			+ 'https://www.googleapis.com/auth/drive.install '
-			+ 'https://www.googleapis.com/auth/userinfo.profile';
-
+	
+	// google oauth access token
 	var token = "";
 	
 	var loadedFile = null;
@@ -61,7 +55,6 @@ define([],function() {
 		$("#share-btn").on('click', function(){
 			if( client == null ) {
 				gapi.load('drive-share', function(){
-					console.log(APP_ID);
 				 	client = new gapi.drive.share.ShareClient(APP_ID);
 		    		client.setItemIds([loadedFile]);
 				 	client.showSettingsDialog();
@@ -78,15 +71,13 @@ define([],function() {
 		
 
 		_loadApi(function() {
-			// try a quick login
-			gapi.auth.authorize({
-				client_id : CLIENT_ID,
-				scope : OAUTH_SCOPES,
-				immediate : true
-			}, function() {
-				token = gapi.auth.getToken();
-				if( token ) _setUserInfo();
-				if( callback ) callback();
+			Oauth.isAuthorized(function(refreshToken){
+				if( !refreshToken ) return;
+
+				Oauth.getAccessToken(function(t){
+					token = t;
+					if( token ) _setUserInfo();
+				});
 			});
 			
 			setInterval(function() {
@@ -144,6 +135,9 @@ define([],function() {
 	function _updateFileList() {
 		$("#gdrive-file-list").html("Loading...");
 		listFiles("mimeType = '"+MIME_TYPE+"'", function(resp){
+
+			console.log("File Request recieved!");
+
 			if( !resp.result.items ) return $("#gdrive-file-list").html("<li>No Files</li>");
 			if( resp.result.items.length == 0 ) return $("#gdrive-file-list").html("<li>No Files</li>");
 			$("#gdrive-file-list").html("");
@@ -253,28 +247,17 @@ define([],function() {
 		if (!token)
 			return;
 
-		if (((parseInt(token.expires_at) * 1000) - new Date().getTime()) < 1000 * 60 * 20) {
-			gapi.auth.authorize({
-				client_id : CLIENT_ID,
-				scope : OAUTH_SCOPES,
-				// don't force the popup
-				immediate : true
-			}, function() {
-				token = gapi.auth.getToken();
-			});
-		}
+		console.log("Requesting new access token (refresh)");
+		Oauth.getAccessToken(function(t) {
+			console.log("New token recieved");
+			console.log(t);
+
+			if( t != null ) token = t;
+		});
 	};
 
-	function checkSignedIn(callback) {
-		if (!token) callback(false);
-		
-		gapi.auth.authorize({
-			client_id : CLIENT_ID,
-			scope : OAUTH_SCOPES,
-			// don't force the popup
-			immediate : true
-		}, function() {
-			token = gapi.auth.getToken();
+	function checkSignedIn(callback) {		
+		Oauth.isAuthorized(function(token){
 			if (token != null)
 				callback(true);
 			else
@@ -283,16 +266,15 @@ define([],function() {
 	};
 
 	function signIn(callback) {
-		gapi.auth.authorize({
-			client_id : CLIENT_ID,
-			scope : OAUTH_SCOPES,
-			// force the popup
-			immediate : false
-		}, function() {
-			token = gapi.auth.getToken();
-			// you can check if login was successful based on token
-			callback(token);
-		});
+		Oauth.authorize(function(t){
+			token = t;
+			if (token != null) {
+				if( t.error ) return callback(false);
+				callback(true);
+			} else {
+				callback(false);
+			}
+		})
 	};
 
 	function getToken() {

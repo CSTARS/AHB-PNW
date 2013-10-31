@@ -2,11 +2,14 @@
 <widget id="edu.ucdavis.ahb" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>AHB 3PG Model</name>
     <description>
-        Hello World sample application that responds to the deviceready event.
+        3PG Growth Model Application
     </description>
     <author email="jrmerz@ucdavis.edu" href="https://plus.google.com/u/0/b/107620944323155568384/107620944323155568384/posts">
         UC Davis - AHB Team
     </author>
+
+    <gap:plugin name="ChildBrowser" />
+
     <feature name="http://api.phonegap.com/1.0/device" />
     <preference name="permissions" value="none" />
     <preference name="orientation" value="default" />
@@ -47,6 +50,9 @@
     <gap:splash gap:platform="ios" height="1024" src="res/screen/ios/screen-ipad-portrait.png" width="768" />
     <gap:splash gap:platform="ios" height="768" src="res/screen/ios/screen-ipad-landscape.png" width="1024" />
     <gap:splash gap:platform="winphone" src="res/screen/windows-phone/screen-portrait.jpg" />
+
+    <gap:plugin name="org.apache.cordova.inappbrowser" version="0.2.4" />
+
     <access origin="*" />
     <content src="dist/index.html" />
 </widget>
