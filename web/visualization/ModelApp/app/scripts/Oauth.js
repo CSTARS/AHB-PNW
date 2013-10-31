@@ -8,10 +8,10 @@ define([], function () {
     var tokenKey = 'refresh_token';
         
     /* stores the accessToken after retrieval from google server */
-    var accessToken = false;
+    var accessToken = null;
                 
     /* stores the Time when access token was last received from server */
-    var accessTokenTime = false;
+    var accessTokenTime = null;
                 
     /* stores access Token's Expiry Limit. Uses 58 min. instead of 60 min. */
     var accessTokenExpiryLimit = 58 * 60 * 1000;
@@ -335,7 +335,7 @@ define([], function () {
     	getAccessToken = function(callback) {
 	       var currentTime = (new Date()).getTime();           
 
-	       if (accessToken && accessToken != false && 
+	       if (accessToken && 
 	               currentTime < (accessTokenTime + accessTokenExpiryLimit)) {
 	               callback(accessToken);
 	                       
@@ -436,7 +436,8 @@ define([], function () {
 	return {
 		authorize : authorize,
 		isAuthorized : isAuthorized,
-		getAccessToken : getAccessToken
+		getAccessToken : getAccessToken,
+    APP_ID : APP_ID
 	}
 
 });

@@ -52,20 +52,6 @@ define(["Oauth"],function(Oauth) {
 			);
 		});
 		
-		$("#share-btn").on('click', function(){
-			if( client == null ) {
-				gapi.load('drive-share', function(){
-				 	client = new gapi.drive.share.ShareClient(APP_ID);
-		    		client.setItemIds([loadedFile]);
-				 	client.showSettingsDialog();
-				 });
-			} else {
-				client.setItemIds([loadedFile]);
-			 	client.showSettingsDialog();
-			}
-		});
-		
-		
 		_createLoginBtn();
 
 		
@@ -159,7 +145,14 @@ define(["Oauth"],function(Oauth) {
 				getFile(id, $(this).attr("url"), function(file) {
 					if( file == null ) return alert("failed to load file");
 					loadedFile = id;
+					
+					// hide the modal
 					$("#load-modal").modal('hide');
+
+					// show the share btn
+					$("#share-btn").parent().show();
+
+
 					m3PGIO.loadSetup(id, file);
 					alert("File Loaded");
 				});
@@ -196,7 +189,8 @@ define(["Oauth"],function(Oauth) {
 		var btn = $('<li class="dropdown">'
 				+ '<a class="dropdown-toggle" style="cursor:pointer">' + name
 				+ '<b class="caret"></b></a>' + '<ul class="dropdown-menu">'
-				+ '<li><a id="save"><i class="icon-cloud-upload"></i> Save / <i class="icon-share"></i> Share</a></li>' 
+				+ '<li><a id="save"><i class="icon-cloud-upload"></i> Save</a></li>'
+				+ '<li style="display:none"><a id="share-btn"><i class="icon-share"></i> Share</a></li>' 
 				+ '<li><a id="load"><i class="icon-cloud-download"></i> Load</a></li>' 
 				+ '<li><a id="logout"><i class="icon-signout"></i> Logout</a></li>' 
 				+ '</ul></li>');
@@ -225,6 +219,19 @@ define(["Oauth"],function(Oauth) {
 			}
 			
 			$("#save-modal").modal('show');
+		});
+
+		btn.find("#share-btn").on('click', function(){
+			if( client == null ) {
+				gapi.load('drive-share', function(){
+				 	client = new gapi.drive.share.ShareClient(Oauth.APP_ID);
+		    		client.setItemIds([loadedFile]);
+				 	client.showSettingsDialog();
+				 });
+			} else {
+				client.setItemIds([loadedFile]);
+			 	client.showSettingsDialog();
+			}
 		});
 		
 		btn.find('#load').on('click', function() {
