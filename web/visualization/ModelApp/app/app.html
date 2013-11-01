@@ -149,7 +149,7 @@
     
     <section id="output">
             <div class="page-header">
-                    <h1>Raw Output</h1>
+                    <h1>Raw Output <a class='btn btn-default' id="show-export-csv" style="margin-left:25px;display:none"><i class='icon-external-link'></i> Export CSV</a></h1>
             </div>
            <div id="output-content" style="overflow:hidden">
                     <div style="text-align:center;"><i class="icon-table blank-icon"></i></div>
@@ -237,13 +237,21 @@
 
             <div style="text-align:center">
               <img src="logo_196.png" style="width:58px;height:58px;vertical-align:top;margin-right:15px" />
-              <span class="letter" data-letter="AHB">AHB</span>
+              <span class="letter" data-letter="A">A</span>
+              <span class="letter" data-letter="H">H</span>
+              <span class="letter" data-letter="B">B</span>
               &nbsp;
               <span class="letter" data-letter="-">-</span>
               &nbsp;
-              <span class="letter" data-letter="3PG">3PG</span>
+              <span class="letter" data-letter="3">3</span>
+              <span class="letter" data-letter="P">P</span>
+              <span class="letter" data-letter="G">G</span>
               &nbsp;
-              <span class="letter" data-letter="Model">Model</span>
+              <span class="letter" data-letter="M">M</span>
+              <span class="letter" data-letter="o">o</span>
+              <span class="letter" data-letter="d">d</span>
+              <span class="letter" data-letter="e">e</span>
+              <span class="letter" data-letter="l">l</span>
             </div>
             <p style="text-align:center">
               System For Advanced Biofuels Production From Woody Biomass In The Pacific Northwest
@@ -291,6 +299,7 @@ The Advanced Hardwood Biofuels Northwest project, AHB-NW investigates using popl
                 <div><a href="https://code.google.com/p/google-visualization-java/" target="_blank">google-visualization-java (modified)</a></div>
                 <div><a href="http://phonegap.com/" target="_blank">PhoneGap</a></div>
                 <div><a href="http://owlgraphic.com/owlcarousel/" target="_blank">OWL Carousel</a></div>
+                <div><a href="https://github.com/browserstack/flashblock-detector" target="_blank">flashblock-detector</a></div>
                 <div><a href="http://requirejs.org/" target="_blank">RequireJS</a></div>
             </div>
       </div>
@@ -318,6 +327,33 @@ The Advanced Hardwood Biofuels Northwest project, AHB-NW investigates using popl
       </div>
       <div class="modal-footer">
      	<a class="btn btn-default pull-right" data-dismiss="modal" >Cancel</a>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="export-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <img src="images/gdrive_icon.png" style="height:24px;width:24px" /> Export CSV to Google Drive
+      </div>
+      <div class="modal-body">
+        <div id="export-msg"></div>
+        <div class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="export-name" class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="export-name" placeholder="Folder Name">
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-primary pull-right" id="export-csv">Export</a>
+        <a class="btn btn-default pull-right" style="margin-right: 15px" data-dismiss="modal" >Close</a>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

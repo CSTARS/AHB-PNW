@@ -79,11 +79,14 @@ define(["Oauth"],function(Oauth) {
 
 		_loadApi(function() {
 			Oauth.isAuthorized(function(refreshToken){
-				if( !refreshToken ) return;
-
+				if( !refreshToken ) {
+					callback();
+					return;
+				}
 				Oauth.getAccessToken(function(t){
 					token = t;
 					if( token ) _setUserInfo();
+					callback();
 				});
 			});
 			
@@ -213,6 +216,10 @@ define(["Oauth"],function(Oauth) {
 					getFile(id, file.downloadUrl, function(file) {
 						if( file == null ) return alert("failed to load file");
 						loadedFile = id;
+						
+						// show the share btn
+						$("#share-btn").parent().show();
+						$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+id).parent().show();
 						m3PGIO.loadSetup(id, file);
 					});
 				});
@@ -223,6 +230,10 @@ define(["Oauth"],function(Oauth) {
 				getFile(id, file.downloadUrl, function(file) {
 					if( file == null ) return alert("failed to load file");
 					loadedFile = id;
+						
+					// show the share btn
+					$("#share-btn").parent().show();
+					$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+id).parent().show();
 					m3PGIO.loadSetup(id, file);
 				});
 			});
@@ -235,7 +246,7 @@ define(["Oauth"],function(Oauth) {
 				+ '<b class="caret"></b></a>' + '<ul class="dropdown-menu">'
 				+ '<li><a id="save"><i class="icon-cloud-upload"></i> Save Model</a></li>'
 				+ '<li style="display:none"><a id="share-btn"><i class="icon-share"></i> Share Model</a></li>'
-				+ '<li style="display:none"><a id="open-in-drive" target="_blank"><i class="icon-mail-forward"></i> Open in Google Drive</a></li>' 
+				+ '<li style="display:none"><a id="open-in-drive" target="_blank"><i class="icon-external-link-sign"></i> Open in Google Drive</a></li>' 
 				+ '<li><a id="load"><i class="icon-cloud-download"></i> Load Model</a></li>'
 				+ '<li><a id="about"><i class="icon-info-sign"></i> About</a></li>' 
 				+ '<li><a id="logout"><i class="icon-signout"></i> Logout</a></li>' 
@@ -379,8 +390,7 @@ define(["Oauth"],function(Oauth) {
 			success : function(data, status, xhr) {
 				try {
 					data = JSON.parse(data);
-				} catch (e) {
-				}
+				} catch (e) {}
 
 				callback(data, id);
 			},
@@ -394,7 +404,9 @@ define(["Oauth"],function(Oauth) {
 		});
 	};
 
-	function saveFile(name, description, mimeType, json, callback) {
+	function saveFile(name, description, mimeType, json, callback, options) {
+		if( !options ) options = {}
+
 		var boundary = '-------314159265358979323846';
 		var delimiter = "\r\n--" + boundary + "\r\n";
 		var close_delim = "\r\n--" + boundary + "--";
@@ -406,8 +418,11 @@ define(["Oauth"],function(Oauth) {
 		// parents : [{id: folderId}] TODO
 		};
 
-		if (typeof json == 'object')
-			json = JSON.stringify(json);
+		if( options.parent ) {
+			metadata.parents = [{id: options.parent}];
+		}
+
+		if (typeof json == 'object') json = JSON.stringify(json);
 		var base64Data = btoa(json);
 		var multipartRequestBody = delimiter
 				+ 'Content-Type: application/json\r\n\r\n'
@@ -416,7 +431,7 @@ define(["Oauth"],function(Oauth) {
 				+ '\r\n' + base64Data + close_delim;
 
 		var request = gapi.client.request({
-			'path' : '/upload/drive/v2/files',
+			'path' : '/upload/drive/v2/files' + ( options.convert ? '?convert=true' : ''),
 			'method' : 'POST',
 			'params' : {
 				'uploadType' : 'multipart'
@@ -486,6 +501,7 @@ define(["Oauth"],function(Oauth) {
 		listFiles : listFiles,
 		getFileMetadata : getFileMetadata,
 		load : load,
+		saveFile: saveFile,
 
 		MIME_TYPE : MIME_TYPE
 	}

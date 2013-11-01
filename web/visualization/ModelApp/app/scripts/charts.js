@@ -180,8 +180,10 @@ define(["require"],function(require) {
 
     // basically redraw everything
     function resize() {
-        if( cWidth == $(window).width() ) return;
-         cWidth = $(window).width();
+        // require more than a 30 pixel width change (so we don't redraw w/ scroll bars added)
+        var winWidth = $(window).width();
+        if( cWidth > winWidth - 15 && cWidth < winWidth + 15 ) return;
+        cWidth = winWidth;
 
         if( resizeTimer != -1 ) clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {

@@ -1,5 +1,5 @@
 /*global define */
-define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
+define(["gdrive","charts","inputForm","export"], function (gdrive, charts, inputForm, exporter) {
 
      var runCallback = null;
      var _3pgModel = null;
@@ -12,6 +12,11 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
 			           "PhysMod","pR","pS","litterfall","NPP","WF","WR","WS","W"];
 	 var debug = false;
 	 var devmode = false;
+
+     // row raw data does a lot of processing of the results and the current state of what's
+     // being displayed.  Go ahead an setup the csv data at this point, then if the user
+     // decides to export, we are all set to to;
+     var csvResults = null;
 
      var getModel = function() {
         return _3pgModel;
@@ -242,6 +247,12 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
             if( val > 0 ) $("#chart-type-btn-group").hide();        
         });
 
+        // setup export modal
+        exporter.init();
+        $("#export-csv").on('click', function(){
+            exporter.exportCsv(csvResults);
+        });
+
         var ele = $("#inputs-content");
         inputForm.create(ele);
 
@@ -399,6 +410,8 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
             }]
         }
 
+        currentResults = result;
+
         showRawOutput(result);
         charts.updateCharts(result);
 
@@ -418,37 +431,53 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
             if( vars.indexOf(results[0].output[0][i]) > -1 ) chartRows[results[0].output[0][i]] = i;
         }
 
-        var tabs = $('<ul class="nav nav-tabs" id="rawOutputTabs"  data-tabs="tabs"></ul>');
-        var contents = $('<div class="tab-content" style="overflow:auto"></div>');
+        var tabs = $('<ul class="nav nav-pills" id="rawOutputTabs"  data-tabs="pill"></ul>');
+        var contents = $('<div class="pill-content" style="overflow:auto;margin-top:15px"></div>');
 
         for ( var i = 0; i < vars.length; i++) {
             tabs.append($('<li '+(i == 0 ? 'class="active"' : "")+'><a href="#rawout'
                 +vars[i]+'" data-toggle="tab">'+vars[i]+'</a></li>'));
         
-            contents.append($('<div class="tab-pane ' + (i == 0 ? 'active' : "")
+            contents.append($('<div class="pill-pane ' + (i == 0 ? 'active' : "")
                 + '" id="rawout' + vars[i] + '"></div>'));
         }
 
         $("#output-content").html("").append(tabs).append(contents);
         $("#rawOutputTabs").tab();
    
+        csvResults = {
+            config : m3PGIO.exportSetup(),
+            data : {}
+        };
+
         var table, row;
         for( var key in chartRows ) {
             table = "<table class='table table-striped'>";
 
+            csvResults.data[key] = [];
+
             for( var j = 0; j < results[0].output.length; j++ ){
+
+                csvResults.data[key][j] = [];
 
                 // set header row
                 if( j == 0 ) {
                     table += "<tr><th>Month</th>";
                     for( var z = 0; z < results.length; z++ ) {
                         table += "<th>";
-                        var c = 0;
+                        var tmp = [];
+
                         for( var mType in results[z].inputs ) {
+                            tmp.push(mType+"="+results[z].inputs[mType]);
                             table += "<div>"+mType+"="+results[z].inputs[mType]+"</div>";
-                            c++;
                         }
-                        if( c == 0 ) table += key;
+
+                        if( tmp.length == 0 ) {
+                            csvResults.data[key][j].push[key];
+                            table += key;
+                        } else {
+                            csvResults.data[key][j].push(tmp.join(" "));
+                        }
                         table += "</th>";
                     }
 
@@ -458,15 +487,20 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
                 // ignore string rows
                 if( typeof results[0].output[j][chartRows[key]] == 'string' ) continue;
 
-
                 table += "<tr><td>"+j+"</td>";
+                var v;
                 for( var z = 0; z < results.length; z++ ) {
-                    table += "<td>"+results[z].output[j][chartRows[key]]+"</td>";
+                    v = results[z].output[j][chartRows[key]];
+                    table += "<td>"+v+"</td>";
+                    csvResults.data[key][j].push(v);
                 }
                 table += "</tr>";        
             }
             $("#rawout" + key).html(table+"</table>");
         }
+
+        // make sure we can see the export btn
+        $("#show-export-csv").show();
     }
 
 
