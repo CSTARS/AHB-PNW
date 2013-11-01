@@ -13,9 +13,25 @@ define(["gdrive"],function(gdrive) {
         });
 	}
 
-	function _setMessage(msg, type) {
-		if( !msg ) return $("#export-msg").html("");
-		$('#export-msg').html('<div class="alert alert-'+type+'">'+msg+'</div>');
+	function _setMessage(msg, type, progress) {
+		if( !msg ) {
+			return $("#export-msg").hide();
+		}
+		$("#export-msg").show();
+
+		if( progress ) {
+			$("#export-msg-progress").show();
+		} else {
+			$("#export-msg-progress").hide();
+		}
+
+		$('#export-msg').attr("class",'alert alert-'+type);
+		$('#export-msg-text').html(msg);
+	}
+
+	function _updateProgress(index, total) {
+		percent = 100 * ( index / total );
+		$("#export-msg-progress-bar").attr("aria-valuenow", percent).css("width",percent+"%");
 	}
 
 	// see if an error exists, if so, set state
@@ -44,23 +60,26 @@ define(["gdrive"],function(gdrive) {
 		}
 
 		var data = results.data;
+
+		// create a list so we can recursively iterate
+		var keys = [];
+		for( var key in data ) keys.push(key);
 		
 		// create folder
-		_setMessage("<i class='icon-spinner icon-spin'></i> Creating export folder...", "info");
+		_setMessage("<i class='icon-spinner icon-spin'></i> Creating export folder...", "info", true);
+		_updateProgress(1, keys.length+2);
 		gdrive.saveFile(name,"AHB 3PG Model Results","application/vnd.google-apps.folder","",function(file){
 			if( _checkError(file) ) return;
 			var parent = file.id;
+			_updateProgress(2, keys.length+2);
 
 			// create a nice file describing the current export
-			_setMessage("<i class='icon-spinner icon-spin'></i> Creating config file...", "info");
+			_setMessage("<i class='icon-spinner icon-spin'></i> Creating config file...", "info", true);
 			delete results.config.plantation_state;
 			var config = JSON.stringify(results.config,null,"  ");
 			gdrive.saveFile("config.txt","AHB 3PG Model - Run Configuration","text/plain",config,function(file){
 				if( _checkError(file) ) return;
-
-				// create a list so we can recursively iterate
-				var keys = [];
-				for( var key in data ) keys.push(key);
+				_updateProgress(3, keys.length+2);
 
 				_createExport(0, keys, data, parent);
 			},{parent: parent})
@@ -71,6 +90,7 @@ define(["gdrive"],function(gdrive) {
 		
 		// we are all done :)
 		if( index == keys.length ) {
+			_updateProgress(1, 1);
 			_setMessage("Export Successful.<br /><a href='https://drive.google.com/#folders/" + parent + 
 						"' target='_blank'><i class='icon-external-link-sign'></i> Open in Google Drive</a>", "success");
 			$("#export-csv").removeClass("disabled").html("Export");
@@ -80,14 +100,16 @@ define(["gdrive"],function(gdrive) {
 			var csv = "";
 			for( var i = 0; i < data[key].length; i++ ) {
 				if( data[key][i].length == 0 ) continue; // ignore the blank rows
-				
+
 				for( var j = 0; j < data[key][i].length; j++ ) csv += data[key][i][j]+",";
 				csv = csv.replace(/,$/,'')+"\n";
 			}
 
-			_setMessage("<i class='icon-spinner icon-spin'></i> Creating "+keys[index]+".csv... ", "info");
+			_setMessage("<i class='icon-spinner icon-spin'></i> Creating "+keys[index]+".csv... ", "info", true);
 			gdrive.saveFile(keys[index]+".csv","","text/csv",csv,function(file){
 				if( _checkError(file) ) return;
+
+				_updateProgress(index+4, keys.length+2);
 				
 				index++;
 				_createExport(index, keys, data, parent);

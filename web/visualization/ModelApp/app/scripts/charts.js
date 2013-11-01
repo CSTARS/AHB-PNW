@@ -40,6 +40,10 @@ define(["require"],function(require) {
 
         // setup chart selectors
         $("#chart-modal").modal({show:false});
+
+        // set popup click handlers
+        $("#chartType-selectAll").on('click',selectAll);
+        $("#chartType-unselectAll").on('click',unselectAll);
        
         chartTypeSelector = $("#chartTypeInput");
         chartCheckboxes = $("#chartSelections");

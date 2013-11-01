@@ -212,8 +212,8 @@
       </div>
       <div class="modal-body">
             <select class="minput" id="chartTypeInput" multiple="multiple" style="display:none"></select>
-            <a style="cursor:pointer" onclick="app.charts.selectAll()">Select All</a> | 
-            <a style="cursor:pointer" onclick="app.charts.unselectAll()">Unselect All</a>
+            <a style="cursor:pointer" id="chartType-selectAll">Select All</a> | 
+            <a style="cursor:pointer" id="chartType-unselectAll">Unselect All</a>
             <div class="row" id="chartSelections">
                 <div class="col-md-6" id="chartSelections-c1"></div>
                 <div class="col-md-6" id="chartSelections-c2"></div>
@@ -339,7 +339,13 @@ The Advanced Hardwood Biofuels Northwest project, AHB-NW investigates using popl
         <img src="images/a8b428bf.gdrive_icon.png" style="height:24px;width:24px"> Export CSV to Google Drive
       </div>
       <div class="modal-body">
-        <div id="export-msg"></div>
+        <div id="export-msg">
+          <div id="export-msg-text"></div>
+          <div id="export-msg-progress" class="progress progress-striped active">
+            <div id="export-msg-progress-bar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+            </div>
+          </div>
+        </div>
         <div class="form-horizontal" role="form">
           <div class="form-group">
             <label for="export-name" class="col-sm-2 control-label">Name</label>
