@@ -162,8 +162,6 @@ define(["Oauth"],function(Oauth) {
 		$("#gdrive-file-list").html("Loading...");
 		listFiles("mimeType = '"+MIME_TYPE+"'", function(resp){
 
-			console.log("File Request recieved!");
-
 			if( !resp.result.items ) return $("#gdrive-file-list").html("<li>No Files</li>");
 			if( resp.result.items.length == 0 ) return $("#gdrive-file-list").html("<li>No Files</li>");
 			$("#gdrive-file-list").html("");
@@ -173,9 +171,9 @@ define(["Oauth"],function(Oauth) {
 				var item = resp.result.items[i];
 				var d = new Date(item.modifiedDate);
 				$("#gdrive-file-list").append(
-					$("<li><a id='"+item.id+"' url='"+item.downloadUrl+"' style='cursor:pointer'><i class='icon-file'></i> "+item.title+"</a><br />" +
-					  "<span style='color:#888'>"+item.description+"</span></li>"+
-					  "<span style='font-style:italic;font-size:11px;'>Last Modified: "+d.toDateString()+" "+d.toLocaleTimeString()+" by "+item.lastModifyingUserName+"</span><br />"
+					$("<li class='list-group-item'><a id='"+item.id+"' url='"+item.downloadUrl+"' style='cursor:pointer'><i class='icon-file'></i> "+item.title+"</a><br />" +
+					  "<span style='color:#888'>"+item.description+"</span><br />"+
+					  "<span style='font-style:italic;font-size:11px;'>Last Modified: "+d.toDateString()+" "+d.toLocaleTimeString()+" by "+item.lastModifyingUserName+"</span></li>"
 					  )
 				);
 			}
@@ -268,9 +266,12 @@ define(["Oauth"],function(Oauth) {
 				}
 				$("#save-update-panel").show();
 				var d = new Date(file.modifiedDate);
-				$("#save-update-panel-inner").html(file.title+"<br />" +
+				$("#save-update-panel-inner").html("<b>"+file.title+"</b><br />" +
 					  "<span style='color:#888'>"+file.description+"</span><br />"+
-					  "<span style='font-style:italic;font-size:11px;'>Last Modified: "+d.toDateString()+" "+d.toLocaleTimeString()+" by "+file.lastModifyingUserName+"</span>")
+					  "<span style='font-style:italic;font-size:11px;'>Last Modified: " + 
+					  d.toDateString()+" "+d.toLocaleTimeString()+" by "+file.lastModifyingUserName+"</span><br />"+
+					  "<a href='https://drive.google.com/file/d/"+file.id+"'' target='_blank'><i class='icon-link'></i> " +
+					  "Link to Share</a> <span style='color:#888'>(must have permission)</span><br /><br />");
 			} else {
 				$("#save-update-panel").hide();
 			}
