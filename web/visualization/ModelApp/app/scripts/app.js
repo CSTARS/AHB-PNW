@@ -236,12 +236,16 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
 
     var init = function(callback) {
 
+        
+        // check if flash is installed.  If not, hide the chart type toggle.
+        flashBlockDetect(function(val){
+            if( val > 0 ) $("#chart-type-btn-group").hide();        
+        });
+
         var ele = $("#inputs-content");
         inputForm.create(ele);
 
         $("#runbtn, #runbtn-sm").on('click', function() {
-            if ($(this).hasClass("disabled")) return;
-            $(this).addClass("disabled").html("Running...");
             runModel();
         });
 
@@ -260,6 +264,7 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
             if( $("#configuration").hasClass("open") ) {
                 $('#configuration').animate({top: $("#configuration").height()*-1},500).removeClass("open");
             } else {
+                $("html, body").animate({ scrollTop: 0 }, "fast");
                 $('#configuration').animate({top: 50},500).addClass("open");
             }
         });
@@ -288,6 +293,9 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
 
     
     var runModel = function() {
+        if ($("#runbtn, #runbtn-sm").hasClass("disabled")) return;
+        $("#runbtn, #runbtn-sm").addClass("disabled").html("Running...");
+
         // TODO: this sucks :/ ....
         // make sure all the weather is set.  #1 thing people will mess up
         for ( var i = 0; i < 12; i++) {

@@ -16,10 +16,16 @@ require.config({
         bootstrap: '../bower_components/bootstrap/dist/js/bootstrap',
         requirejs: '../bower_components/requirejs/require',
         owlCarousel: '../bower_components/owlcarousel/owl-carousel/owl.carousel',
-        'sass-bootstrap': '../bower_components/sass-bootstrap/dist/js/bootstrap'
+        'sass-bootstrap': '../bower_components/sass-bootstrap/dist/js/bootstrap',
+        charts : 'charts'
     },
     shim: {
         owlCarousel: {
+            deps: [
+                'jquery'
+            ]
+        },
+        charts: {
             deps: [
                 'jquery'
             ]
@@ -99,7 +105,7 @@ require.config({
     }
 });
 
-require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel'], function ($, bootstrap, app, gdrive) {
+require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel', 'flashblock-detector'], function ($, bootstrap, app, gdrive) {
 
     function onChartsLoaded() {
 			$("#status").html("3pg model");

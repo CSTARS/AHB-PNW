@@ -3,11 +3,11 @@
     	  <button class="btn btn-default visible-xs" style="float:right;margin:8px" type="button" data-toggle="collapse" data-target=".navbar-main">
             <i class="icon-reorder"></i>
         </button>
-        <button class="btn btn-primary visible-xs" style="float:right;margin:8px" type="button">
+        <button id="configuration-btn-sm" class="btn btn-primary visible-xs" style="float:right;margin:8px" type="button">
             <i class="icon-cogs"></i>
         </button>
-        <button class="btn btn-success visible-xs" style="float:right;margin:8px" type="button">
-            <i class="icon-play"></i>
+        <button id="runbtn-sm" class="btn btn-success visible-xs" style="float:right;margin:8px" type="button">
+            <i class="icon-play"></i> Run
         </button>
 
         <a class="navbar-brand hidden-xs">
@@ -129,7 +129,7 @@
 	                <div class="page-header">
 	                        <h1>Charts 
 	                           <a class="btn btn-default" style="margin-left:25px" id="select-charts-title-btn"><i class="icon-plus"></i> Add</a>
-                               <div class="btn-group">
+                               <div class="btn-group" id="chart-type-btn-group">
                                     <button type="button" class="btn btn-default active chart-type-toggle" value="line" >Basic</button>
                                     <button type="button" class="btn btn-default chart-type-toggle" value="timeline" >Interactive</button>
                                 </div>

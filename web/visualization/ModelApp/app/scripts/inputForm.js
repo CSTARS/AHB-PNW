@@ -314,6 +314,11 @@ define(['require'],function(require){
 		tabHeader += "</ul>";
 		
 		ele.html(tabHeader+"<div class='form-horizontal'>"+content+"</div>");
+
+		// run the model whenever some hits 'enter'
+		ele.find('input').on('keyup',function(e){
+			if( e.which == 13 ) app.runModel();
+		});
 		
 		$('#input_tabs a').click(function (e) {
 			  e.preventDefault()

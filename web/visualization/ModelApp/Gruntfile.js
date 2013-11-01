@@ -66,7 +66,8 @@ module.exports = function (grunt) {
                 base: [
                         '.tmp',
                         '<%= yeoman.app %>'
-                    ]
+                    ],
+                hostname: '0.0.0.0'
               }
             },
             test: {
