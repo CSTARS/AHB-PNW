@@ -62,7 +62,7 @@ define(['require'],function(require){
 		}
 		
 		
-		var table = "<table class='table table-striped table-condensed' style='margin-top:20px'>";
+		var table = "<table class='table table-striped table-condensed weather-table' style='margin-top:20px'>";
 
 		table += "<tr>";
 		for( var i = 0; i < cols.length; i++ ) {

@@ -54,5 +54,5 @@
     <gap:plugin name="org.apache.cordova.inappbrowser" version="0.2.4" />
 
     <access origin="*" />
-    <content src="dist/index.html" />
+    <content src="dist/native.html" />
 </widget>

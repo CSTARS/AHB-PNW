@@ -18,14 +18,25 @@ define(["Oauth"],function(Oauth) {
 		$("#load-modal").modal({
 			show : false
 		});
+
+		// the about modal link is created below, so why not...
+		$("#about-modal").modal({
+			show : false
+		});
 		
 		$("#save-update-btn").on('click', function() {
+			_setSaveMessage('<i class="icon-spinner icon-spin"></i> Updating File...','info');
+
 			updateFile(loadedFile, 
 					m3PGIO.exportSetup(), 
 					function(resp){
-						if( resp.error ) alert("Update file failed");
-						else alert("Success");
-						$("#save-modal").modal('hide');
+						if( resp.error ) return _setSaveMessage('Failed to update file on Google Drive :(','danger');
+						else _setSaveMessage('Update Successful.','success');
+
+						setTimeout(function(){
+							$("#save-modal").modal('hide');
+						},1500);
+						
 						_updateFileList();
 					}
 			);
@@ -34,19 +45,29 @@ define(["Oauth"],function(Oauth) {
 		$("#save-new-btn").on('click', function() {
 			var name = $("#save-name-input").val();
 			if( name.length == 0 ) {
-				alert("Please provide a name");
+				_setSaveMessage('Please provide a filename.','info');
 				return;
 			}
 			
+			_setSaveMessage('<i class="icon-spinner icon-spin"></i> Saving File...','info');
 			saveFile(name,
 					$("#save-description-input").val(),
 					MIME_TYPE, 
 					m3PGIO.exportSetup(), 
 					function(resp) {
-						if( resp.error ) alert("Save to drive failed");
-						else alert("Success");
-						$("#save-modal").modal('hide');
+						if( resp.error ) return _setSaveMessage('Failed to save file to Google Drive :(','danger');
+						else _setSaveMessage('File sucessfully saved.','success');
+
+						setTimeout(function(){
+							$("#save-modal").modal('hide');
+						},1500);
+
 						_updateFileList();
+
+						// show the share btn
+						$("#share-btn").parent().show();
+						$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+resp.id).parent().show();
+
 						loadedFile = resp.id;
 					}
 			);
@@ -73,15 +94,31 @@ define(["Oauth"],function(Oauth) {
 
 	}
 
+	function _setLoadMessage(msg, type) {
+		if( !msg ) return $("#gdrive-file-msg").html("");
+		$('#gdrive-file-msg').html('<div class="alert alert-'+type+'">'+msg+'</div>');
+	}
+
+	function _setSaveMessage(msg, type) {
+		if( !msg ) return $("#gdrive-save-msg").html("");
+		$('#gdrive-save-msg').html('<div class="alert alert-'+type+'">'+msg+'</div>');
+	}
+
 	function _createLoginBtn() {
 		var btn = $('<li class="dropdown">'
 				+ '<a class="dropdown-toggle" style="cursor:pointer">Login<b class="caret"></b></a>'
 				+ '<ul class="dropdown-menu">'
+				+ '<li><a id="about"><i class="icon-info-sign"></i> About</a></li>'
 				+ '<li><a id="login-with-google"><i class="icon-signin"></i> Login with Google</a></li>'
 				+ '</ul></li>');
 
 		btn.find('a.dropdown-toggle').on('click', function(){
 			$(this).parent().toggleClass('open');
+		});
+
+		btn.find('#about').on('click', function() {
+			btn.toggleClass('open');
+			$("#about-modal").modal('show');
 		});
 
 		btn.find('#login-with-google').on('click',function() {
@@ -142,19 +179,26 @@ define(["Oauth"],function(Oauth) {
 			
 			$("#gdrive-file-list a").on('click', function(){
 				var id = $(this).attr("id");
+
+				_setLoadMessage('<i class="icon-spinner icon-spin"></i> Loading File...','info');
 				getFile(id, $(this).attr("url"), function(file) {
-					if( file == null ) return alert("failed to load file");
-					loadedFile = id;
-					
-					// hide the modal
-					$("#load-modal").modal('hide');
+					if( !file  ) return _setLoadMessage('Failed to load file from Google Drive :(','danger');
+					if( file.error  ) return _setLoadMessage('Failed to load file from Google Drive :(','danger');
+
+					_setLoadMessage('File Loaded.','success');
+					loadedFile = id;					
 
 					// show the share btn
 					$("#share-btn").parent().show();
-
+					$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+id).parent().show();
 
 					m3PGIO.loadSetup(id, file);
-					alert("File Loaded");
+					
+					setTimeout(function(){
+						// hide the modal
+						$("#load-modal").modal('hide');
+					},1500);
+
 				});
 			});
 		});
@@ -189,9 +233,11 @@ define(["Oauth"],function(Oauth) {
 		var btn = $('<li class="dropdown">'
 				+ '<a class="dropdown-toggle" style="cursor:pointer">' + name
 				+ '<b class="caret"></b></a>' + '<ul class="dropdown-menu">'
-				+ '<li><a id="save"><i class="icon-cloud-upload"></i> Save</a></li>'
-				+ '<li style="display:none"><a id="share-btn"><i class="icon-share"></i> Share</a></li>' 
-				+ '<li><a id="load"><i class="icon-cloud-download"></i> Load</a></li>' 
+				+ '<li><a id="save"><i class="icon-cloud-upload"></i> Save Model</a></li>'
+				+ '<li style="display:none"><a id="share-btn"><i class="icon-share"></i> Share Model</a></li>'
+				+ '<li style="display:none"><a id="open-in-drive" target="_blank"><i class="icon-mail-forward"></i> Open in Google Drive</a></li>' 
+				+ '<li><a id="load"><i class="icon-cloud-download"></i> Load Model</a></li>'
+				+ '<li><a id="about"><i class="icon-info-sign"></i> About</a></li>' 
 				+ '<li><a id="logout"><i class="icon-signout"></i> Logout</a></li>' 
 				+ '</ul></li>');
 		
@@ -218,6 +264,9 @@ define(["Oauth"],function(Oauth) {
 				$("#save-update-panel").hide();
 			}
 			
+			// clear any message
+			_setSaveMessage(null);
+
 			$("#save-modal").modal('show');
 		});
 
@@ -234,8 +283,18 @@ define(["Oauth"],function(Oauth) {
 			}
 		});
 		
+		btn.find('#about').on('click', function() {
+			btn.toggleClass('open');
+			$("#about-modal").modal('show');
+		});
+
 		btn.find('#load').on('click', function() {
 			btn.toggleClass('open');
+
+			// hide any existing message
+			_setLoadMessage(null);
+
+			// show the modal
 			$("#load-modal").modal('show');
 		});
 				
@@ -330,6 +389,7 @@ define(["Oauth"],function(Oauth) {
 					error : true,
 					message : "Failed to load file from Google Drive"
 				});
+
 			}
 		});
 	};

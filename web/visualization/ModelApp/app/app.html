@@ -182,16 +182,18 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		Save to Google Drive
+		<img src="images/gdrive_icon.png" style="height:24px;width:24px" /> Save to Google Drive
       </div>
       <div class="modal-body">
+          <div id="gdrive-save-msg"></div>
       		<div class="well" style="display:none" id="save-update-panel">
       			<div id="save-update-panel-inner"></div>
       			<a class="btn btn-success" id="save-update-btn"><i class="icon-save"></i> Update Current File</a>
       		</div>
-     		Name: <input type="text" class="form-control" id="save-name-input" /><br />
-     		Description: <textarea class="form-control" id="save-description-input" ></textarea>
-     		
+     		  <div>
+            Name: <input type="text" class="form-control" id="save-name-input" /><br />
+     		    Description: <textarea class="form-control" id="save-description-input" ></textarea>
+     		  </div>
       </div>
       <div class="modal-footer">
       	<a class="btn btn-success pull-right" id="save-new-btn" style="margin-left:10px" ><i class="icon-cloud-upload"></i> Save New File</a>
@@ -224,14 +226,84 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div class="modal fade" id="about-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <i class="icon-info-sign"></i> About
+      </div>
+      <div class="modal-body">
+
+            <div style="text-align:center">
+              <img src="logo_196.png" style="width:58px;height:58px;vertical-align:top;margin-right:15px" />
+              <span class="letter" data-letter="AHB">AHB</span>
+              &nbsp;
+              <span class="letter" data-letter="-">-</span>
+              &nbsp;
+              <span class="letter" data-letter="3PG">3PG</span>
+              &nbsp;
+              <span class="letter" data-letter="Model">Model</span>
+            </div>
+            <p style="text-align:center">
+              System For Advanced Biofuels Production From Woody Biomass In The Pacific Northwest
+            </p>
+            <h4>About</h4>
+            <div class="well">
+The Advanced Hardwood Biofuels Northwest project, AHB-NW investigates using poplar as a feedstock source for drop in gasoline replacement in the Pacific Northwest.  UC Davis, a part of the sustainability group and created this appication for popular growth modeling.
+            </div>
+            <h4>Links</h4>
+            <div class="well">
+                <a href="http://hardwoodbiofuels.org/" target="_blank">AHB Website</a><br />
+                <a href="https://plus.google.com/107620944323155568384/posts" target="_blank">UC Davis AHB Group on Google+</a><br />
+                <a href="http://www.ucdavis.edu" target="_blank">UC Davis</a>
+            </div>
+            <h4>Developers</h4>
+            <div class="well">
+                <div style="margin-bottom:15px">
+                    <b>Quinn Hart</b> <a href="mailto:qjhart@ucdavis">qjhart@ucdavis</a>, 3PG Model Development, database extraordinaire.
+                </div>
+                <div style="margin-bottom:15px"> 
+                    <b>Olga Prilepova</b> <a href="mailto:oprilepova@ucdavis.edu">oprilepova@ucdavis.edu</a>, 
+                    3PG Model Development, application development, supreme grad student
+                </div>
+                <div style="margin-bottom:15px"> 
+                    <b>Justin Merz</b> <a href="mailto:jrmerz@ucdavis.edu">jrmerz@ucdavis.edu</a>, 
+                    Application development, lead tube connector
+                </div>
+            </div>
+            <h4>Attribution (no app stands alone)</h4>
+            <div class="well">
+                <div><a href="http://jquery.com/" target="_blank">jQuery</a></div>
+                <div><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a></div>
+                <div><a href="http://fortawesome.github.io/Font-Awesome/" target="_blank">Font Awesome</a></div>
+                <div><a href="http://yeoman.io/" target="_blank">Yeoman</a></div>
+                <div><a href="http://bower.io/" target="_blank">Bower</a></div>
+                <div><a href="http://gruntjs.com/" target="_blank">Grunt</a></div>
+                <div><a href="https://github.com/" target="_blank">GitHub</a></div>
+                <div><a href="https://drive.google.com" target="_blank">Google Drive</a></div>
+                <div><a href="http://phonegap.com/" target="_blank">PhoneGap</a></div>
+                <div><a href="http://owlgraphic.com/owlcarousel/" target="_blank">OWL Carousel</a></div>
+                <div><a href="http://requirejs.org/" target="_blank">RequireJS</a></div>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-default pull-right" data-dismiss="modal" >Close</a>
+      </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 <div class="modal fade" id="load-modal">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		Load from Google Drive
+		    <img src="images/gdrive_icon.png" style="height:24px;width:24px" /> Load from Google Drive
       </div>
       <div class="modal-body">
+        <div id="gdrive-file-msg"></div>
      		Files:
      		<ul id="gdrive-file-list">
      			<li>Loading...</li>
