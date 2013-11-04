@@ -1,8 +1,3 @@
-create type price_level_t (
-       price_level integer,
-       price float
-);
-
 create type biorefinery_t (
        biorefinery serial,
        location integer,
@@ -12,21 +7,48 @@ create type biorefinery_t (
        maxSize float       
 );
 
+create type conversion_t (
+       feed text,
+       technology integer,
+       conv_eff  float
+);
+
 create type od_t (
        src integer,
        dest integer,
+       feed text
        cost float,
        capacity float
 );
 
 create type supply_t (
        location integer,
+       feed text,
        price_level integer,
+       price float,
        amount float
+);
+
+create type AHBland_t (
+       scmz text,
+       ccid integer,
+       location integer,
+       crop text,
+       area float,
+       pop_yield float
+);
+
+create type BCAMresults_t (
+       scmz text,
+       ccid integer,
+       crop text,
+       price_level integer,
+       area float
 );
 
 create type demand_t (
        location integer,
+       product text,
        price_level integer,
        amount float
 );
