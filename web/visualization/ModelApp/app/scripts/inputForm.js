@@ -235,15 +235,17 @@ define(['require'],function(require){
             for( var key in attrs.value ) {
                 input += _generateInputs(i+1, type, id, key, attrs.value[key]);
             }
-		} else if ( (typeof attrs.value == 'number' || typeof attrs.value == 'string')  && i == 1 ) { // && type == 'tree' ) {
+		} else if ( (typeof attrs.value == 'number' || typeof attrs.value == 'string') && i == 1 ) { // && type == 'tree' ) {
 		    
 		    treebody += 
 		        '<input type="text" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
                 +attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
 		    
 		} else if (  typeof attrs.value == 'string' || typeof attrs.value == 'number' ) {
+
 			input += '<input type="text" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
 				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+				
 			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		}
 			

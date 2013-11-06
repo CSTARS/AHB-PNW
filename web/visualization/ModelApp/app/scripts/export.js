@@ -66,7 +66,7 @@ define(["gdrive"],function(gdrive) {
 		for( var key in data ) keys.push(key);
 		
 		// create folder
-		_setMessage("<i class='icon-spinner icon-spin'></i> Creating export folder...", "info", true);
+		_setMessage("Creating export folder...", "info", true);
 		_updateProgress(1, keys.length+2);
 		gdrive.saveFile(name,"AHB 3PG Model Results","application/vnd.google-apps.folder","",function(file){
 			if( _checkError(file) ) return;
@@ -74,7 +74,7 @@ define(["gdrive"],function(gdrive) {
 			_updateProgress(2, keys.length+2);
 
 			// create a nice file describing the current export
-			_setMessage("<i class='icon-spinner icon-spin'></i> Creating config file...", "info", true);
+			_setMessage("Creating config file...", "info", true);
 			delete results.config.plantation_state;
 			var config = JSON.stringify(results.config,null,"  ");
 			gdrive.saveFile("config.txt","AHB 3PG Model - Run Configuration","text/plain",config,function(file){
@@ -105,7 +105,7 @@ define(["gdrive"],function(gdrive) {
 				csv = csv.replace(/,$/,'')+"\n";
 			}
 
-			_setMessage("<i class='icon-spinner icon-spin'></i> Creating "+keys[index]+".csv... ", "info", true);
+			_setMessage("Creating "+keys[index]+".csv... ", "info", true);
 			gdrive.saveFile(keys[index]+".csv","","text/csv",csv,function(file){
 				if( _checkError(file) ) return;
 
