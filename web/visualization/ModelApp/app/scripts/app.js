@@ -263,43 +263,43 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         charts.init();
 
         // set default config
-        $("#input-date-datePlanted").val(new Date().toISOString().replace(/T.*/,''));
-        $("#input-date-dateCoppiced").val(new Date(new Date().getTime()+(86400000*2*365)).toISOString().replace(/T.*/,''));
-        $("#input-date-yearsPerCoppice").val(3);
+        $("#input-manage-DatePlanted").val(new Date().toISOString().replace(/T.*/,''));
+        $("#input-manage-DateCoppiced").val(new Date(new Date().getTime()+(86400000*2*365)).toISOString().replace(/T.*/,''));
+        $("#input-manage-DateFinalHarvest").val(new Date(new Date().getTime()+(86400000*10*365)).toISOString().replace(/T.*/,''));
     
         $(window).resize(function(){
-            _resizeConfig();
+            charts.resize();
         });
-    
-        $('#configuration-btn, #config-hide-btn, #configuration-btn-sm').on('click', function(){
-            if( $("#configuration").hasClass("open") ) {
-                $('#configuration').animate({top: $("#configuration").height()*-1},500).removeClass("open");
-            } else {
-                $("html, body").animate({ scrollTop: 0 }, "fast");
-                $('#configuration').animate({top: 50},500).addClass("open");
-            }
-        });
-        _resizeConfig();
 
         callback();
-    }
-
-    function _resizeConfig(){
-        charts.resize();
-    
-        if( !$("#configuration").hasClass("open") ) {
-            $("#configuration").css("top",$("#configuration").height()*-1);
-        }
-        
-        if( $("#configuration").height() - 50 > $(window).height() ) $("#configuration").css("height", $(window).height()-50)
-        else $("#configuration").css("height", 'auto');
-
     }
 
 
     var runComplete = function(rows) {
         if ( runCallback ) runCallback(rows);
         runCallback = null;
+    }
+
+    var monthsToRun = function() {
+        var d1 = $("#input-manage-DatePlanted").val();
+        if (d1 && d1 != "") {
+            d1 = new Date($("#input-manage-DatePlanted").val());
+        } else {
+            d1 = new Date();
+        }
+
+        var d2 = $("#input-manage-DateFinalHarvest").val();
+        if (d2 && d2 != "") {
+            d2 = new Date($("#input-manage-DateFinalHarvest").val());
+        } else {
+            d2 = new Date();
+        }
+
+        var months;
+        months = (d2.getFullYear() - d1.getFullYear()) * 12;
+        months -= d1.getMonth() + 1;
+        months += d2.getMonth();
+        return months <= 0 ? 1 : months+1;
     }
 
     
@@ -315,7 +315,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                 var val = parseFloat($("#input-weather-" + c + "-" + i).val());
                 if( !val && val != 0 ) {
                     alert("Missing weather data: "+c+" for month "+i+"\n\n"+
-                          "Did you select a location (Config) and/or are all weather/soil fields filled out?");
+                          "Did you select a location (Setup) and/or are all weather/soil fields filled out?");
                     $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
                     return;
                 }
@@ -348,7 +348,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                 runCallback = function(rows) {
                     showResults(rows);
                 }
-                m3PG.run(parseInt($("#monthsToRun").val()));
+                m3PG.run(monthsToRun());
 
             } else {
                 // set variation order
@@ -397,7 +397,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             }
         }
 
-        m3PG.run(parseInt($("#monthsToRun").val()));
+        m3PG.run(monthsToRun());
     }
 
 
@@ -450,6 +450,16 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             data : {}
         };
 
+        // some rows have strings, we don't want these
+        // ignore string rows
+        for( var i = 0; i < results.length; i++ ) {
+            var clean = [results[i].output[0]];
+            for( var j = 1; j < results[i].output.length; j++ ) {
+                if( typeof results[i].output[j][0] != 'string' ) clean.push(results[i].output[j]);
+            }
+            results[i].output = clean;
+        }
+
         var table, row;
         for( var key in chartRows ) {
             table = "<table class='table table-striped'>";
@@ -483,9 +493,6 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
                     table += "</tr>";
                 }
-
-                // ignore string rows
-                if( typeof results[0].output[j][chartRows[key]] == 'string' ) continue;
 
                 table += "<tr><td>"+j+"</td>";
                 var v;
@@ -533,22 +540,32 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
         },
         readWeather : function(weatherMap, plantingParams) {
-            var datePlanted = $("#input-date-datePlanted").val();
+            var datePlanted = $("#input-manage-DatePlanted").val();
             if (datePlanted && datePlanted != "") {
-                plantingParams.datePlanted = new Date($("#input-date-datePlanted").val());
+                plantingParams.datePlanted = new Date($("#input-manage-DatePlanted").val());
             } else {
                 plantingParams.datePlanted = new Date();
             }
 
-            var dateCoppiced = $("#input-date-dateCoppiced").val();
+            var dateCoppiced = $("#input-manage-DateCoppiced").val();
             if (dateCoppiced && dateCoppiced != "") {
-                plantingParams.dateCoppiced = new Date($("#input-date-dateCoppiced").val());
+                plantingParams.dateCoppiced = new Date($("#input-manage-DateCoppiced").val());
+            } else {
+               // set error condition : TODO
+            } 
+
+            var DateFinalHarvest = $("#input-manage-DateFinalHarvest").val();
+            if (DateFinalHarvest && DateFinalHarvest != "") {
+                plantingParams.DateFinalHarvest = new Date($("#input-manage-DateFinalHarvest").val());
+            } else {
+               // set error condition : TODO
             }
 
-            var yearsPerCoppice = $("#input-date-yearsPerCoppice").val();
+            var yearsPerCoppice = $("#input-manage-CoppiceInterval").val();
             if (yearsPerCoppice && yearsPerCoppice != "") {
-                plantingParams.yearsPerCoppice = parseInt($("#input-date-yearsPerCoppice").val());
+                plantingParams.yearsPerCoppice = parseInt($("#input-manage-CoppiceInterval").val());
             }
+
             window.plantingParams = plantingParams;
 
             for ( var i = 0; i < 12; i++) {
@@ -646,12 +663,11 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                 plantation : window.plantation,
                 manage : window.manage,
                 soil : window.soil,
-                plantingParams : window.plantingParam,
-                plantation_state : window.plantation_state,
                 plantingParams : window.plantingParams,
+                plantation_state : window.plantation_state,
                 config : {
                     chartTypeInput : $("#chartTypeInput").val(),
-                    monthsToRun : $("#monthsToRun").val(),
+                    monthsToRun : monthsToRun(),
                     currentLocation : $("#current-weather-location").html(),
                     version : qs("version") ? qs("version") : "master"
                 }
@@ -691,11 +707,6 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             if (setup.config.currentLocation) {
                 $("#current-location").html(setup.config.currentLocation);
             }
-            var configs = ["monthsToRun"];
-            for ( var i = 0; i < configs.length; i++) {
-                if (setup.config[configs[i]])
-                    $("#" + configs[i]).val(setup.config[configs[i]]);
-            }
 
             // load weather
             for ( var i = 0; i < setup.weather.length; i++) {
@@ -721,14 +732,33 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             }
 
             // load planting params
+            // Now part of manage....
+            // fo
             if (setup.plantingParams) {
+                var map = {
+                    "datePlanted" : "DatePlanted",
+                    "dateCoppiced" : "DateCoppiced",
+                    "yearsPerCoppice" : "CoppiceInterval"
+                }
+
                 for ( var key in setup.plantingParams) {
+                    var newKey = key;
+                    if( map[key] ) newKey = map[key];
+
                     if (typeof setup.plantingParams[key] == 'string')
-                        $("#input-date-" + key).val(setup.plantingParams[key].replace(/T.*/, ''));
+                        $("#input-manage-" + newKey).val(setup.plantingParams[key].replace(/T.*/, ''));
                     else
-                        $("#input-date-" + key).val(setup.plantingParams[key]);
+                        $("#input-manage-" + newKey).val(setup.plantingParams[key]);
                 }
             }
+
+            // this value is deprecated, set to new input
+            if( setup.config.monthsToRun ) {
+                var d = new Date(setup.plantingParams.datePlanted);
+                d = new Date(new Date(d).setMonth(d.getMonth()+parseInt(setup.config.monthsToRun)));
+                $("#input-manage-DateFinalHarvest").val(d.toISOString().replace(/T.*/, ''));
+            }
+            
 
             // load rest
             var inputs = [ "plantation", "soil", "manage" ];

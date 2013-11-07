@@ -1,6 +1,28 @@
 define(['require'],function(require){
     var app = null;
 
+    var SETUP_TEMPLATE = 
+    	'<div>'+
+    	'<h4>Chart Options</h4>'+
+	    '<div>'+
+	        '<table class="table">'+
+	            '<tr>'+
+	                '<td style="width:50%">Output variable(s) to chart </td>'+
+	                '<td> <a id="select-charts-btn" class="btn btn-default">Select Charts</a></td>'+
+	            '</tr>'+
+	            '<tr>'+
+	                '<td style="width:50%">Variation analysis parameter(s) </td>'+
+	                '<td> <div id="variationAnalysisStatus">None</div></td>'+
+	            '</tr>'+
+	        '</table>'+
+	    '</div>'+
+	    '<h4>Location</h4>'+
+	     '<div style="border-top:1px solid #ddd;padding:8px;height:60px">'+
+	       '<span id="current-location" style="color:#888"></span>'+
+	       '<a class="btn btn-default pull-right select-weather-location"><i class="icon-map-marker"></i> Select Location</a>'+
+         '</div>'+
+         '<div>';
+
 	var INPUT_TEMPLATE = 
 		'<div class="form-group">'+
 			'<label for="{{id}}" class="col-lg-4 control-label">{{label}}</label>'+
@@ -238,14 +260,19 @@ define(['require'],function(require){
 		} else if ( (typeof attrs.value == 'number' || typeof attrs.value == 'string') && i == 1 ) { // && type == 'tree' ) {
 		    
 		    treebody += 
-		        '<input type="text" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
-                +attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+		        '<input type="'+(attrs.value == '_date_' ? 'date' : 'text')+'" '+
+		        (type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+
+		        id+'" style="width:200px;display:inline-block" value="'
+                +(attrs.value == '_date_' ? '' : attrs.value)+'">&nbsp;&nbsp;'
+                +(attrs.units ? attrs.units : '');
 		    
 		} else if (  typeof attrs.value == 'string' || typeof attrs.value == 'number' ) {
 
-			input += '<input type="text" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
-				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
-				
+			input += '<input type="'+(attrs.value == '_date_' ? 'date' : 'text')+'" '
+						+(type=='constants'?'disabled':'')+' class="form-control '+type+
+					 	'" id="'+id+'" style="width:200px;display:inline-block" value="'
+						+(attrs.value == '_date_' ? '' : attrs.value)+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+
 			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		}
 			
@@ -265,7 +292,9 @@ define(['require'],function(require){
         app = require('app');
 		var model, m, attr, config;
 		
-        var inputs = app.getModel();
+        var inputs = $.extend(true, {}, app.getModel());
+
+        inputs['setup'] = {};
 		for( model in inputs ) {
 			m = inputs[model];
 			for( attr in m ) {
@@ -303,10 +332,12 @@ define(['require'],function(require){
 
 			if( model == 'weather' ) {
 				content += _createWeatherInputs();
+			} else if( model == 'setup' ) {
+				content += SETUP_TEMPLATE;
 			} else {
-			    /*if( model == 'tree' )*/ content += treeHeader;
+			    content += treeHeader;
 				content += _generateInputs(0, model, '', model, inputs[model]);
-				/*if( model == 'tree' )*/ content += '</div>';
+				content += '</div>';
 			}
 			
 			

@@ -328,7 +328,7 @@ define(["require"],function(require) {
             }
         }
 
-        var cDate = new Date($("#input-date-datePlanted").val());
+        var cDate = new Date($("#input-manage-DatePlanted").val());
 
         var data = [];
         // create the [][] array for the google chart

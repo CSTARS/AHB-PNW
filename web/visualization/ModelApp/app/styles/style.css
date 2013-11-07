@@ -11,19 +11,6 @@
 	box-shadow: 0 0 5px #333;
 }
 
-.config-overlay {
-    /* Nicer but buggy on small screens */
-	/* position: fixed; */
-	position: absolute;
-    display: block;
-	background: rgba(250,250,250,.95);
-	z-index: 100;
-	width: 100%;
-	top: -600px;
-	box-shadow: 0 0 10px #888;
-	padding: 0 15px;
-	overflow: auto;
-}
 
 .blank-icon {
 	color: #eee;
