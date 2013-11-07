@@ -260,6 +260,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             runModel();
         });
 
+        // initialize the charts
         charts.init();
 
         // set default config
@@ -267,6 +268,14 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         $("#input-manage-DateCoppiced").val(new Date(new Date().getTime()+(86400000*2*365)).toISOString().replace(/T.*/,''));
         $("#input-manage-DateFinalHarvest").val(new Date(new Date().getTime()+(86400000*10*365)).toISOString().replace(/T.*/,''));
     
+        // setup nice scrolling
+        $('.app-nav').on('click', function(e) {
+            e.preventDefault();
+            $('html, body').animate({
+                scrollTop: $(this.hash).offset().top-55
+             }, 700);
+       });
+
         $(window).resize(function(){
             charts.resize();
         });
@@ -277,6 +286,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
     var runComplete = function(rows) {
         if ( runCallback ) runCallback(rows);
+        if( hideInitLoading ) hideInitLoading();
         runCallback = null;
     }
 

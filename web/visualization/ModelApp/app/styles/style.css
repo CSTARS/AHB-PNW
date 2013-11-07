@@ -115,6 +115,31 @@
   margin : 7px 0;
 }
 
+.init-loading-outer {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  opacity : 0;
+
+  transition : opacity 500ms linear;
+  -ms-transition : opacity 500ms linear;
+  -moz-transition : opacity 500ms linear;
+  -webkit-transition : opacity 500ms linear;
+}
+
+.init-loading {
+  text-align: center;
+  background-color: #222;
+  padding: 20px 10px;
+  width: 260px;
+  color: #fff;
+  margin: 0 auto;
+  border-radius: 5px;
+  font-weight: bold;
+  border: 1px solid white;
+  box-shadow: 0 0 5px #222;
+}
 
 /* interesting lettering */
 @import url(http://fonts.googleapis.com/css?family=Lato:900);

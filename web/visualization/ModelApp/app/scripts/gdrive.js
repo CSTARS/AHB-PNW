@@ -324,12 +324,7 @@ define(["Oauth"],function(Oauth) {
 	function _checkToken() {
 		if (!token)
 			return;
-
-		console.log("Requesting new access token (refresh)");
 		Oauth.getAccessToken(function(t) {
-			console.log("New token recieved");
-			console.log(t);
-
 			if( t != null ) token = t;
 		});
 	};

@@ -107,6 +107,23 @@ require.config({
 
 require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel', 'flashblock-detector'], function ($, bootstrap, app, gdrive) {
 
+    window.hideInitLoading = null;
+    function initLoading() {
+        var panel = $("<div class='init-loading-outer'><div class='init-loading'><i class='icon-spinner icon-spin'></i> Initializing from Google Drive...</div></div>");
+        $("body").append(panel);
+        setTimeout(function(){
+            panel.css("opacity",".9");
+        },50);
+
+        window.hideInitLoading = function() {
+            $(".init-loading-outer").css("opacity","0");
+            setTimeout(function(){
+                $(".init-loading-outer").remove();
+                window.hideInitLoading = null;
+            },500);
+        }
+    }
+
     function onChartsLoaded() {
 			$("#status").html("3pg model");
 			
@@ -122,12 +139,15 @@ require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel', 'flashblock-detect
 					app.init(function(){
 						gdrive.init(function(){
 							var file = app.qs("file");
-							if( file ) gdrive.load(file);
-								
+							if( file ) {
+                                initLoading();
+                                gdrive.load(file);
+							}
 							// see if we are loading for google drive
 							var state = app.qs("state");
 							if( state ) {
 								state = JSON.parse(state);
+                                initLoading();
 								gdrive.load(state.ids[0]);
 							}
 						});
