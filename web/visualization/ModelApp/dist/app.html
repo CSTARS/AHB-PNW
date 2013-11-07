@@ -3,9 +3,6 @@
     	  <button class="btn btn-default visible-xs" style="float:right;margin:8px" type="button" data-toggle="collapse" data-target=".navbar-main">
             <i class="icon-reorder"></i>
         </button>
-        <button id="configuration-btn-sm" class="btn btn-primary visible-xs" style="float:right;margin:8px" type="button">
-            <i class="icon-cogs"></i>
-        </button>
         <button id="runbtn-sm" class="btn btn-success visible-xs" style="float:right;margin:8px" type="button">
             <i class="icon-play"></i> Run
         </button>
@@ -39,12 +36,6 @@
             </a>
         </li>
         <li>
-            <button id="configuration-btn" class="btn btn-primary hidden-xs" style="margin:7px 4px">
-                <span class="hidden-sm"><i class="icon-cogs"></i> Config</span>
-                <span class="visible-sm"><i class="icon-cogs"></i></span>
-            
-        </button></li>
-        <li>
             <button id="runbtn" class="btn btn-success hidden-xs" style="margin:7px 4px">
                 <i class="icon-play"></i> Run
             </button>
@@ -56,61 +47,6 @@
 
     </div>
 </div>
-
-<div id="configuration" class="config-overlay">
-
-    <div class="row"><div class="col-md-6">
-    
-	     <h4>Run Time</h4>
-	     <div>
-	         <table class="table">
-	             <tr>
-	                 <td>Number of months to run 3PG Model </td>
-	                 <td> <input class="minput form-control" type="text" id="monthsToRun" value="120" style="height:40px;width:200px"></td>
-	             </tr>
-	         </table>
-	     </div>
-	     
-	     <h4>Chart Options</h4>
-	    <div>
-	        <table class="table">
-	            <tr>
-	                <td style="width:50%">Output variable(s) to chart </td>
-	                <td> <a id="select-charts-btn" class="btn btn-default">Select Charts</a></td>
-	            </tr>
-	            <tr>
-	                <td style="width:50%">Variation analysis parameter(s) </td>
-	                <td> <div id="variationAnalysisStatus">None</div></td>
-	            </tr>
-	        </table>
-	    </div>
-     
-   </div><div class="col-md-6">
-   
-	   <h4>Dates</h4>
-	    <div>
-	        <table class="table">
-	            <tr><td>Date Planted</td><td><input type="date" class="minput form-control" id="input-date-datePlanted" style="height:40px;width:200px"></td></tr>
-	            <tr><td>Date Coppiced</td><td><input type="date" class="minput form-control" id="input-date-dateCoppiced" style="height:40px;width:200px"></td></tr>
-	            <tr><td>Coppice Interval Years</td><td><input type="text" class="minput form-control" id="input-date-yearsPerCoppice" style="height:40px;width:200px"></td></tr>
-	        </table>
-	    </div>
-	     
-	   <h4>Location</h4>
-	     <div style="border-top:1px solid #ddd;padding:8px;height:60px">
-	       <span id="current-location" style="color:#888"></span>
-	       <a class="btn btn-default pull-right select-weather-location"><i class="icon-map-marker"></i> Select Location</a>
-         </div>
-   
-   </div></div>
-   
-    
-   <div style="margin-bottom:10px;text-align:center">
-    <a class="btn btn-primary" id="config-hide-btn" style="width:100px">Close</a>
-   </div>
-     
-</div>
-
 
 <div class="" id="root" style="padding: 50px 20px">
 
