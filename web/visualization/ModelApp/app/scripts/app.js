@@ -593,7 +593,9 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         // it has a ',' is set for variation
         _readVal : function(ele) {
             var val = ele.val();
-            if( val.match(/.*,.*/) ) {
+            if( val.match(/\d*-\d*-\d*$/) ) {
+                return val;
+            } else if( val.match(/.*,.*/) ) {
                 val = val.replace(/\s/g,'').split(",");
                 var id = ele.attr("id").replace(/^input-/,'').replace(/-/g,'.');
                 window.variations[id] = [];
@@ -687,6 +689,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             return ex;
         },    
         loadSetup : function(fileid, setup) {
+
             // first, if the version is off, we need to reload the entire app
             if (setup.config.version) {
                 var cversion = qs("version") ? qs("version") : "master";
@@ -764,10 +767,13 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             var inputs = [ "plantation", "soil", "manage" ];
             for ( var i = 0; i < inputs.length; i++) {
                 for ( var key in setup[inputs[i]]) {
-                    if (key == 'maxAWS')
+                    if (key == 'maxAWS') {
                         $("#input-soil-maxaws").val(setup.soil.maxAWS);
-                    else
+                    } else if ( typeof setup[inputs[i]][key] == 'string' && setup[inputs[i]][key].match(/.*T.*Z$/) ) {
+                        $("#input-" + inputs[i] + "-" + key).val(setup[inputs[i]][key].replace(/T.*/, ''));
+                    } else {
                         $("#input-" + inputs[i] + "-" + key).val(setup[inputs[i]][key]);
+                    }
                 }
             }
 
