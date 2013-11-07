@@ -56,14 +56,8 @@
 }
 
 #show-chartspopup-btn {
-	font-size:25px;
-	margin: 15px 20px 0 0;
+	margin-top: 7px;
 	display:none;
-	color: #ddd;
-	cursor:pointer;
-}
-#show-chartspopup-btn:hover {
-	color: #888;
 }
 
 

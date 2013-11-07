@@ -12,7 +12,7 @@ define(['require'],function(require){
 	            '</tr>'+
 	            '<tr>'+
 	                '<td style="width:50%">Variation analysis parameter(s) </td>'+
-	                '<td> <div id="variationAnalysisStatus">None</div></td>'+
+	                '<td><div id="variationAnalysisStatus">None</div></td>'+
 	            '</tr>'+
 	        '</table>'+
 	    '</div>'+
@@ -146,17 +146,22 @@ define(['require'],function(require){
 		var q = new google.visualization.Query(url);
 		q.setQuery('SELECT *');
 		q.send(function(response){
+			var error = false;
 			var table = JSON.parse(response.getDataTable().toJSON());
 			for( var i = 0; i < table.cols.length; i++ ) {
+				if( table.rows[0] == null ) {
+					error = true;
+					alert("Invalid location selected");
+					break;
+				}
 				$("#input-soil-"+table.cols[i].id).val(table.rows[0].c[i].v);
 			}
-			
-			checkDone();
+
+			if( !error ) checkDone();
 		});
 		
 		$("#current-location").html(lng+", "+lat+" <a href='"+window.location.href.replace(/#.*/,'')+
 		                            "?ll="+lng+","+lat+"' target='_blank'><i class='icon-link'></i></a>");
-		
 		
 	}
 	

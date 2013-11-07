@@ -147,7 +147,7 @@ define(["Oauth"],function(Oauth) {
 				} catch (e) {
 				}
 
-				_createLogoutBtn(data.name);
+				_createLogoutBtn(data);
 
 			},
 			error : function() {
@@ -171,9 +171,9 @@ define(["Oauth"],function(Oauth) {
 				var item = resp.result.items[i];
 				var d = new Date(item.modifiedDate);
 				$("#gdrive-file-list").append(
-					$("<li class='list-group-item'><a id='"+item.id+"' url='"+item.downloadUrl+"' style='cursor:pointer'><i class='icon-file'></i> "+item.title+"</a><br />" +
-					  "<span style='color:#888'>"+item.description+"</span><br />"+
-					  "<span style='font-style:italic;font-size:11px;'>Last Modified: "+d.toDateString()+" "+d.toLocaleTimeString()+" by "+item.lastModifyingUserName+"</span></li>"
+					$("<li class='list-group-item'><a id='"+item.id+"' url='"+item.downloadUrl+"' style='cursor:pointer'><i class='icon-file'></i> "+item.title+"</a>" +
+					  "<div style='color:#888;padding: 5px 0 0 10px'>"+item.description+"</div>"+
+					  "<div style='font-style:italic;font-size:11px;padding-left:10px'>Last Modified: "+d.toDateString()+" "+d.toLocaleTimeString()+" by "+item.lastModifyingUserName+"<div></li>"
 					  )
 				);
 			}
@@ -238,9 +238,10 @@ define(["Oauth"],function(Oauth) {
 		}
 	}
 
-	function _createLogoutBtn(name) {
+	function _createLogoutBtn(userdata) {
 		var btn = $('<li class="dropdown">'
-				+ '<a class="dropdown-toggle" style="cursor:pointer">' + name
+				+ '<a class="dropdown-toggle" style="cursor:pointer"><img class="img-rounded" src="'+userdata.picture
+				+ '" style="margin:-5px 5px -5px 0;width:28px;height:28px;border:1px solid white" /> ' + userdata.name
 				+ '<b class="caret"></b></a>' + '<ul class="dropdown-menu">'
 				+ '<li><a id="save"><i class="icon-cloud-upload"></i> Save Model</a></li>'
 				+ '<li style="display:none"><a id="share-btn"><i class="icon-share"></i> Share Model</a></li>'
