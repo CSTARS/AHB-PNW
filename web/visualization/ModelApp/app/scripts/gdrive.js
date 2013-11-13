@@ -11,6 +11,13 @@ define(["Oauth"],function(Oauth) {
 	var fileList = [];
 	var client = null;
 
+	// loaded tree and management
+	var loadedTree = null;
+	var treeList = [];
+
+	// current MIME TYPE we are saving
+	var saveMimeType = "";
+
 	function init(callback) {
 		$("#save-modal").modal({
 			show : false
@@ -25,19 +32,37 @@ define(["Oauth"],function(Oauth) {
 		});
 		
 		$("#save-update-btn").on('click', function() {
-			_setSaveMessage('<i class="icon-spinner icon-spin"></i> Updating File...','info');
+			_setSaveMessage('<i class="icon-spinner icon-spin"></i> Updating...','info');
 
-			updateFile(loadedFile, 
-					m3PGIO.exportSetup(), 
+			var file = {};
+			var data = {};
+
+			if( saveMimeType == MIME_TYPE ) {
+				file = loadedFile;
+				data = m3PGIO.exportSetup();
+			} else if ( saveMimeType == TREE_MIME_TYPE ) {
+				file = loadedTree;
+				data = m3PGIO.exportSetup().tree;
+			} else { // badness
+				alert("Unknown MIME_TYPE: "+saveMimeType);
+				return;
+			}
+
+			updateFile(file, 
+					data, 
 					function(resp){
-						if( resp.error ) return _setSaveMessage('Failed to update file on Google Drive :(','danger');
+						if( resp.error ) return _setSaveMessage('Failed to update on Google Drive :(','danger');
 						else _setSaveMessage('Update Successful.','success');
 
 						setTimeout(function(){
 							$("#save-modal").modal('hide');
 						},1500);
 						
-						_updateFileList();
+						if( saveMimeType == MIME_TYPE ) {
+							_updateFileList();
+						} else if ( saveMimeType == TREE_MIME_TYPE ) {
+							_updateTreeList();
+						}
 					}
 			);
 		});
@@ -49,33 +74,49 @@ define(["Oauth"],function(Oauth) {
 				return;
 			}
 			
+			if( saveMimeType == MIME_TYPE ) {
+				data = m3PGIO.exportSetup();
+			} else if ( saveMimeType == TREE_MIME_TYPE ) {
+				data = m3PGIO.exportSetup().tree;
+			} else { // badness
+				alert("Unknown MIME_TYPE: "+saveMimeType);
+				return;
+			}
+
 			_setSaveMessage('<i class="icon-spinner icon-spin"></i> Saving File...','info');
 			saveFile(name,
 					$("#save-description-input").val(),
-					MIME_TYPE, 
-					m3PGIO.exportSetup(), 
+					saveMimeType, 
+					data, 
 					function(resp) {
-						if( resp.error ) return _setSaveMessage('Failed to save file to Google Drive :(','danger');
-						else _setSaveMessage('File sucessfully saved.','success');
+						if( resp.error ) return _setSaveMessage('Failed to save to Google Drive :(','danger');
+						else _setSaveMessage('Sucessfully saved.','success');
 
 						setTimeout(function(){
 							$("#save-modal").modal('hide');
 						},1500);
 
-						_updateFileList();
+						
 
 						// show the share btn
-						$("#share-btn").parent().show();
-						$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+resp.id).parent().show();
+						if( saveMimeType == MIME_TYPE ) {
+							_updateFileList();
 
-						loadedFile = resp.id;
+							$("#share-btn").parent().show();
+							$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+resp.id).parent().show();
+
+							loadedFile = resp.id;
+						} else if ( saveMimeType == TREE_MIME_TYPE ) {
+							_updateTreeList();
+							$("#share-tree-btn").show();
+							$("#loaded-tree-name").html(name).parent().show();
+							loadedTree = resp.id;
+						}
 					}
 			);
 		});
 		
 		_createLoginBtn();
-
-		
 
 		_loadApi(function() {
 			Oauth.isAuthorized(function(refreshToken){
@@ -93,6 +134,19 @@ define(["Oauth"],function(Oauth) {
 			setInterval(function() {
 				_checkToken();
 			}, 1000 * 5 * 60);
+		});
+
+		$("#share-tree-btn").on('click', function(){
+			if( client == null ) {
+				gapi.load('drive-share', function(){
+				 	client = new gapi.drive.share.ShareClient(Oauth.APP_ID);
+		    		client.setItemIds([loadedTree]);
+				 	client.showSettingsDialog();
+				 });
+			} else {
+				client.setItemIds([loadedFile]);
+			 	client.showSettingsDialog();
+			}
 		});
 
 	}
@@ -154,87 +208,199 @@ define(["Oauth"],function(Oauth) {
 			}
 		});
 		
-		// load user files
+		// load user files, trees
 		_updateFileList();
+		_updateTreeList();
 	}
 	
+	// TODO: add search to the following functions,
+	// limit to 10 results
 	function _updateFileList() {
-		$("#gdrive-file-list").html("Loading...");
 		listFiles("mimeType = '"+MIME_TYPE+"'", function(resp){
-
-			if( !resp.result.items ) return $("#gdrive-file-list").html("<li>No Files</li>");
-			if( resp.result.items.length == 0 ) return $("#gdrive-file-list").html("<li>No Files</li>");
-			$("#gdrive-file-list").html("");
-			
 			fileList = resp.result.items;
-			for( var i = 0; i < resp.result.items.length; i++ ) {
-				var item = resp.result.items[i];
-				var d = new Date(item.modifiedDate);
-				$("#gdrive-file-list").append(
-					$("<li class='list-group-item'><a id='"+item.id+"' url='"+item.downloadUrl+"' style='cursor:pointer'><i class='icon-file'></i> "+item.title+"</a>" +
-					  "<div style='color:#888;padding: 5px 0 0 10px'>"+item.description+"</div>"+
-					  "<div style='font-style:italic;font-size:11px;padding-left:10px'>Last Modified: "+d.toDateString()+" "+d.toLocaleTimeString()+" by "+item.lastModifyingUserName+"<div></li>"
-					  )
-				);
-			}
-			
-			$("#gdrive-file-list a").on('click', function(){
-				var id = $(this).attr("id");
+		});
+	}
 
-				_setLoadMessage('<i class="icon-spinner icon-spin"></i> Loading File...','info');
-				getFile(id, $(this).attr("url"), function(file) {
-					if( !file  ) return _setLoadMessage('Failed to load file from Google Drive :(','danger');
-					if( file.error  ) return _setLoadMessage('Failed to load file from Google Drive :(','danger');
+	function _updateTreeList() {
+		listFiles("mimeType = '"+TREE_MIME_TYPE+"'", function(resp){
+			treeList = resp.result.items;
+		});
+	}
 
-					_setLoadMessage('File Loaded.','success');
-					loadedFile = id;					
 
-					// show the share btn
-					$("#share-btn").parent().show();
-					$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+id).parent().show();
+	function _showDriveFiles() {
+		if( !fileList ) return $("#gdrive-file-list").html("<li>No Files</li>");
+		if( fileList.length == 0 ) return $("#gdrive-file-list").html("<li>No Files</li>");
+		$("#gdrive-file-list").html("<h4>Select File</h4>");
 
-					m3PGIO.loadSetup(id, file);
-					
-					setTimeout(function(){
-						// hide the modal
-						$("#load-modal").modal('hide');
-					},1500);
+		for( var i = 0; i < fileList.length; i++ ) {
+			var item = fileList[i];
+			var d = new Date(item.modifiedDate);
+			$("#gdrive-file-list").append(
+				$("<li class='list-group-item'><a id='"+item.id+"' url='"+item.downloadUrl+"' style='cursor:pointer'><i class='icon-file'></i> "+item.title+"</a>" +
+				  "<div style='color:#888;padding: 5px 0 0 10px'>"+item.description+"</div>"+
+				  "<div style='font-style:italic;font-size:11px;padding-left:10px'>Last Modified: "+d.toDateString()+" "+d.toLocaleTimeString()+" by "+item.lastModifyingUserName+"<div></li>"
+				  )
+			);
+		}
+		
+		$("#gdrive-file-list a").on('click', function(){
+			var id = $(this).attr("id");
 
-				});
+			_setLoadMessage('<i class="icon-spinner icon-spin"></i> Loading File...','info');
+			getFile(id, $(this).attr("url"), function(file) {
+				if( !file  ) return _setLoadMessage('Failed to load file from Google Drive :(','danger');
+				if( file.error  ) return _setLoadMessage('Failed to load file from Google Drive :(','danger');
+
+				// hide any loaded trees
+				$("#share-tree-btn").hide();
+				$("#loaded-tree-name").html("").parent().hide();
+				loadedTree = null;
+
+				_setLoadMessage('File Loaded.','success');
+				loadedFile = id;					
+
+				// show the share btn
+				$("#share-btn").parent().show();
+				$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+id).parent().show();
+
+				m3PGIO.loadSetup(id, file);
+				
+				setTimeout(function(){
+					// hide the modal
+					$("#load-modal").modal('hide');
+				},1500);
+
 			});
 		});
 	}
 	
+	function _showTreeFiles() {
+		$("#gdrive-file-list").html("");
+		$("#gdrive-file-list").append($("<li class='list-group-item'><h5>Select Tree</h5></li>"));
+
+		if( !treeList ) return $("#gdrive-file-list").append($("<li class='list-group-item'>No Trees Available</li>"));
+		if( treeList.length == 0 ) return $("#gdrive-file-list").append($("<li class='list-group-item'>No Trees Available</li>"));
+
+		for( var i = 0; i < treeList.length; i++ ) {
+			var item = treeList[i];
+			var d = new Date(item.modifiedDate);
+			$("#gdrive-file-list").append(
+				$("<li class='list-group-item'><a id='"+item.id+"' name='"+item.title+"' url='"+item.downloadUrl+"' style='cursor:pointer'><i class='icon-leaf'></i> "+item.title+"</a>" +
+				  "<div style='color:#888;padding: 5px 0 0 10px'>"+item.description+"</div>"+
+				  "<div style='font-style:italic;font-size:11px;padding-left:10px'>Last Modified: "+d.toDateString()+" "+d.toLocaleTimeString()+" by "+item.lastModifyingUserName+"<div></li>"
+				  )
+			);
+		}
+		
+		$("#gdrive-file-list a").on('click', function(){
+			var id = $(this).attr("id");
+			var name = $(this).attr("name");
+
+			_setLoadMessage('<i class="icon-spinner icon-spin"></i> Loading Tree...','info');
+			getFile(id, $(this).attr("url"), function(file) {
+				if( !file  ) return _setLoadMessage('Failed to load tree from Google Drive :(','danger');
+				if( file.error  ) return _setLoadMessage('Failed to load tree from Google Drive :(','danger');
+
+				$("#share-tree-btn").show();
+				$("#loaded-tree-name").html(name).parent().show();
+
+				_setLoadMessage('Tree Loaded.','success');
+				loadedTree = id;					
+
+				m3PGIO.loadTree(file);
+				
+				setTimeout(function(){
+					// hide the modal
+					$("#load-modal").modal('hide');
+				},1500);
+
+			});
+		});
+	}
+
+	function showLoadTreePanel() {
+		_showTreeFiles();
+		_setLoadMessage(null);
+		$("#load-modal").modal('show');
+	}
+
+	function showSaveTreePanel() {
+		saveMimeType = TREE_MIME_TYPE;
+
+		$("#gdrive-save-subheader").html("<h5>Save Tree</h5>");
+
+		if( loadedTree != null) {
+			var tree = {};
+			for( var i = 0; i < treeList.length; i++ ) {
+				if( treeList[i].id == loadedTree) {
+					tree = treeList[i];
+					break;
+				}
+			}
+			$("#save-update-panel").show();
+			var d = new Date(tree.modifiedDate);
+			$("#save-update-panel-inner").html("<b>"+tree.title+"</b><br />" +
+				  "<span style='color:#888'>"+tree.description+"</span><br />"+
+				  "<span style='font-style:italic;font-size:11px;'>Last Modified: " + 
+				  d.toDateString()+" "+d.toLocaleTimeString()+" by "+tree.lastModifyingUserName+"</span><br />"+
+				  "<a href='https://drive.google.com/file/d/"+tree.id+"'' target='_blank'><i class='icon-link'></i> Open in Google Drive</a>");
+		} else {
+			$("#save-update-panel").hide();
+		}
+		
+		// clear any message
+		_setSaveMessage(null);
+
+		$("#save-modal").modal('show');
+	}
+
 	function load(id) {
 		if( !token ) {
 			signIn(function(token) {
 				_setUserInfo();
 				
-				getFileMetadata(id, function(file){
-					getFile(id, file.downloadUrl, function(file) {
-						if( file == null ) return alert("failed to load file");
-						loadedFile = id;
-						
-						// show the share btn
-						$("#share-btn").parent().show();
-						$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+id).parent().show();
-						m3PGIO.loadSetup(id, file);
+				getFileMetadata(id, function(metadata){
+					getFile(id, metadata.downloadUrl, function(file) {
+						_onInitFileLoaded(metadata,file);
 					});
 				});
 				
 			});
 		} else {
-			getFileMetadata(id, function(file){
-				getFile(id, file.downloadUrl, function(file) {
-					if( file == null ) return alert("failed to load file");
-					loadedFile = id;
-						
-					// show the share btn
-					$("#share-btn").parent().show();
-					$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+id).parent().show();
-					m3PGIO.loadSetup(id, file);
+			getFileMetadata(id, function(metadata){
+				getFile(id, metadata.downloadUrl, function(file) {
+					_onInitFileLoaded(metadata,file);
 				});
 			});
+		}
+	}
+
+	function _onInitFileLoaded(metadata, file) {
+		if( !file ) {
+			if( hideInitLoading ) hideInitLoading();
+			return alert("Failed to load from Google Drive :/");
+		}
+		if( metadata.code == 404 ) {
+			if( hideInitLoading ) hideInitLoading();
+			return alert("Google Drive: "+metadata.message);
+		}
+
+		if( metadata.mimeType == MIME_TYPE ) {
+			loadedFile = metadata.id;
+						
+			// show the share btn
+			$("#share-btn").parent().show();
+			$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+metadata.id).parent().show();
+			m3PGIO.loadSetup(metadata.id, file);
+		} else if ( metadata.mimeType == TREE_MIME_TYPE ) {
+			loadedTree = metadata.id;
+			$("#share-tree-btn").show();
+			$("#loaded-tree-name").html(metadata.title).parent().show();
+			m3PGIO.loadTree(file);
+			if( hideInitLoading ) hideInitLoading();
+		} else {
+			alert("Loaded unknown file type from Google Drive: "+metadata.mimeType);
 		}
 	}
 
@@ -256,6 +422,9 @@ define(["Oauth"],function(Oauth) {
 		});
 
 		btn.find('#save').on('click', function() {
+			saveMimeType = MIME_TYPE;
+			$("#gdrive-save-subheader").html("<h5>Save Model</h5>");
+
 			btn.toggleClass('open');
 			if( loadedFile != null) {
 				var file = {};
@@ -309,6 +478,7 @@ define(["Oauth"],function(Oauth) {
 
 			// show the modal
 			$("#load-modal").modal('show');
+			_showDriveFiles();
 		});
 				
 		btn.find('#logout').on('click', function() {
@@ -499,6 +669,8 @@ define(["Oauth"],function(Oauth) {
 		getFileMetadata : getFileMetadata,
 		load : load,
 		saveFile: saveFile,
+		showLoadTreePanel : showLoadTreePanel,
+		showSaveTreePanel : showSaveTreePanel,
 
 		MIME_TYPE : MIME_TYPE
 	}

@@ -1,5 +1,6 @@
 define(['require'],function(require){
     var app = null;
+    var gdrive = null;
 
     var SETUP_TEMPLATE = 
     	'<div>'+
@@ -22,6 +23,16 @@ define(['require'],function(require){
 	       '<a class="btn btn-default pull-right select-weather-location"><i class="icon-map-marker"></i> Select Location</a>'+
          '</div>'+
          '<div>';
+
+    var GOOLEDRIVE_TREE_TEMPLATE =
+    	'<div style="padding:15px 0 5px 0;border-bottom:1px solid #eee;margin-bottom:5px;">'+
+    		'<div class="btn-group">'+
+    			'<a class="btn btn-default" id="gdrive-treepanel-load"><i class="icon-cloud-download"></i> Load</a>'+
+    			'<a class="btn btn-default" id="gdrive-treepanel-save"><i class="icon-cloud-upload"></i> Save</a>'+
+    		'</div>'+
+    		'<a id="share-tree-btn" class="btn btn-default" style="display:none;margin-left:10px"><i class="icon-share"></i> Share</a>'+
+    		'<h5 style="display:none" class="pull-right">Loaded Tree: <span id="loaded-tree-name" class="label label-default"></span></h5>'+
+    	'</div>';
 
 	var INPUT_TEMPLATE = 
 		'<div class="form-group">'+
@@ -243,16 +254,12 @@ define(['require'],function(require){
 		
 		var treebody = "";
 		
-		if( !(i == 1 /*&& type == 'tree'*/) ) {
+		if( !(i == 1) ) {
 		    if( i != 0 ) input += '<label for="'+id+'" class="control-label">'+name +'</label>';
 		    input += '<div>';
 		}
 
-		//if( typeof attrs.value == 'string' ) {
-		//	input += '<input type="text" class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
-		//		+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
-		//	if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
-		//} else 
+
         if ( typeof attrs.value == 'object' && i == 1  ) { // && type == 'tree' ) {
 		    for( var key in attrs.value ) {
                 treebody += _generateInputs(i+1, type, id, key, attrs.value[key]);
@@ -295,6 +302,7 @@ define(['require'],function(require){
 	
 	function create(ele) {
         app = require('app');
+        gdrive = require('gdrive');
 		var model, m, attr, config;
 		
         var inputs = $.extend(true, {}, app.getModel());
@@ -341,6 +349,12 @@ define(['require'],function(require){
 				content += SETUP_TEMPLATE;
 			} else {
 			    content += treeHeader;
+
+			    // add the google drive btn from trees
+			    if( model =='tree' ) {
+			    	content += GOOLEDRIVE_TREE_TEMPLATE;
+			    }
+
 				content += _generateInputs(0, model, '', model, inputs[model]);
 				content += '</div>';
 			}
@@ -356,6 +370,14 @@ define(['require'],function(require){
 		// run the model whenever some hits 'enter'
 		ele.find('input').on('keyup',function(e){
 			if( e.which == 13 ) app.runModel();
+		});
+
+		// add click handler for loading a tree
+		ele.find("#gdrive-treepanel-load").on('click', function(){
+			gdrive.showLoadTreePanel();
+		});
+		ele.find("#gdrive-treepanel-save").on('click', function(){
+			gdrive.showSaveTreePanel();
 		});
 		
 		$('#input_tabs a').click(function (e) {

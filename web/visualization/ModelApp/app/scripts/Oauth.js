@@ -20,7 +20,7 @@ define([], function () {
     var callbackFunc = false;
                 
     // are we running native or browser mode?
-    var isNative = window.location.href.match(/file.*/) ? true : false;
+    var isNative = window.location.href.match(/^file.*/) ? true : false;
 
 	var CLIENT_ID = isNative ? 
 						"344190713465-diimtferh4tjb03169bkl9mkoqvq2ru9.apps.googleusercontent.com" :

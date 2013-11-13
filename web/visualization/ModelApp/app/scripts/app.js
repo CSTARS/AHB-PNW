@@ -680,7 +680,8 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                 config : {
                     chartTypeInput : $("#chartTypeInput").val(),
                     monthsToRun : monthsToRun(),
-                    currentLocation : $("#current-weather-location").html(),
+                    currentLocation : $("#current-location").html(),
+                    loadedTree : $("#loaded-tree-name").html(),
                     version : qs("version") ? qs("version") : "master"
                 }
             }
@@ -698,6 +699,17 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
             return ex;
         },    
+        loadTree : function(tree) {
+            for ( var rootKey in tree) {
+                if (typeof tree[rootKey] != 'object') {
+                    $("#input-tree-" + rootKey).val(tree[rootKey]);
+                } else {
+                    for ( var childKey in tree[rootKey]) {
+                        $("#input-tree-" + rootKey + "-" + childKey).val(tree[rootKey][childKey]);
+                    }
+                }
+            }
+        },
         loadSetup : function(fileid, setup) {
 
             // first, if the version is off, we need to reload the entire app
@@ -720,6 +732,9 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             if (setup.config.currentLocation) {
                 $("#current-location").html(setup.config.currentLocation);
             }
+            if( setup.config.loadedTree ) {
+                $("#loaded-tree-name").html(setup.config.loadedTree).parent().show();
+            }
 
             // load weather
             for ( var i = 0; i < setup.weather.length; i++) {
@@ -734,15 +749,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             }
 
             // load tree
-            for ( var rootKey in setup.tree) {
-                if (typeof setup.tree[rootKey] != 'object') {
-                    $("#input-tree-" + rootKey).val(setup.tree[rootKey]);
-                } else {
-                    for ( var childKey in setup.tree[rootKey]) {
-                        $("#input-tree-" + rootKey + "-" + childKey).val(setup.tree[rootKey][childKey]);
-                    }
-                }
-            }
+            this.loadTree(setup.tree);
 
             // load planting params
             // Now part of manage....
