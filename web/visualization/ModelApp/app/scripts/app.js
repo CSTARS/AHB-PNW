@@ -423,7 +423,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         currentResults = result;
 
         showRawOutput(result);
-        charts.updateCharts(result);
+        charts.updateCharts(result, true);
 
         setTimeout(function() {
             $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
