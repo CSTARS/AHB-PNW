@@ -1,4 +1,5 @@
 require.config({
+    catchError:false,
     paths: {
         jquery: '../bower_components/jquery/jquery',
         bootstrapAffix: '../bower_components/sass-bootstrap/js/affix',

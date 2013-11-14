@@ -18,6 +18,10 @@ define(["Oauth"],function(Oauth) {
 	// current MIME TYPE we are saving
 	var saveMimeType = "";
 
+	// rt json
+	var rtJson = null;
+	var rtDoc = null;
+
 	function init(callback) {
 		$("#save-modal").modal({
 			show : false
@@ -213,6 +217,144 @@ define(["Oauth"],function(Oauth) {
 		_updateTreeList();
 	}
 	
+	var _rtLoaded = false;
+	var _rtTimer = -1;
+	function _initRtApi() {
+		rtJson = null; // kill off any old listners
+		if( rtDoc ) rtDoc.close();
+
+		if( loadedFile == null ) return;
+
+		if( !_rtLoaded ) {
+			gapi.load('drive-realtime', function(){
+				_rtLoaded = true;
+				_loadRtFile();
+			});
+		} else {
+			_loadRtFile();
+		}
+	}
+
+	function _loadRtFile() {
+		gapi.drive.realtime.load(loadedFile,
+			// file loaded
+			function(file){
+				rtDoc = file;
+				var json = file.getModel().getRoot().get("json");
+
+				if( json == null ) {
+					_onRtModelLoad(file.getModel());
+					json = file.getModel().getRoot().get("json");
+				}
+
+				if( !json ) return console.log("Failed to connect to rt json");
+				rtJson = json;
+
+				var users = file.getCollaborators();
+				
+				// TODO: this needs works ...
+				// see if there are active changes to the model
+				/*if( users.length > 0 && JSON.stringify(m3PGIO.exportSetup()) != rtJson.getText() ) {
+					// let things settle
+					setTimeout(function(){
+						if( confirm("There are active changes to this model, would you like to load them?") ) {
+							var data = JSON.parse(rtJson.getText());
+							m3PGIO.loadSetup(loadedFile, data, true);
+						}
+					}, 2000);
+				}*/
+
+				file.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_JOINED, function(e){
+					users = file.getCollaborators();
+					_updateActiveUsers(users);
+				});
+				file.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_LEFT, function(e){
+					users = file.getCollaborators();
+					_updateActiveUsers(users);
+				});
+
+				// add event listeners
+				json.addEventListener(gapi.drive.realtime.EventType.TEXT_INSERTED, function(e){
+					if( e.isLocal ) return;
+					_rerunRt(users, e.userId);
+			  	});
+			  	json.addEventListener(gapi.drive.realtime.EventType.TEXT_DELETED, function(e){
+			  		if( e.isLocal ) return;
+			  		_rerunRt(users, e.userId);
+			  	});
+
+			  	_updateActiveUsers(users);
+			},
+			// model loaded
+			function(model){
+				_onRtModelLoad(model);
+			},
+			// errors
+			function(err) {
+				console.log("RT ERRORS: ");
+				console.log(err);
+			}
+		);
+	}
+
+	function _updateActiveUsers(users) {
+		if( !users ) return $("#active-users").html("");
+		if( users.length <= 1 ) return $("#active-users").html("");
+
+		var html = "Active Users ";
+		for( var i = 0; i < users.length; i++ ) {
+			if( users[i].photoUrl ) {
+				html += "<img src='"+users[i].photoUrl+"' title='"+users[i].displayName+"' style='margin:0 5px;width:32px;height:32px' class='img-rounded' /> ";
+			} else {
+				html += "<span style='width:32px;height:32px;margin:0 5px;background-color:"+users[i].color+"' title='"+users[i].displayName+"' ></span> ";
+			}
+		}
+		$("#active-users").html(html);
+	}
+
+	function _rerunRt(users, userId) {
+		if( !rtJson ) return;
+
+		if( _rtTimer != -1 ) clearTimeout(_rtTimer);
+
+		_rtTimer = setTimeout(function(){
+			_rtTimer = -1;
+
+			for( var i = 0; i < users.length; i++ ) {
+				if( users[i].userId == userId ) {
+					var panel = $("<div class='init-loading-outer' ><div class='init-loading' style='width:400px'> "+
+									(users[i].photoUrl ? "<img src='"+users[i].photoUrl+"' /> " : "")+users[i].displayName+" is updating the model...</div></div>");
+			        $("body").append(panel);
+			        setTimeout(function(){
+			            panel.css("opacity",".9");
+			        },50);
+			        setTimeout(function(){
+			            panel.remove();
+			        }, 3500);
+			        break;
+				}
+			}
+
+			var data = JSON.parse(rtJson.getText());
+			m3PGIO.loadSetup(loadedFile, data, true);
+		},200);
+	}
+
+	function _onRtModelLoad(model) {
+		var json = model.getRoot().get("json");
+		if( json == null ) {
+			var string = model.createString("{}");
+			model.getRoot().set("json", string);
+		}
+	}
+
+	// let the world know what we are doing :)
+	function runModelRt() {
+		if( rtJson ) rtJson.setText(JSON.stringify( m3PGIO.exportSetup() ));
+	}
+
+
+
 	// TODO: add search to the following functions,
 	// limit to 10 results
 	function _updateFileList() {
@@ -260,11 +402,22 @@ define(["Oauth"],function(Oauth) {
 				_setLoadMessage('File Loaded.','success');
 				loadedFile = id;					
 
+				// set the loaded file name
+				for( var i = 0; i < fileList.length; i++ ) {
+					if( id == fileList[i].id ) {
+						$("#loaded-model-title").html("<span style='color:#333'>Loaded Model </span> "+fileList[i].title);
+					}
+				}
+
 				// show the share btn
 				$("#share-btn").parent().show();
 				$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+id).parent().show();
 
+				// setup model
 				m3PGIO.loadSetup(id, file);
+
+				// setup realtime events
+				_initRtApi();
 				
 				setTimeout(function(){
 					// hide the modal
@@ -392,7 +545,15 @@ define(["Oauth"],function(Oauth) {
 			// show the share btn
 			$("#share-btn").parent().show();
 			$("#open-in-drive").attr("href","https://docs.google.com/file/d/"+metadata.id).parent().show();
+			
+			// show title
+			$("#loaded-model-title").html("<span style='color:#333'>Loaded Model </span> "+metadata.title);
+
+			// setup model
 			m3PGIO.loadSetup(metadata.id, file);
+
+			// setup realtime events
+			_initRtApi();
 		} else if ( metadata.mimeType == TREE_MIME_TYPE ) {
 			loadedTree = metadata.id;
 			$("#share-tree-btn").show();
@@ -671,6 +832,7 @@ define(["Oauth"],function(Oauth) {
 		saveFile: saveFile,
 		showLoadTreePanel : showLoadTreePanel,
 		showSaveTreePanel : showSaveTreePanel,
+		runModelRt : runModelRt,
 
 		MIME_TYPE : MIME_TYPE
 	}

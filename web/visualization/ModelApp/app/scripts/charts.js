@@ -400,7 +400,6 @@ define(["require"],function(require) {
                 // let's animate a little bit
                 options.animation = {duration: 500};
                 options.vAxis = {maxValue:max};
-                console.log(options)
 
                 var chart = new google.visualization.LineChart(panel[0]);
                 chart.draw(init, options);

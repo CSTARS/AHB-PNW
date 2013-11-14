@@ -115,6 +115,7 @@
   left: 0;
   right: 0;
   opacity : 0;
+  z-index:5000;
 
   transition : opacity 500ms linear;
   -ms-transition : opacity 500ms linear;

@@ -313,7 +313,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
     }
 
     
-    var runModel = function() {
+    var runModel = function(isRt) {
         if ($("#runbtn, #runbtn-sm").hasClass("disabled")) return;
         $("#runbtn, #runbtn-sm").addClass("disabled").html("Running...");
 
@@ -339,6 +339,9 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             // read everything so the variations are set
             window.variations = {};
             m3PGIO.readFromInputs();
+
+            // let the world know what we are doing
+            if( !isRt ) gdrive.runModelRt();
 
             // make sure we are only setting 2 variation parameters
             var params = [];
@@ -710,7 +713,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                 }
             }
         },
-        loadSetup : function(fileid, setup) {
+        loadSetup : function(fileid, setup, isRt) {
 
             // first, if the version is off, we need to reload the entire app
             if (setup.config.version) {
@@ -794,7 +797,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                 }
             }
 
-            runModel();
+            runModel(isRt);
         }
     };
 
