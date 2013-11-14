@@ -301,12 +301,23 @@ define(["Oauth"],function(Oauth) {
 		if( !users ) return $("#active-users").html("");
 		if( users.length <= 1 ) return $("#active-users").html("");
 
-		var html = "Active Users ";
+		// we only want unique users
+		var unique = [];
+		var uusers = [];
 		for( var i = 0; i < users.length; i++ ) {
-			if( users[i].photoUrl ) {
-				html += "<img src='"+users[i].photoUrl+"' title='"+users[i].displayName+"' style='margin:0 5px;width:32px;height:32px' class='img-rounded' /> ";
+			if( unique.indexOf(users[i].userId) == -1 ) {
+				unique.push(users[i].userId);
+				uusers.push(users[i]);
+			}
+		}
+		if( uusers.length <= 1 ) return $("#active-users").html("");
+
+		var html = "Active Users ";
+		for( var i = 0; i < uusers.length; i++ ) {
+			if( uusers[i].photoUrl ) {
+				html += "<img src='"+uusers[i].photoUrl+"' title='"+uusers[i].displayName+"' style='margin:0 5px;width:32px;height:32px' class='img-rounded' /> ";
 			} else {
-				html += "<span style='width:32px;height:32px;margin:0 5px;background-color:"+users[i].color+"' title='"+users[i].displayName+"' ></span> ";
+				html += "<span style='width:32px;height:32px;margin:0 5px;background-color:"+uusers[i].color+"' title='"+uusers[i].displayName+"' ></span> ";
 			}
 		}
 		$("#active-users").html(html);
