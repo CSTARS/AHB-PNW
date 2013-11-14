@@ -340,9 +340,6 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             window.variations = {};
             m3PGIO.readFromInputs();
 
-            // let the world know what we are doing
-            if( !isRt ) gdrive.runModelRt();
-
             // make sure we are only setting 2 variation parameters
             var params = [];
             for( var key in window.variations ) params.push(key);
@@ -352,6 +349,10 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                 $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
                 return;
             }
+
+            // let the world know what we are doing
+            if( !isRt ) gdrive.runModelRt();
+
             // show what we are doing
             $("#variationAnalysisStatus").html("<b>"+(params.length == 0 ? "None" : params.join(", "))+"</b>");
 
