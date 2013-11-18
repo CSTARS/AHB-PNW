@@ -81,6 +81,9 @@ CREATE TABLE tree OF tree_t ( type with options primary key );
 INSERT INTO tree (type,"fullCanAge", "kG", "alpha", "fT", "BLcond", "fAge", "fN0", "SLA","Conductance", "Intcptn", "pR", "y", "pfs", "rootP","litterfall", "k") VALUES 
 ('default',0, 0.5, 0.0177, (5,20,40)::fT_t, 0.2, (1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.02, 3.33)::cond_t, (0,0.15,5)::intcpt_t, (0.25,0.8,0,0.005)::pR_t, 0.47, (4.4, 0.18, 2.4, 5, -1.161976, 1.91698)::pfs_t, (0.25, 10, 0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
 ('poplar',0, 0.5, 0.06, (5,20,40)::fT_t, 0.2, (1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.02, 3.33)::cond_t, (0,0.15,5)::intcpt_t, (0.25,0.34,0,0.005)::pR_t, 0.47, (2.8, 0.18, 2.4, 2, -1.161976, 1.91698)::pfs_t, (1,10,0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
+('fischer2013',0, 0.85, 0.08, (5,20,40)::fT_t, 0.2, (1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.033, 3.33)::cond_t, (0,0.15,5)::intcpt_t, (0.25,0.34,0,0.005)::pR_t, 0.47, (2.8, 0.18, 2.4, 2, -1.161976, 1.91698)::pfs_t, (1,10,0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
+('badblcond',0, 0.6, 0.08, (5,20,40)::fT_t, 0.02, (1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.033, 3.33)::cond_t, (0,0.15,5)::intcpt_t, (0.25,0.34,0,0.005)::pR_t, 0.47, (2.8, 0.18, 2.4, 2, -1.161976, 1.91698)::pfs_t, (1,10,0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
+('hart',0, 0.85, 0.08, (5,20,40)::fT_t, 0.02, (1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.033, 3.33)::cond_t, (0,0.15,5)::intcpt_t, (0.25,0.34,0,0.005)::pR_t, 0.47, (2.8, 0.18, 2.4, 2, -1.161976, 1.91698)::pfs_t, (0,10,0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
 ('popstick',0, 0.5, 0.06, (5,20,40)::fT_t, 0.2,(1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.02, 3.33)::cond_t, (0,0.15,5)::intcpt_t, (0.25,0.34,0,0.005)::pR_t, 0.47, (1, 0.18, 2.4, 2, -1.161976, 1.91698)::pfs_t, (0.01, 10, 0.6)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5);
 
 drop type if exists plantation_t cascade;
@@ -96,10 +99,9 @@ CREATE type plantation_t as (
 );
 
 create table plantation of plantation_t ( type with options primary key);
-insert into plantation("type","StockingDensity","SeedlingMass","pS","pF","pR")
-VALUES ('greenwood',3587,0.0004,0.1,0,0.9);
-update plantation p set "seedlingTree"=t,"coppicedTree"= t2 
+insert into plantation("type","StockingDensity","SeedlingMass","pS","pF","pR","seedlingTree","coppicedTree")
+select
+'greenwood/'||t2.type,3587,0.0004,0.1,0,0.9,t,t2
 from tree t, tree t2
-where p.type='greenwood' 
-and t.type='popstick' 
-and t2.type='poplar';
+where t.type='popstick' 
+and t2.type in ('poplar','badblcond');

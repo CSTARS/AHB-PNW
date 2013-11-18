@@ -23,6 +23,12 @@ insert into locations (name,longitude,latitude) select * from
 -- ('Jefferson, OR',-121.2356,44.5792),
 -- ('Clarksbug, CA',-121.5272,38.4206)
 -- ) AS l(name,longitude,latitude);
+--      name      | longitude | latitude |  pid   
+-- ---------------+-----------+----------+--------
+--  Hayden, ID    | -116.7856 |  47.7661 | 289038
+--  Pilchuck, WA  | -121.7967 |  48.0578 | 288544
+--  Jefferson, OR | -121.2356 |  44.5792 | 293925
+--  Clarksbug, CA | -121.5272 |  38.4206 | 303216
 
 drop table if exists pixel_sw;
 CREATE TABLE pixel_sw (
