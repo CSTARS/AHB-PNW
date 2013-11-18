@@ -1,4 +1,5 @@
 require.config({
+    catchError:false,
     paths: {
         jquery: '../bower_components/jquery/jquery',
         bootstrapAffix: '../bower_components/sass-bootstrap/js/affix',
@@ -16,10 +17,16 @@ require.config({
         bootstrap: '../bower_components/bootstrap/dist/js/bootstrap',
         requirejs: '../bower_components/requirejs/require',
         owlCarousel: '../bower_components/owlcarousel/owl-carousel/owl.carousel',
-        'sass-bootstrap': '../bower_components/sass-bootstrap/dist/js/bootstrap'
+        'sass-bootstrap': '../bower_components/sass-bootstrap/dist/js/bootstrap',
+        charts : 'charts'
     },
     shim: {
         owlCarousel: {
+            deps: [
+                'jquery'
+            ]
+        },
+        charts: {
             deps: [
                 'jquery'
             ]
@@ -99,7 +106,24 @@ require.config({
     }
 });
 
-require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel'], function ($, bootstrap, app, gdrive) {
+require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel', 'flashblock-detector'], function ($, bootstrap, app, gdrive) {
+
+    window.hideInitLoading = null;
+    function initLoading() {
+        var panel = $("<div class='init-loading-outer'><div class='init-loading'><i class='icon-spinner icon-spin'></i> Initializing from Google Drive...</div></div>");
+        $("body").append(panel);
+        setTimeout(function(){
+            panel.css("opacity",".9");
+        },50);
+
+        window.hideInitLoading = function() {
+            $(".init-loading-outer").css("opacity","0");
+            setTimeout(function(){
+                $(".init-loading-outer").remove();
+                window.hideInitLoading = null;
+            },500);
+        }
+    }
 
     function onChartsLoaded() {
 			$("#status").html("3pg model");
@@ -116,12 +140,15 @@ require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel'], function ($, boot
 					app.init(function(){
 						gdrive.init(function(){
 							var file = app.qs("file");
-							if( file ) gdrive.load(file);
-								
+							if( file ) {
+                                initLoading();
+                                gdrive.load(file);
+							}
 							// see if we are loading for google drive
 							var state = app.qs("state");
 							if( state ) {
 								state = JSON.parse(state);
+                                initLoading();
 								gdrive.load(state.ids[0]);
 							}
 						});

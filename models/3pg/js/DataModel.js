@@ -564,7 +564,7 @@ var model = {
 	        }
 	    },
 	    manage : {
-	    	description : "",
+	    	description : "Crop Management Parameters",
 	    	value : {
 	    		irrigFrac : {
 	    			value : 1,
@@ -575,7 +575,27 @@ var model = {
 	    			value : 0.7,
 	    			units : "",
 	    			description : ""
-	    		}
+	    		},
+                DatePlanted : {
+                    value : "_date_",
+                    units : "date",
+                    description : "Date the crop was planted"
+                },
+                DateCoppiced : {
+                    value : "_date_",
+                    units : "date",
+                    description : "Date of the first coppice"
+                },
+                CoppiceInterval : {
+                    value : 3,
+                    units : "Years",
+                    description : "How after the crop is coppiced after the first coppice"
+                },
+                DateFinalHarvest : {
+                    value : "_date_",
+                    units : "date",
+                    description : "Date when the crop is completely harvested"
+                }
 	    	}
 	    }
 		

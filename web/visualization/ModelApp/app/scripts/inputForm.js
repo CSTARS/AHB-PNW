@@ -1,5 +1,38 @@
 define(['require'],function(require){
     var app = null;
+    var gdrive = null;
+
+    var SETUP_TEMPLATE = 
+    	'<div>'+
+    	'<h4>Chart Options</h4>'+
+	    '<div>'+
+	        '<table class="table">'+
+	            '<tr>'+
+	                '<td style="width:50%">Output variable(s) to chart </td>'+
+	                '<td> <a id="select-charts-btn" class="btn btn-default">Select Charts</a></td>'+
+	            '</tr>'+
+	            '<tr>'+
+	                '<td style="width:50%">Variation analysis parameter(s) </td>'+
+	                '<td><div id="variationAnalysisStatus">None</div></td>'+
+	            '</tr>'+
+	        '</table>'+
+	    '</div>'+
+	    '<h4>Location</h4>'+
+	     '<div style="border-top:1px solid #ddd;padding:8px;height:60px">'+
+	       '<span id="current-location" style="color:#888"></span>'+
+	       '<a class="btn btn-default pull-right select-weather-location"><i class="icon-map-marker"></i> Select Location</a>'+
+         '</div>'+
+         '<div>';
+
+    var GOOLEDRIVE_TREE_TEMPLATE =
+    	'<div style="padding:15px 0 5px 0;border-bottom:1px solid #eee;margin-bottom:5px;">'+
+    		'<div class="btn-group">'+
+    			'<a class="btn btn-default" id="gdrive-treepanel-load"><i class="icon-cloud-download"></i> Load</a>'+
+    			'<a class="btn btn-default" id="gdrive-treepanel-save"><i class="icon-cloud-upload"></i> Save</a>'+
+    		'</div>'+
+    		'<a id="share-tree-btn" class="btn btn-default" style="display:none;margin-left:10px"><i class="icon-share"></i> Share</a>'+
+    		'<h5 style="display:none" class="pull-right">Loaded Tree: <span id="loaded-tree-name" class="label label-default"></span></h5>'+
+    	'</div>';
 
 	var INPUT_TEMPLATE = 
 		'<div class="form-group">'+
@@ -62,7 +95,7 @@ define(['require'],function(require){
 		}
 		
 		
-		var table = "<table class='table table-striped table-condensed' style='margin-top:20px'>";
+		var table = "<table class='table table-striped table-condensed weather-table' style='margin-top:20px'>";
 
 		table += "<tr>";
 		for( var i = 0; i < cols.length; i++ ) {
@@ -124,17 +157,22 @@ define(['require'],function(require){
 		var q = new google.visualization.Query(url);
 		q.setQuery('SELECT *');
 		q.send(function(response){
+			var error = false;
 			var table = JSON.parse(response.getDataTable().toJSON());
 			for( var i = 0; i < table.cols.length; i++ ) {
+				if( table.rows[0] == null ) {
+					error = true;
+					alert("Invalid location selected");
+					break;
+				}
 				$("#input-soil-"+table.cols[i].id).val(table.rows[0].c[i].v);
 			}
-			
-			checkDone();
+
+			if( !error ) checkDone();
 		});
 		
 		$("#current-location").html(lng+", "+lat+" <a href='"+window.location.href.replace(/#.*/,'')+
 		                            "?ll="+lng+","+lat+"' target='_blank'><i class='icon-link'></i></a>");
-		
 		
 	}
 	
@@ -216,16 +254,12 @@ define(['require'],function(require){
 		
 		var treebody = "";
 		
-		if( !(i == 1 /*&& type == 'tree'*/) ) {
+		if( !(i == 1) ) {
 		    if( i != 0 ) input += '<label for="'+id+'" class="control-label">'+name +'</label>';
 		    input += '<div>';
 		}
 
-		//if( typeof attrs.value == 'string' ) {
-		//	input += '<input type="text" class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
-		//		+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
-		//	if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
-		//} else 
+
         if ( typeof attrs.value == 'object' && i == 1  ) { // && type == 'tree' ) {
 		    for( var key in attrs.value ) {
                 treebody += _generateInputs(i+1, type, id, key, attrs.value[key]);
@@ -235,15 +269,22 @@ define(['require'],function(require){
             for( var key in attrs.value ) {
                 input += _generateInputs(i+1, type, id, key, attrs.value[key]);
             }
-		} else if ( (typeof attrs.value == 'number' || typeof attrs.value == 'string')  && i == 1 ) { // && type == 'tree' ) {
+		} else if ( (typeof attrs.value == 'number' || typeof attrs.value == 'string') && i == 1 ) { // && type == 'tree' ) {
 		    
 		    treebody += 
-		        '<input type="text" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
-                +attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+		        '<input type="'+(attrs.value == '_date_' ? 'date' : 'text')+'" '+
+		        (type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+
+		        id+'" style="width:200px;display:inline-block" value="'
+                +(attrs.value == '_date_' ? '' : attrs.value)+'">&nbsp;&nbsp;'
+                +(attrs.units ? attrs.units : '');
 		    
 		} else if (  typeof attrs.value == 'string' || typeof attrs.value == 'number' ) {
-			input += '<input type="text" '+(type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+id+'" style="width:200px;display:inline-block" value="'
-				+attrs.value+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+
+			input += '<input type="'+(attrs.value == '_date_' ? 'date' : 'text')+'" '
+						+(type=='constants'?'disabled':'')+' class="form-control '+type+
+					 	'" id="'+id+'" style="width:200px;display:inline-block" value="'
+						+(attrs.value == '_date_' ? '' : attrs.value)+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+
 			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		}
 			
@@ -261,9 +302,12 @@ define(['require'],function(require){
 	
 	function create(ele) {
         app = require('app');
+        gdrive = require('gdrive');
 		var model, m, attr, config;
 		
-        var inputs = app.getModel();
+        var inputs = $.extend(true, {}, app.getModel());
+
+        inputs['setup'] = {};
 		for( model in inputs ) {
 			m = inputs[model];
 			for( attr in m ) {
@@ -301,10 +345,18 @@ define(['require'],function(require){
 
 			if( model == 'weather' ) {
 				content += _createWeatherInputs();
+			} else if( model == 'setup' ) {
+				content += SETUP_TEMPLATE;
 			} else {
-			    /*if( model == 'tree' )*/ content += treeHeader;
+			    content += treeHeader;
+
+			    // add the google drive btn from trees
+			    if( model =='tree' ) {
+			    	content += GOOLEDRIVE_TREE_TEMPLATE;
+			    }
+
 				content += _generateInputs(0, model, '', model, inputs[model]);
-				/*if( model == 'tree' )*/ content += '</div>';
+				content += '</div>';
 			}
 			
 			
@@ -314,6 +366,19 @@ define(['require'],function(require){
 		tabHeader += "</ul>";
 		
 		ele.html(tabHeader+"<div class='form-horizontal'>"+content+"</div>");
+
+		// run the model whenever some hits 'enter'
+		ele.find('input').on('keyup',function(e){
+			if( e.which == 13 ) app.runModel();
+		});
+
+		// add click handler for loading a tree
+		ele.find("#gdrive-treepanel-load").on('click', function(){
+			gdrive.showLoadTreePanel();
+		});
+		ele.find("#gdrive-treepanel-save").on('click', function(){
+			gdrive.showSaveTreePanel();
+		});
 		
 		$('#input_tabs a').click(function (e) {
 			  e.preventDefault()

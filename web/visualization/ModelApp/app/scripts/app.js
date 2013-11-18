@@ -1,5 +1,5 @@
 /*global define */
-define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
+define(["gdrive","charts","inputForm","export"], function (gdrive, charts, inputForm, exporter) {
 
      var runCallback = null;
      var _3pgModel = null;
@@ -12,6 +12,11 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
 			           "PhysMod","pR","pS","litterfall","NPP","WF","WR","WS","W"];
 	 var debug = false;
 	 var devmode = false;
+
+     // row raw data does a lot of processing of the results and the current state of what's
+     // being displayed.  Go ahead an setup the csv data at this point, then if the user
+     // decides to export, we are all set to to;
+     var csvResults = null;
 
      var getModel = function() {
         return _3pgModel;
@@ -170,21 +175,6 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
 
     var loadModelCode = function(version, callback) {
 
-        // TODO: figure this out w/ require.js
-        // load script from a this server
-        // scripts should be in /jslib
-        /*if (app.devmode) {
-            console.log("DevMode: Loading local scripts");
-            $.getScript("jslib/Model3PG.js", function() {
-                $.getScript("jslib/SingleRunFunctions.js", function() {
-                    $.getScript("jslib/DataModel.js", function() {
-                        callback();
-                    });
-                });
-            });
-            return;
-        }*/
-
         if (typeof version === 'function') callback = version;
         if (!version || typeof version != 'string') version = "master";
 
@@ -249,76 +239,84 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
         });
     };
 
-    // not required anymore
-    /*var loadSpreadsheetData = function(callback) {
+    var init = function(callback) {
 
-        var rootUrl = "https://docs.google.com/spreadsheet/tq?key=" + app.spreadsheet.id + "&gid=";
-        var loadCount = 0;
-
-        var metadataQuery = new google.visualization.Query(rootUrl + app.spreadsheet.worksheets.metadata);
-        metadataQuery.setQuery('');
-
-        metadataQuery.send(function(response) {
-            app.spreadsheet.dataTables["metadata"] = response;
-            callback();
+        
+        // check if flash is installed.  If not, hide the chart type toggle.
+        flashBlockDetect(function(val){
+            if( val > 0 ) $("#chart-type-btn-group").hide();        
         });
 
-    }*/
-
-    var init = function(callback) {
+        // setup export modal
+        exporter.init();
+        $("#export-csv").on('click', function(){
+            exporter.exportCsv(csvResults);
+        });
 
         var ele = $("#inputs-content");
         inputForm.create(ele);
 
         $("#runbtn, #runbtn-sm").on('click', function() {
-            if ($(this).hasClass("disabled")) return;
-            $(this).addClass("disabled").html("Running...");
             runModel();
         });
 
+        // initialize the charts
         charts.init();
 
         // set default config
-        $("#input-date-datePlanted").val(new Date().toISOString().replace(/T.*/,''));
-        $("#input-date-dateCoppiced").val(new Date(new Date().getTime()+(86400000*2*365)).toISOString().replace(/T.*/,''));
-        $("#input-date-yearsPerCoppice").val(3);
+        $("#input-manage-DatePlanted").val(new Date().toISOString().replace(/T.*/,''));
+        $("#input-manage-DateCoppiced").val(new Date(new Date().getTime()+(86400000*2*365)).toISOString().replace(/T.*/,''));
+        $("#input-manage-DateFinalHarvest").val(new Date(new Date().getTime()+(86400000*10*365)).toISOString().replace(/T.*/,''));
     
+        // setup nice scrolling
+        $('.app-nav').on('click', function(e) {
+            e.preventDefault();
+            $('html, body').animate({
+                scrollTop: $(this.hash).offset().top-55
+             }, 700);
+       });
+
         $(window).resize(function(){
-            _resizeConfig();
+            charts.resize();
         });
-    
-        $('#configuration-btn, #config-hide-btn, #configuration-btn-sm').on('click', function(){
-            if( $("#configuration").hasClass("open") ) {
-                $('#configuration').animate({top: $("#configuration").height()*-1},500).removeClass("open");
-            } else {
-                $('#configuration').animate({top: 50},500).addClass("open");
-            }
-        });
-        _resizeConfig();
 
         callback();
-    }
-
-    function _resizeConfig(){
-        charts.resize();
-    
-        if( !$("#configuration").hasClass("open") ) {
-            $("#configuration").css("top",$("#configuration").height()*-1);
-            return;
-        }
-    
-        if( $("#configuration").height() -50 > $(window).height() ) $("#configuration").css("height", $(window).height()-50)
-        else $("#configuration").css("height", 'auto');
     }
 
 
     var runComplete = function(rows) {
         if ( runCallback ) runCallback(rows);
+        if( hideInitLoading ) hideInitLoading();
         runCallback = null;
     }
 
+    var monthsToRun = function() {
+        var d1 = $("#input-manage-DatePlanted").val();
+        if (d1 && d1 != "") {
+            d1 = new Date($("#input-manage-DatePlanted").val());
+        } else {
+            d1 = new Date();
+        }
+
+        var d2 = $("#input-manage-DateFinalHarvest").val();
+        if (d2 && d2 != "") {
+            d2 = new Date($("#input-manage-DateFinalHarvest").val());
+        } else {
+            d2 = new Date();
+        }
+
+        var months;
+        months = (d2.getFullYear() - d1.getFullYear()) * 12;
+        months -= d1.getMonth() + 1;
+        months += d2.getMonth();
+        return months <= 0 ? 1 : months+1;
+    }
+
     
-    var runModel = function() {
+    var runModel = function(isRt) {
+        if ($("#runbtn, #runbtn-sm").hasClass("disabled")) return;
+        $("#runbtn, #runbtn-sm").addClass("disabled").html("Running...");
+
         // TODO: this sucks :/ ....
         // make sure all the weather is set.  #1 thing people will mess up
         for ( var i = 0; i < 12; i++) {
@@ -327,7 +325,7 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
                 var val = parseFloat($("#input-weather-" + c + "-" + i).val());
                 if( !val && val != 0 ) {
                     alert("Missing weather data: "+c+" for month "+i+"\n\n"+
-                          "Did you select a location (Config) and/or are all weather/soil fields filled out?");
+                          "Did you select a location (Setup) and/or are all weather/soil fields filled out?");
                     $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
                     return;
                 }
@@ -351,6 +349,10 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
                 $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
                 return;
             }
+
+            // let the world know what we are doing
+            if( !isRt ) gdrive.runModelRt();
+
             // show what we are doing
             $("#variationAnalysisStatus").html("<b>"+(params.length == 0 ? "None" : params.join(", "))+"</b>");
 
@@ -360,7 +362,7 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
                 runCallback = function(rows) {
                     showResults(rows);
                 }
-                m3PG.run(parseInt($("#monthsToRun").val()));
+                m3PG.run(monthsToRun());
 
             } else {
                 // set variation order
@@ -409,7 +411,7 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
             }
         }
 
-        m3PG.run(parseInt($("#monthsToRun").val()));
+        m3PG.run(monthsToRun());
     }
 
 
@@ -422,8 +424,10 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
             }]
         }
 
+        currentResults = result;
+
         showRawOutput(result);
-        charts.updateCharts(result);
+        charts.updateCharts(result, true);
 
         setTimeout(function() {
             $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
@@ -441,55 +445,83 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
             if( vars.indexOf(results[0].output[0][i]) > -1 ) chartRows[results[0].output[0][i]] = i;
         }
 
-        var tabs = $('<ul class="nav nav-tabs" id="rawOutputTabs"  data-tabs="tabs"></ul>');
-        var contents = $('<div class="tab-content" style="overflow:auto"></div>');
+        var tabs = $('<ul class="nav nav-pills" id="rawOutputTabs"  data-tabs="pill"></ul>');
+        var contents = $('<div class="pill-content" style="overflow:auto;margin-top:15px"></div>');
 
         for ( var i = 0; i < vars.length; i++) {
             tabs.append($('<li '+(i == 0 ? 'class="active"' : "")+'><a href="#rawout'
                 +vars[i]+'" data-toggle="tab">'+vars[i]+'</a></li>'));
         
-            contents.append($('<div class="tab-pane ' + (i == 0 ? 'active' : "")
+            contents.append($('<div class="pill-pane ' + (i == 0 ? 'active' : "")
                 + '" id="rawout' + vars[i] + '"></div>'));
         }
 
         $("#output-content").html("").append(tabs).append(contents);
         $("#rawOutputTabs").tab();
    
+        csvResults = {
+            config : m3PGIO.exportSetup(),
+            data : {}
+        };
+
+        // some rows have strings, we don't want these
+        // ignore string rows
+        for( var i = 0; i < results.length; i++ ) {
+            var clean = [results[i].output[0]];
+            for( var j = 1; j < results[i].output.length; j++ ) {
+                if( typeof results[i].output[j][0] != 'string' ) clean.push(results[i].output[j]);
+            }
+            results[i].output = clean;
+        }
+
         var table, row;
         for( var key in chartRows ) {
             table = "<table class='table table-striped'>";
 
+            csvResults.data[key] = [];
+
             for( var j = 0; j < results[0].output.length; j++ ){
+
+                csvResults.data[key][j] = [];
 
                 // set header row
                 if( j == 0 ) {
                     table += "<tr><th>Month</th>";
                     for( var z = 0; z < results.length; z++ ) {
                         table += "<th>";
-                        var c = 0;
+                        var tmp = [];
+
                         for( var mType in results[z].inputs ) {
+                            tmp.push(mType+"="+results[z].inputs[mType]);
                             table += "<div>"+mType+"="+results[z].inputs[mType]+"</div>";
-                            c++;
                         }
-                        if( c == 0 ) table += key;
+
+                        if( tmp.length == 0 ) {
+                            csvResults.data[key][j].push[key];
+                            table += key;
+                        } else {
+                            csvResults.data[key][j].push(tmp.join(" "));
+                        }
                         table += "</th>";
                     }
 
                     table += "</tr>";
                 }
 
-                // ignore string rows
-                if( typeof results[0].output[j][chartRows[key]] == 'string' ) continue;
-
-
                 table += "<tr><td>"+j+"</td>";
+                var v;
                 for( var z = 0; z < results.length; z++ ) {
-                    table += "<td>"+results[z].output[j][chartRows[key]]+"</td>";
+                    v = results[z].output[j][chartRows[key]];
+                    table += "<td>"+v+"</td>";
+                    csvResults.data[key][j].push(v);
                 }
                 table += "</tr>";        
             }
             $("#rawout" + key).html(table+"</table>");
         }
+
+        // make sure we can see the export btn
+        $("#show-export-csv").show();
     }
 
 
@@ -522,22 +554,32 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
 
         },
         readWeather : function(weatherMap, plantingParams) {
-            var datePlanted = $("#input-date-datePlanted").val();
+            var datePlanted = $("#input-manage-DatePlanted").val();
             if (datePlanted && datePlanted != "") {
-                plantingParams.datePlanted = new Date($("#input-date-datePlanted").val());
+                plantingParams.datePlanted = new Date($("#input-manage-DatePlanted").val());
             } else {
                 plantingParams.datePlanted = new Date();
             }
 
-            var dateCoppiced = $("#input-date-dateCoppiced").val();
+            var dateCoppiced = $("#input-manage-DateCoppiced").val();
             if (dateCoppiced && dateCoppiced != "") {
-                plantingParams.dateCoppiced = new Date($("#input-date-dateCoppiced").val());
+                plantingParams.dateCoppiced = new Date($("#input-manage-DateCoppiced").val());
+            } else {
+               // set error condition : TODO
+            } 
+
+            var DateFinalHarvest = $("#input-manage-DateFinalHarvest").val();
+            if (DateFinalHarvest && DateFinalHarvest != "") {
+                plantingParams.DateFinalHarvest = new Date($("#input-manage-DateFinalHarvest").val());
+            } else {
+               // set error condition : TODO
             }
 
-            var yearsPerCoppice = $("#input-date-yearsPerCoppice").val();
+            var yearsPerCoppice = $("#input-manage-CoppiceInterval").val();
             if (yearsPerCoppice && yearsPerCoppice != "") {
-                plantingParams.yearsPerCoppice = parseInt($("#input-date-yearsPerCoppice").val());
+                plantingParams.yearsPerCoppice = parseInt($("#input-manage-CoppiceInterval").val());
             }
+
             window.plantingParams = plantingParams;
 
             for ( var i = 0; i < 12; i++) {
@@ -565,7 +607,9 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
         // it has a ',' is set for variation
         _readVal : function(ele) {
             var val = ele.val();
-            if( val.match(/.*,.*/) ) {
+            if( val.match(/\d*-\d*-\d*$/) ) {
+                return val;
+            } else if( val.match(/.*,.*/) ) {
                 val = val.replace(/\s/g,'').split(",");
                 var id = ele.attr("id").replace(/^input-/,'').replace(/-/g,'.');
                 window.variations[id] = [];
@@ -635,13 +679,13 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
                 plantation : window.plantation,
                 manage : window.manage,
                 soil : window.soil,
-                plantingParams : window.plantingParam,
-                plantation_state : window.plantation_state,
                 plantingParams : window.plantingParams,
+                plantation_state : window.plantation_state,
                 config : {
                     chartTypeInput : $("#chartTypeInput").val(),
-                    monthsToRun : $("#monthsToRun").val(),
-                    currentLocation : $("#current-weather-location").html(),
+                    monthsToRun : monthsToRun(),
+                    currentLocation : $("#current-location").html(),
+                    loadedTree : $("#loaded-tree-name").html(),
                     version : qs("version") ? qs("version") : "master"
                 }
             }
@@ -659,7 +703,19 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
 
             return ex;
         },    
-        loadSetup : function(fileid, setup) {
+        loadTree : function(tree) {
+            for ( var rootKey in tree) {
+                if (typeof tree[rootKey] != 'object') {
+                    $("#input-tree-" + rootKey).val(tree[rootKey]);
+                } else {
+                    for ( var childKey in tree[rootKey]) {
+                        $("#input-tree-" + rootKey + "-" + childKey).val(tree[rootKey][childKey]);
+                    }
+                }
+            }
+        },
+        loadSetup : function(fileid, setup, isRt) {
+
             // first, if the version is off, we need to reload the entire app
             if (setup.config.version) {
                 var cversion = qs("version") ? qs("version") : "master";
@@ -680,10 +736,8 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
             if (setup.config.currentLocation) {
                 $("#current-location").html(setup.config.currentLocation);
             }
-            var configs = ["monthsToRun"];
-            for ( var i = 0; i < configs.length; i++) {
-                if (setup.config[configs[i]])
-                    $("#" + configs[i]).val(setup.config[configs[i]]);
+            if( setup.config.loadedTree ) {
+                $("#loaded-tree-name").html(setup.config.loadedTree).parent().show();
             }
 
             // load weather
@@ -699,38 +753,52 @@ define(["gdrive","charts","inputForm"], function (gdrive, charts, inputForm) {
             }
 
             // load tree
-            for ( var rootKey in setup.tree) {
-                if (typeof setup.tree[rootKey] != 'object') {
-                    $("#input-tree-" + rootKey).val(setup.tree[rootKey]);
-                } else {
-                    for ( var childKey in setup.tree[rootKey]) {
-                        $("#input-tree-" + rootKey + "-" + childKey).val(setup.tree[rootKey][childKey]);
-                    }
+            this.loadTree(setup.tree);
+
+            // load planting params
+            // Now part of manage....
+            // fo
+            if (setup.plantingParams) {
+                var map = {
+                    "datePlanted" : "DatePlanted",
+                    "dateCoppiced" : "DateCoppiced",
+                    "yearsPerCoppice" : "CoppiceInterval"
+                }
+
+                for ( var key in setup.plantingParams) {
+                    var newKey = key;
+                    if( map[key] ) newKey = map[key];
+
+                    if (typeof setup.plantingParams[key] == 'string')
+                        $("#input-manage-" + newKey).val(setup.plantingParams[key].replace(/T.*/, ''));
+                    else
+                        $("#input-manage-" + newKey).val(setup.plantingParams[key]);
                 }
             }
 
-            // load planting params
-            if (setup.plantingParams) {
-                for ( var key in setup.plantingParams) {
-                    if (typeof setup.plantingParams[key] == 'string')
-                        $("#input-date-" + key).val(setup.plantingParams[key].replace(/T.*/, ''));
-                    else
-                        $("#input-date-" + key).val(setup.plantingParams[key]);
-                }
+            // this value is deprecated, set to new input
+            if( setup.config.monthsToRun ) {
+                var d = new Date(setup.plantingParams.datePlanted);
+                d = new Date(new Date(d).setMonth(d.getMonth()+parseInt(setup.config.monthsToRun)));
+                $("#input-manage-DateFinalHarvest").val(d.toISOString().replace(/T.*/, ''));
             }
+            
 
             // load rest
             var inputs = [ "plantation", "soil", "manage" ];
             for ( var i = 0; i < inputs.length; i++) {
                 for ( var key in setup[inputs[i]]) {
-                    if (key == 'maxAWS')
+                    if (key == 'maxAWS') {
                         $("#input-soil-maxaws").val(setup.soil.maxAWS);
-                    else
+                    } else if ( typeof setup[inputs[i]][key] == 'string' && setup[inputs[i]][key].match(/.*T.*Z$/) ) {
+                        $("#input-" + inputs[i] + "-" + key).val(setup[inputs[i]][key].replace(/T.*/, ''));
+                    } else {
                         $("#input-" + inputs[i] + "-" + key).val(setup[inputs[i]][key]);
+                    }
                 }
             }
 
-            runModel();
+            runModel(isRt);
         }
     };
 

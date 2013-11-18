@@ -20,9 +20,7 @@ define(["require"],function(require) {
                 "<i class='icon-remove-circle pull-right slide-popup-close'></i>"+
                 "<div id='carousel' class='owl-carousel owl-theme' style='margin-top:15px'></div>" +
     		"</div>");
-    sliderPopup.find('.slide-popup-close').on('click',function(){
-            hidePopup();
-    });
+
     var sliderPopupBg = $("<div class='slide-popup-bg'>&nbsp;</div>");
     
     // only draw charts if someone has click a checkbox
@@ -42,6 +40,10 @@ define(["require"],function(require) {
 
         // setup chart selectors
         $("#chart-modal").modal({show:false});
+
+        // set popup click handlers
+        $("#chartType-selectAll").on('click',selectAll);
+        $("#chartType-unselectAll").on('click',unselectAll);
        
         chartTypeSelector = $("#chartTypeInput");
         chartCheckboxes = $("#chartSelections");
@@ -182,8 +184,10 @@ define(["require"],function(require) {
 
     // basically redraw everything
     function resize() {
-        if( cWidth == $(window).width() ) return;
-         cWidth = $(window).width();
+        // require more than a 30 pixel width change (so we don't redraw w/ scroll bars added)
+        var winWidth = $(window).width();
+        if( cWidth > winWidth - 15 && cWidth < winWidth + 15 ) return;
+        cWidth = winWidth;
 
         if( resizeTimer != -1 ) clearTimeout(resizeTimer);
         resizeTimer = setTimeout(function() {
@@ -192,7 +196,7 @@ define(["require"],function(require) {
         },300);
     }
     
-    function updateCharts(results) {
+    function updateCharts(results, animate) {
         if( results ) setData(results);
         if( !cData ) return;
         
@@ -216,8 +220,8 @@ define(["require"],function(require) {
             }
             legend = "<div><a id='legend-panel-toggle' style='margin-left:5px;cursor:pointer'>Legend</a></div>"+
                      "<div style='border-bottom:1px solid #eee;padding-bottom:5px;margin-bottom:15px'>"+
-                     "<div class='row' id='legend-panel'><div class='col-md-6'>"+c1+"</div>"+
-                     "<div class='col-md-6'>"+c2+"</div>"+
+                     "<div class='row' id='legend-panel'><div class='col-sm-6'>"+c1+"</div>"+
+                     "<div class='col-sm-6'>"+c2+"</div>"+
                      "</div></div>";
         }
         $("#chart-content").html(legend);
@@ -228,13 +232,18 @@ define(["require"],function(require) {
 
         var types = chartTypeSelector.val();
         for ( var i = 0; i < types.length; i++) {
-            _showMainChart(types[i]);
+            _showMainChart(types[i], animate);
         }
     }
     
     function showPopup() {
         sliderPopup.find(".owl-theme").html("");
         $('body').scrollTop(0).css('overflow','hidden').append(sliderPopupBg).append(sliderPopup);
+
+        // this could case badness....  why doesn't it live when removed from DOM?
+        sliderPopup.find('.slide-popup-close').on('click',function(){
+            hidePopup();
+        });
         
         var types = chartTypeSelector.val();
         for ( var i = 0; i < types.length; i++) {
@@ -255,7 +264,7 @@ define(["require"],function(require) {
         $('body').css('overflow','auto');
     }
     
-    function _showMainChart(type) {
+    function _showMainChart(type, animate) {
         var chartType = $(".chart-type-toggle.active").attr("value");
         var panel = $("<div />");
         var outerPanel = $("<div>"+
@@ -267,7 +276,7 @@ define(["require"],function(require) {
         });
         if( chartType == "timeline" ) outerPanel.css("margin-bottom","20px");
         $("#chart-content").append(outerPanel.append(panel));
-        _createChart(type, chartType, panel, false);
+        _createChart(type, chartType, panel, false, null, animate);
     }
     
     function _showPopupChart(type) {
@@ -285,15 +294,18 @@ define(["require"],function(require) {
         _createChart(type, 'line', chartPanel, true, [Math.round($(window).width()*.88), Math.round(($(window).height()*.90)-125)]);
     }
     
-    function _createChart(type, chartType, panel, showLegend, size) {
+    function _createChart(type, chartType, panel, showLegend, size, animate) {
         var col = 0;
-        //var data = [ [ "month" ] ];
+
         var dt = new google.visualization.DataTable();
+        // for animation
+        var init = new google.visualization.DataTable();
         
         if( chartType == 'timeline' ) {
             dt.addColumn('date', 'Month');        
         } else {
-            dt.addColumn('number', 'Month');        
+            dt.addColumn('number', 'Month'); 
+            init.addColumn('number', 'Month');
         }
 
         // set the first column
@@ -305,10 +317,11 @@ define(["require"],function(require) {
                 }
                 label = label.replace(/,\s$/,'');
                 dt.addColumn('number', label);        
-                //data[0].push(label);
+                init.addColumn('number', label);
             }
         } else {
-            dt.addColumn('number', type);        
+            dt.addColumn('number', type);   
+            init.addColumn('number', type);        
         }
 
         // find the column we want to chart
@@ -319,31 +332,37 @@ define(["require"],function(require) {
             }
         }
 
-        var cDate = new Date($("#input-date-datePlanted").val());
+        var cDate = new Date($("#input-manage-DatePlanted").val());
 
         var data = [];
+        var idata = [];
+        var max = 0;
         // create the [][] array for the google chart
         for ( var i = 1; i < cData[0].output.length; i++) {
             if (typeof cData[0].output[i][col] === 'string') continue;
             
             var row = [];
+            var irow = [];
             if( chartType == "timeline" ) {
                 // add on month
                 cDate
                 row.push(new Date(cDate.getYear()+1900, cDate.getMonth()+i, cDate.getDate()));
             } else {
                 row.push(i);
+                irow.push(i);
             }
 
             for ( var j = 0; j < cData.length; j++) {
+                if( cData[j].output[i][col] > max ) max = cData[j].output[i][col];
                 row.push(cData[j].output[i][col]);
+                irow.push(0);
             }
             data.push(row);
+            idata.push(irow);
         }
 
         dt.addRows(data);
-        //var dt = google.visualization.arrayToDataTable(data);
-        
+        init.addRows(idata);
         
         if( app.outputDefinitions[type] ) {
             var desc = app.outputDefinitions[type];
@@ -377,8 +396,23 @@ define(["require"],function(require) {
             var chart = new google.visualization.AnnotatedTimeLine(panel[0]);
             chart.draw(dt, options);
         } else {
-            var chart = new google.visualization.LineChart(panel[0]);
-            chart.draw(dt, options);
+            if( animate ) {
+                // let's animate a little bit
+                options.animation = {duration: 500};
+                options.vAxis = {maxValue:max};
+
+                var chart = new google.visualization.LineChart(panel[0]);
+                chart.draw(init, options);
+
+                delete options.max;
+                // let ui breat ;)
+                setTimeout(function(){
+                    chart.draw(dt, options);
+                },100);
+            } else {
+                 var chart = new google.visualization.LineChart(panel[0]);
+                chart.draw(dt, options);
+            }
         }
     }
     
