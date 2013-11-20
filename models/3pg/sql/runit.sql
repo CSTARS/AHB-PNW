@@ -1,13 +1,13 @@
 --drop schema m3pgjs cascade;
 --create schema m3pgjs;
 set search_path=m3pgjs,public;
--- \i plv8_startup.sql
+--\i plv8_startup.sql
 -- \i types.sql
--- \i  tree_and_plantation.sql
+\i  tree_and_plantation.sql
 -- --\i example_locations.sql
 -- -- If you've modified the js script, then use \reload_modules.sql
--- \i reload_modules.sql
--- \i model.sql
+\i reload_modules.sql
+\i model.sql
 
 select plv8_startup();
 
@@ -54,6 +54,35 @@ select pid,type,
 --false as irrigated,
 --((n)."feedstockHarvest"/non.years)::decimal(6,2) as yield
 from irr join non using (pid,type);
+
+drop table if exists harvests cascade;
+create table harvests as 
+with a as (
+ select generate_subscripts(ps,1) as i,
+ unnest(d) as d,
+ (unnest(ps))."coppiceCount"
+ from growthmodel
+), 
+i as (
+select distinct min(i) over (partition by "coppiceCount") as n,
+ (max(i) over (partition by "coppiceCount"))+1 as x 
+ from a order by n
+), 
+f as (
+ select pid,i.n,p.n as p,type,d[i.n] as date,
+ g.ps[i.n] as irr,n.ps[i.n] as non,
+ g.ps[p.n] as pirr,n.ps[p.n] as pnon,
+ (i.n-p.n)/12 as yr
+ from growthmodel g 
+ join nonirrigatedgrowthmodel n using (pid,d,type),
+ i i join i p on (i.n=p.x)
+) 
+select pid,type,date,
+(((irr)."feedstockHarvest" - (pirr)."feedstockHarvest")/yr)::decimal(6,2) as irr, 
+(((irr)."CumIrrig" - (pirr)."CumIrrig")/yr)::decimal(6,2) as irrigation,
+(((non)."feedstockHarvest" - (pnon)."feedstockHarvest")/yr)::decimal(6,2) as nonirrigated 
+from f 
+order by date,pid,type;
 
 --update average_growth set yield=irrigated_yield,irrigated=true 
 --where irrigated_yield/nonirrigated_yield > 1.3;

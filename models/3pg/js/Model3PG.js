@@ -236,7 +236,7 @@ var m3PG = {
     c.fNutr=m3PGFunc.fNutr(tree.fN0, manage.fertility);
     c.NPP = m3PGFunc.NPP(p.coppiceAge, tree.fullCanAge, c.xPP, tree.k, p.LAI, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
 	
-    var NPP_target = m3PGFunc.NPP(p.coppiceAge, tree.fullCanAge, c.xPP, tree.k, tree.rootP.LAITarget, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
+    var NPP_target = m3PGFunc.NPP(tree.fullCanAge, tree.fullCanAge, c.xPP, tree.k, tree.rootP.LAITarget, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
     c.RootP = m3PGFunc.coppice.RootP(c.NPP, NPP_target, p.WR, p.W,
 					 tree.pR.mx,tree.rootP.frac);
 

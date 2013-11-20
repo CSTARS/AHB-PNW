@@ -52,7 +52,7 @@ dates date[],
 coppice date[] DEFAULT  '{2014-09-01,2017-09-01,2020-09-01,2023-09-01,
                           2026-09-01,2029-09-01,2032-09-01,2035-09-01}'::date[],
 irrigFrac float DEFAULT 1.0,
-fertility float DEFAULT 0.8
+fertility float DEFAULT 1
 )
 RETURNS manage_t[] AS $$
 WITH
