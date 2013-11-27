@@ -1,17 +1,18 @@
 drop table if exists locations;
 create table locations (
        name text,
+       pid integer,
        longitude float,
        latitude float
 );
 
-insert into locations (name,longitude,latitude) select * from
+insert into locations (name,pid,longitude,latitude) select * from
 (VALUES
-('Hayden, ID',-116.7856,47.7661),
-('Pilchuck, WA',-121.7967,48.0578),
-('Jefferson, OR',-121.2356,44.5792),	
-('Clarksbug, CA',-121.5272,38.4206)
-) AS l(name,longitude,latitude);
+('Hayden, ID',289038,-116.7856,47.7661),
+('Pilchuck, WA',288544,-121.7967,48.0578),
+('Jefferson, OR',293925,-121.2356,44.5792),	
+('Clarksbug, CA',303216,-121.5272,38.4206)
+) AS l(name,pid,longitude,latitude);
 
 -- --in AFRI
 -- create temp view fields as 
@@ -23,6 +24,12 @@ insert into locations (name,longitude,latitude) select * from
 -- ('Jefferson, OR',-121.2356,44.5792),
 -- ('Clarksbug, CA',-121.5272,38.4206)
 -- ) AS l(name,longitude,latitude);
+--      name      | longitude | latitude |  pid   
+-- ---------------+-----------+----------+--------
+--  Hayden, ID    | -116.7856 |  47.7661 | 289038
+--  Pilchuck, WA  | -121.7967 |  48.0578 | 288544
+--  Jefferson, OR | -121.2356 |  44.5792 | 293925
+--  Clarksbug, CA | -121.5272 |  38.4206 | 303216
 
 drop table if exists pixel_sw;
 CREATE TABLE pixel_sw (

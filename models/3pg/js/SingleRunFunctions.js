@@ -106,7 +106,7 @@ units = unitless
 description='Vapor Pressure Deficit Modifier (Poplar)'
 */
 m3PGFunc.fVPD = function(kG, cur_VPD){
-  return Math.exp(-1 * kG * cur_VPD); 
+ return Math.exp(-1 * kG * cur_VPD); 
 }
 
 //TODO: take constants out

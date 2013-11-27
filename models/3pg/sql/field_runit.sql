@@ -1,4 +1,4 @@
-set search_path=field,public;
+set search_path=m3pgjs_fields,m3pgjs,public;
 select plv8_startup();
 
 create or replace function manage(
@@ -27,7 +27,7 @@ from plantation
 ),
 dt as (
 select (y||'-03-01')::date as d
-from generate_series(1960,1989) as y
+from generate_series(1960,2009) as y
 ),
 i as (
 select d,dateToIndex(d) as i
@@ -35,7 +35,9 @@ from dt
 )
 select 
 pid,(pt).type,i.d as date,ir as irrigation,f as fertility,
-m3pgjs.grow(pt,p.soil,p.weather[i.i:i.i+235],manage(ir,f)) as ps 
+m3pgjs.grow(pt,p.soil,
+p.weather[i.i:i.i+case when (array_length(p.weather,1)-i<235) then array_length(p.weather,1)-i else 235 end],
+manage(ir,f)) as ps 
 from pixel p,pl,i,
 (VALUES (0,0.8),(1,0.8)) as m(ir,f);
 \set stop `date`
@@ -62,3 +64,7 @@ from irr join non using (pid);
 
 update average_growth set yield=irrigated_yield,irrigated=true 
 where irrigated_yield/nonirrigated_yield > 1.3;
+
+-- \COPY (with a as (select name,type,date,irrigation,generate_subscripts(ps,1) as count,(unnest(ps)).* from growthmodel join m3pgjs_fields.fields using (pid) order by name,date,count) select name,date as planted,irrigation,(date::date +(count-1||' months')::interval)::date as month,"WS","WF","W","CumIrrig" from a order by name,planted,irrigation,month) to ~/weather.csv with csv header
+
+

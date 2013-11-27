@@ -13,10 +13,7 @@ var m3PG = {
     var yearToCoppice; //year of the first or subsequent harvests
     var coppiceInterval; //the # of months in a single coppice cycle
     var monthToCoppice; //at which month the harvest is to be performed :: currently the tree will be cut at the beginning of that month
-    
-    
-    
-    
+        
     //Read the input parameters into object 2 functions can be combined into 1.
     var plantation = {};
     m3PGIO.readAllConstants(plantation); //both tree constants and plantation/management constants
@@ -201,19 +198,13 @@ var m3PG = {
   
   singleStep : function(plantation, soil, weather, manage, p) { //p = previous state
     var c = {}; //current state
-    
-    var tree; //tree
-    if (p.coppiceCount==0) { //TODO: check the case where we start with a coppiced multi stump tree
-        tree=plantation.seedlingTree;
-    } else {
-        tree=plantation.coppicedTree;
-    }
-    
+        
     if (manage.coppice == true) { //change this guy for the month when coppice
       // Add in a stump margin....
       c.feedstockHarvest = p.feedstockHarvest + p.WS;
       c.coppiceCount = p.coppiceCount + 1;
       c.coppiceAge = 0;
+	p.LAI=0;
       p.WS = 0;
       p.WF = 0;
       p.W = p.WR;
@@ -221,6 +212,12 @@ var m3PG = {
       c.feedstockHarvest = p.feedstockHarvest;
       c.coppiceCount = p.coppiceCount;
       c.coppiceAge = p.coppiceAge + 1.0/12;
+    }
+    var tree; //tree
+    if (c.coppiceCount==0) { //TODO: check the case where we start with a coppiced multi stump tree
+        tree=plantation.seedlingTree;
+    } else {
+        tree=plantation.coppicedTree;
     }
     
     c.StandAge = p.StandAge+1.0/12;
@@ -239,7 +236,7 @@ var m3PG = {
     c.fNutr=m3PGFunc.fNutr(tree.fN0, manage.fertility);
     c.NPP = m3PGFunc.NPP(p.coppiceAge, tree.fullCanAge, c.xPP, tree.k, p.LAI, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
 	
-    var NPP_target = m3PGFunc.NPP(p.coppiceAge, tree.fullCanAge, c.xPP, tree.k, tree.rootP.LAITarget, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
+    var NPP_target = m3PGFunc.NPP(tree.fullCanAge, tree.fullCanAge, c.xPP, tree.k, tree.rootP.LAITarget, c.fVPD, c.fSW, c.fAge, tree.alpha, c.fNutr, c.fT, c.fFrost);
     c.RootP = m3PGFunc.coppice.RootP(c.NPP, NPP_target, p.WR, p.W,
 					 tree.pR.mx,tree.rootP.frac);
 
