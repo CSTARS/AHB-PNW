@@ -272,18 +272,19 @@ define(['require'],function(require){
 		} else if ( (typeof attrs.value == 'number' || typeof attrs.value == 'string') && i == 1 ) { // && type == 'tree' ) {
 		    
 		    treebody += 
-		        '<input type="'+(attrs.value == '_date_' ? 'date' : 'text')+'" '+
+		        '<div><input type="'+(attrs.value == '_date_' ? 'date' : 'text')+'" '+
 		        (type=='constants'?'disabled':'')+' class="form-control '+type+'" id="'+
 		        id+'" style="width:200px;display:inline-block" value="'
                 +(attrs.value == '_date_' ? '' : attrs.value)+'">&nbsp;&nbsp;'
-                +(attrs.units ? attrs.units : '');
+                +(attrs.units ? attrs.units : '')+'</div>';
 		    
 		} else if (  typeof attrs.value == 'string' || typeof attrs.value == 'number' ) {
 
-			input += '<input type="'+(attrs.value == '_date_' ? 'date' : 'text')+'" '
+			input += '<div><input type="'+(attrs.value == '_date_' ? 'date' : 'text')+'" '
 						+(type=='constants'?'disabled':'')+' class="form-control '+type+
 					 	'" id="'+id+'" style="width:200px;display:inline-block" value="'
-						+(attrs.value == '_date_' ? '' : attrs.value)+'">&nbsp;&nbsp;'+(attrs.units ? attrs.units : '');
+						+(attrs.value == '_date_' ? '' : attrs.value)+'">&nbsp;&nbsp;'
+						+(attrs.units ? attrs.units : '')+'</div>';
 
 			if( attrs.description ) input += '<p class="help-block">'+attrs.description+'</p>';
 		}

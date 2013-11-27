@@ -1,9 +1,11 @@
-define(["Oauth"],function(Oauth) {
+define(["require","Oauth","gdriveRT"],function(require) {
 
 	var MIME_TYPE = "application/vnd.ahb-3pg.run";
 	var TREE_MIME_TYPE = "application/vnd.ahb-3pg.tree";
 	var DRIVE_API_VERSION = "v2";
-	
+
+	var Oauth, gdriveRT;
+
 	// google oauth access token
 	var token = "";
 	
@@ -22,20 +24,13 @@ define(["Oauth"],function(Oauth) {
 	// current MIME TYPE we are saving
 	var saveMimeType = "";
 
-	// REALTIME (rt) Objects
-	// rt json field, used to send updates to peers
-	var rtJson = null;
-	// rt document
-	var rtDoc = null;
-	// has the rt api been loaded?
-	var _rtLoaded = false;
-	// timer to buffer the firing of updates from rt events
-	var _rtTimer = -1;
-
 	/***
 	 *	Initialize google drive panels, btns and login  
 	 ***/
 	function init(callback) {
+		Oauth = require("Oauth");
+		gdriveRT = require("gdriveRT");
+
 		// init bootstrap modal
 		$("#save-modal").modal({
 			show : false
@@ -406,6 +401,9 @@ define(["Oauth"],function(Oauth) {
 
 				// update top right menu
 				_createLogoutBtn(data);
+				
+				// set to window scope
+				window.userinfo = data;
 			},
 			error : function() {
 				// TODO: should we alert this?
@@ -417,197 +415,6 @@ define(["Oauth"],function(Oauth) {
 		_updateTreeList();
 	}
 	
-	/***
-	 * Setup the rt api for the current file.  This will actually load the api if needed
-	 ***/
-	function _initRtApi() {
-		rtJson = null; // kill off any old listners
-
-		// close any old connection
-		if( rtDoc ) rtDoc.close();
-
-		// get out of here if we don't have a loaded file
-		if( loadedFile == null ) return;
-
-		// load api if needed
-		if( !_rtLoaded ) {
-			gapi.load('drive-realtime', function(){
-				// setup rt hooks
-				_rtLoaded = true;
-				_loadRtFile();
-			});
-		} else {
-			// setup rt hooks
-			_loadRtFile();
-		}
-	}
-
-	/***
-	 *	Setup the rt hooks for the current file.  The api needs to already be loaded
-	 ***/
-	function _loadRtFile() {
-		// get the rt doc
-		gapi.drive.realtime.load(loadedFile,
-			// rt doc loaded
-			function(file){
-				rtDoc = file;
-
-				// get our rt attribute.  Triggering changes on rtJson will push events
-				// to all listening clients
-				var json = file.getModel().getRoot().get("json");
-
-				// if there is no json attr, we need to initialize the model
-				if( json == null ) {
-					// initialize our rt model
-					_onRtModelLoad(file.getModel());
-					// grab rt json attr now that we are initialized
-					json = file.getModel().getRoot().get("json");
-				}
-
-				// badness happened :(
-				if( !json ) return console.log("Failed to connect to rt json");
-				// set that attr global to class
-				rtJson = json;
-
-				// get current list of users
-				var users = file.getCollaborators();
-				
-				// TODO: this needs works ...
-				// see if there are active changes to the model
-				/*if( users.length > 0 && JSON.stringify(m3PGIO.exportSetup()) != rtJson.getText() ) {
-					// let things settle
-					setTimeout(function(){
-						if( confirm("There are active changes to this model, would you like to load them?") ) {
-							var data = JSON.parse(rtJson.getText());
-							m3PGIO.loadSetup(loadedFile, data, true);
-						}
-					}, 2000);
-				}*/
-
-				// add event listeners for when people come and go
-				file.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_JOINED, function(e){
-					users = file.getCollaborators();
-					_updateActiveUsers(users);
-				});
-				file.addEventListener(gapi.drive.realtime.EventType.COLLABORATOR_LEFT, function(e){
-					users = file.getCollaborators();
-					_updateActiveUsers(users);
-				});
-
-				// add event listeners for the rtJson object
-				// when this updates, we want to re-run the model
-				json.addEventListener(gapi.drive.realtime.EventType.TEXT_INSERTED, function(e){
-					if( e.isLocal ) return;
-					_rerunRt(users, e.userId);
-			  	});
-			  	json.addEventListener(gapi.drive.realtime.EventType.TEXT_DELETED, function(e){
-			  		if( e.isLocal ) return;
-			  		_rerunRt(users, e.userId);
-			  	});
-
-			  	// show who is listening
-			  	_updateActiveUsers(users);
-			},
-			// model loaded
-			function(model){
-				_onRtModelLoad(model);
-			},
-			// errors
-			function(err) {
-				console.log("RT ERRORS: ");
-				console.log(err);
-			}
-		);
-	}
-
-	/***
-	 * Update the display of active users for the model.
-	 ***/
-	function _updateActiveUsers(users) {
-		// if it's just us, don't show anything
-		if( !users ) return $("#active-users").html("");
-		if( users.length <= 1 ) return $("#active-users").html("");
-
-		// we only want unique users
-		var unique = [];
-		var uusers = [];
-		for( var i = 0; i < users.length; i++ ) {
-			if( unique.indexOf(users[i].userId) == -1 ) {
-				unique.push(users[i].userId);
-				uusers.push(users[i]);
-			}
-		}
-		if( uusers.length <= 1 ) return $("#active-users").html("");
-
-		// add pic of user to display panel
-		var html = "Active Users ";
-		for( var i = 0; i < uusers.length; i++ ) {
-			if( uusers[i].photoUrl ) {
-				html += "<img src='"+uusers[i].photoUrl+"' title='"+uusers[i].displayName+"' style='margin:0 5px;width:32px;height:32px' class='img-rounded' /> ";
-			} else {
-				html += "<span style='width:32px;height:32px;margin:0 5px;background-color:"+uusers[i].color+"' title='"+uusers[i].displayName+"' ></span> ";
-			}
-		}
-		$("#active-users").html(html);
-	}
-
-	/***
-  	 *	Re-run the model.  Events can come in quickly in many parts.  Buffer the events so we don't re-run the model too many times.
-  	 ***/
-	function _rerunRt(users, userId) {
-		// this is badness
-		if( !rtJson ) return;
-
-		// clear any queued run
-		if( _rtTimer != -1 ) clearTimeout(_rtTimer);
-
-		// queue up a run and wait to make sure there are no updates
-		_rtTimer = setTimeout(function(){
-			_rtTimer = -1;
-
-			// find the user who is running the model and diplay popup of that users information
-			for( var i = 0; i < users.length; i++ ) {
-				if( users[i].userId == userId ) {
-					var panel = $("<div class='init-loading-outer' ><div class='init-loading' style='width:400px'> "+
-									(users[i].photoUrl ? "<img src='"+users[i].photoUrl+"' /> " : "")+users[i].displayName+" is updating the model...</div></div>");
-			        $("body").append(panel);
-			        setTimeout(function(){
-			            panel.css("opacity",".9");
-			        },50);
-			        setTimeout(function(){
-			            panel.remove();
-			        }, 3500);
-			        break;
-				}
-			}
-
-			// parse the new model data and load it as our current setup
-			var data = JSON.parse(rtJson.getText());
-			m3PGIO.loadSetup(loadedFile, data, true);
-		}, 300);
-	}
-
-	/***
-	 * initialize a new rt model
-	 ***/
-	function _onRtModelLoad(model) {
-		// currently we just want to use this single attribute to broadcast events
-		var json = model.getRoot().get("json");
-		if( json == null ) {
-			var string = model.createString("{}");
-			model.getRoot().set("json", string);
-		}
-	}
-
-	/***
-	 * let the world know what we are doing :)
-	 * This should be called when a local user runs the model.  It updates the 'json'
-	 * attribute which is then broadcast to all listening parties
-	 ***/
-	function runModelRt() {
-		if( rtJson ) rtJson.setText(JSON.stringify( m3PGIO.exportSetup() ));
-	}
-
 	/***
 	 *	Search for the users models
 	 *
@@ -694,7 +501,7 @@ define(["Oauth"],function(Oauth) {
 				m3PGIO.loadSetup(id, file);
 
 				// setup realtime events
-				_initRtApi();
+				gdriveRT.initRtApi(loadedFile);
 				
 				// wait a tick so user can see success message
 				setTimeout(function(){
@@ -882,7 +689,7 @@ define(["Oauth"],function(Oauth) {
 			m3PGIO.loadSetup(metadata.id, file);
 
 			// setup realtime events
-			_initRtApi();
+			gdriveRT.initRtApi(loadedFile);
 		} else if ( metadata.mimeType == TREE_MIME_TYPE ) { // we loaded a tree
 			// set the loaded tree id
 			loadedTree = metadata.id;
@@ -1115,6 +922,10 @@ define(["Oauth"],function(Oauth) {
 				});
 	    	}
 	    });
+	}
+
+	function runModelRt() {
+		gdriveRT.runModelRt();
 	}
 
 	return {

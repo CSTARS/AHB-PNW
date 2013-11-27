@@ -200,8 +200,6 @@ define(["require"],function(require) {
         if( results ) setData(results);
         if( !cData ) return;
         
-        
-        
         $("#show-chartspopup-btn").show();
         
         // create a legend if there is more than one run
@@ -298,14 +296,15 @@ define(["require"],function(require) {
         var col = 0;
 
         var dt = new google.visualization.DataTable();
+
         // for animation
-        var init = new google.visualization.DataTable();
+        //var init = new google.visualization.DataTable();
         
         if( chartType == 'timeline' ) {
             dt.addColumn('date', 'Month');        
         } else {
             dt.addColumn('number', 'Month'); 
-            init.addColumn('number', 'Month');
+            //init.addColumn('number', 'Month');
         }
 
         // set the first column
@@ -317,11 +316,11 @@ define(["require"],function(require) {
                 }
                 label = label.replace(/,\s$/,'');
                 dt.addColumn('number', label);        
-                init.addColumn('number', label);
+                //init.addColumn('number', label);
             }
         } else {
             dt.addColumn('number', type);   
-            init.addColumn('number', type);        
+            //init.addColumn('number', type);        
         }
 
         // find the column we want to chart
@@ -335,34 +334,34 @@ define(["require"],function(require) {
         var cDate = new Date($("#input-manage-DatePlanted").val());
 
         var data = [];
-        var idata = [];
+        //var idata = [];
         var max = 0;
         // create the [][] array for the google chart
         for ( var i = 1; i < cData[0].output.length; i++) {
             if (typeof cData[0].output[i][col] === 'string') continue;
             
             var row = [];
-            var irow = [];
+            //var irow = [];
             if( chartType == "timeline" ) {
                 // add on month
                 cDate
                 row.push(new Date(cDate.getYear()+1900, cDate.getMonth()+i, cDate.getDate()));
             } else {
                 row.push(i);
-                irow.push(i);
+                //irow.push(i);
             }
 
             for ( var j = 0; j < cData.length; j++) {
                 if( cData[j].output[i][col] > max ) max = cData[j].output[i][col];
                 row.push(cData[j].output[i][col]);
-                irow.push(0);
+                //irow.push(0);
             }
             data.push(row);
-            idata.push(irow);
+            //idata.push(irow);
         }
 
         dt.addRows(data);
-        init.addRows(idata);
+        //init.addRows(idata);
         
         if( app.outputDefinitions[type] ) {
             var desc = app.outputDefinitions[type];
@@ -396,7 +395,7 @@ define(["require"],function(require) {
             var chart = new google.visualization.AnnotatedTimeLine(panel[0]);
             chart.draw(dt, options);
         } else {
-            if( animate ) {
+            /*if( animate ) {
                 // let's animate a little bit
                 options.animation = {duration: 500};
                 options.vAxis = {maxValue:max};
@@ -409,10 +408,10 @@ define(["require"],function(require) {
                 setTimeout(function(){
                     chart.draw(dt, options);
                 },100);
-            } else {
-                 var chart = new google.visualization.LineChart(panel[0]);
+            } else {*/
+                var chart = new google.visualization.LineChart(panel[0]);
                 chart.draw(dt, options);
-            }
+            //}
         }
     }
     
