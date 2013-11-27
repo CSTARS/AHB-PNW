@@ -10,7 +10,7 @@ var model = {
 	            fullCanAge: {
 	                units: "[y]",
 	                description: "Year where tree reaches full Canopy Cover.",
-	                value: 0  
+	                value: 1.5
 	            },
 	            kG: {
 	                units: "[kPA^-1]",
@@ -20,7 +20,7 @@ var model = {
 	            alpha: {
 	                units: "[kg/mol ?]",
 	                description: "Canopy quantum efficiency.",
-	                value: 0.06
+	                value: 0.08
 	            },
 	            fT: {
 	                description: "Specifies the parameters affecting temperature modifier, fT. A graph of how these parameters affect the temperature modifier is found here: https://www.desmos.com/calculator/69iwqtnl28",
@@ -28,7 +28,7 @@ var model = {
 	                    mn: {
 	                        units: "[C]",
 	                        description: "Specifies the minimum temperature of respiration",
-	                        value: 5
+	                        value: 0
 	                    },
 	                    opt: {
 	                        units: "[C]",
@@ -38,14 +38,14 @@ var model = {
 	                    mx: {
 	                        units: "[C]",
 	                        description: "Specifies the maximum temperature of respiration",
-	                        value: 40
+	                        value: 50
 	                    }
 	                }
 	            },
 	            BLcond: {
 	                units: "[]",
 	                description: "Canopy boundary layer conductance. Used in the calcuation of transpiration",
-	                value: 0.2
+	                value: 0.04
 	            },
 	            fAge: {
 	                units: "fraction",
@@ -73,7 +73,7 @@ var model = {
 	            fN0: {
 	                units: "fraction",
 	                description: "Used in the calculation of the nutritional modifier,fNutr.  fNutr ranges from [fNO,1) based on the fertility index which ranges from 0 to 1.  When fN0=1 indicates fNutr is 1",
-	                value: 1
+	                value: 0.26
 	            },
 	            SLA: {
 	                units: "[m^2/kg]",
@@ -81,7 +81,7 @@ var model = {
 	                value: {
 	                    f0: {
 	                        description: "Value at Initial Time",
-	                        value: 10.8
+	                        value: 19
 	                    },
 	                    f1: {
 	                        description: "Value at Infinite Time",
@@ -90,7 +90,7 @@ var model = {
 	                    tm: {
 	                        units: "[y]",
 	                        description: "Time in years where value is the average of f0 and f1",
-	                        value: 1
+	                        value: 5
 	                    },
 	                    n: {
 	                        description: "n>=1; Parameter specifing the rate of change around tm.  n=1 is approximately a linear change, as n increases, change becomes more localized around tm.",
@@ -114,7 +114,7 @@ var model = {
 	                    lai: {
 	                        units: "[m^2/m^2]",
 	                        description: "Leaf Area Index where parameter reaches a maximum value.",
-	                        value: 3.33
+	                        value: 2.6
 	                    }
 	                }
 	            },
@@ -128,12 +128,12 @@ var model = {
 	                    },
 	                    mx: {
 	                        description: "Maximum value",
-	                        value: 0.15
+	                        value: 0.24
 	                    },
 	                    lai: {
 	                        units: "[m^2/m^2]",
 	                        description: "Leaf Area Index where parameter reaches a maximum value.",
-	                        value: 5
+	                        value: 7.3
 	                    }
 	                }
 	            },
@@ -164,12 +164,12 @@ var model = {
 	                    },
 	                    pfsP: {
 	                        description: "Power in relation of DBO to pfs",
-	                        value: -1.161976
+	                        value: -0.772
 	                    },
 	                    pfsC: {
 	                        units: "[cm^-1]",
 	                        description: "Constant in relation of DOB to pfs.",
-	                        value: 1.91698
+	                        value: 1.3
 	                    }
 	                }
 	            },
@@ -179,20 +179,20 @@ var model = {
 	                value: {
 	                    mn: {
 	                        description: "Minimum allocation to the root, when the physiologal parameter is 1.",
-	                        value: 0.25
+	                        value: 0.17
 	                    },
 	                    mx: {
 	                        description: "Maximum allocation to the root, when m0.",
-	                        value: 0.34
+	                        value: 0.7
 	                    },
 	                    m0: {
 	                        description: "Dependance on the fertility index. 0 indicates full dependance on fertility, 1 indicates a constant allocation, independant of fertility",
-	                        value: 0
+	                        value: 0.5
 	                    },
 	                    turnover: {
 	                        units: "[month^-1]",
 	                        description: "Specifies the monthly root turnover rate.",
-	                        value: 0.005
+	                        value: 0.02
 	                    }
 	                }
 	            },
@@ -202,7 +202,7 @@ var model = {
 		                frac: {
 		                    units: "[month^1]",
 		                    description: "Specifies the fractional amount of root biomass that exceeds the aboveground requirements that can be supplied in a given month.",
-		                    value: 1
+		                    value: 0.2
 		                },
 		                LAITarget: {
 		                    units: "[m^2/m^2]",
@@ -212,7 +212,7 @@ var model = {
 		                efficiency: {
 		                    units: "[kg/kg]",
 		                    description: "Specifies the efficiency in converting root biomass into aboveground biomass.",
-		                    value: 0.75
+		                    value: 0.7
 		                }
 	                }
 	            },
@@ -238,11 +238,6 @@ var model = {
 	                        value: 2.5
 	                    }
 	                }
-	            },
-	            stemsPerStump: {
-	                value: 4.4,
-	                units: "unitless",
-	                description: ""
 	            }
 	        }
 	    },

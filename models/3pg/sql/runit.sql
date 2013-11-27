@@ -36,25 +36,6 @@ plantation ;
 \set stop `date`
 select :'stop'::timestamp-:'start'::timestamp as elapsed;
 
-drop table if exists average_growth cascade;
-create table average_growth as with irr as (                     
- select pid,type,(d[array_length(d,1)]-d[1])/365.25 as years,
-        ps[array_length(ps,1)] as i
- from growthmodel
-),
-non as (                     
- select pid,type,(d[array_length(d,1)]-d[1])/365.25 as years,
-        ps[array_length(ps,1)] as n
- from nonirrigatedgrowthmodel
-)
-select pid,type,
-((i)."feedstockHarvest"/irr.years)::decimal(6,2) as "irrigated_yield",
-((i)."CumIrrig"/irr.years)::decimal(6,2) as "irrigation",
-((n)."feedstockHarvest"/non.years)::decimal(6,2) as "nonirrigated_yield"
---false as irrigated,
---((n)."feedstockHarvest"/non.years)::decimal(6,2) as yield
-from irr join non using (pid,type);
-
 drop table if exists harvests cascade;
 create table harvests as 
 with a as (
@@ -78,9 +59,9 @@ f as (
  i i join i p on (i.n=p.x)
 ) 
 select pid,type,date,
-(((irr)."feedstockHarvest" - (pirr)."feedstockHarvest")/yr)::decimal(6,2) as irr, 
+(((irr)."feedstockHarvest" - (pirr)."feedstockHarvest")/yr)::decimal(6,2) as irrigated_yield, 
 (((irr)."CumIrrig" - (pirr)."CumIrrig")/yr)::decimal(6,2) as irrigation,
-(((non)."feedstockHarvest" - (pnon)."feedstockHarvest")/yr)::decimal(6,2) as nonirrigated 
+(((non)."feedstockHarvest" - (pnon)."feedstockHarvest")/yr)::decimal(6,2) as nonirrigated_yield
 from f 
 order by date,pid,type;
 
@@ -88,7 +69,10 @@ order by date,pid,type;
 --where irrigated_yield/nonirrigated_yield > 1.3;
 
 create view poplar_yield_by_cmz as 
-select regexp_replace(cmz,' ','')||state as state_cmz,
+select
+type,
+date,
+regexp_replace(cmz,' ','')||state as state_cmz,
 min(irrigated_yield)::decimal(6,1) min_ir,
 max(irrigated_yield)::decimal(6,1) max_ir,
 avg(irrigated_yield)::decimal(6,1) as avg_ir,
@@ -108,12 +92,15 @@ stddev(nonirrigated_yield)::decimal(6,3) as stddev_non,
 (sum(acres_harvested*nonirrigated_yield)/
  sum(acres_harvested))::decimal(6,1) as weighted_avg_non
 from to_bcam.pixel_nass_production 
-join m3pgjs.average_growth using (pid)
-group by state,cmz
-order by state,cmz;
+join m3pgjs.harvests using (pid)
+group by type,date,state,cmz
+order by type,date,state,cmz;
 
 create view poplar_yield_by_cmz_commodity as 
-select regexp_replace(cmz,' ','')||state as state_cmz,commodity,
+select 
+type,
+date,
+regexp_replace(cmz,' ','')||state as state_cmz,commodity,
 min(irrigated_yield)::decimal(6,1) min_ir,
 max(irrigated_yield)::decimal(6,1) max_ir,
 avg(irrigated_yield)::decimal(6,1) as avg_ir,
@@ -133,6 +120,6 @@ stddev(nonirrigated_yield)::decimal(6,3) as stddev_non,
 (sum(acres_harvested*nonirrigated_yield)/
  sum(acres_harvested))::decimal(6,1) as weighted_avg_non
 from to_bcam.pixel_nass_production 
-join m3pgjs.average_growth using (pid)
-group by state,cmz,commodity
-order by state,cmz,commodity;
+join m3pgjs.harvests using (pid)
+group by type,date,state,cmz,commodity
+order by type,date,state,cmz,commodity;
