@@ -65,7 +65,7 @@ var m3PG = {
   
   runCurrentSetup: function(lengthOfGrowth,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,weatherMap,customWeatherMap, plantation){
     
-    var m = currentMonth+'';
+    var m = (currentMonth+1)+'';
     if( m.length == 1 ) m = '0'+m;
     
     var weatherThisMonth;
@@ -139,7 +139,7 @@ var m3PG = {
         manage.coppice = false; 
       }
       
-      m = currentMonth+'';
+      m = (currentMonth+1)+'';
       if( m.length == 1 ) m = '0'+m;
     
           var weatherThisMonth;
