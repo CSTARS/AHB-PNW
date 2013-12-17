@@ -13,6 +13,8 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 	 var debug = false;
 	 var devmode = false;
 
+    var weatherCustomChart = null;
+
      // row raw data does a lot of processing of the results and the current state of what's
      // being displayed.  Go ahead an setup the csv data at this point, then if the user
      // decides to export, we are all set to to;
@@ -278,6 +280,10 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
         $(window).resize(function(){
             charts.resize();
+
+            if( weatherCustomChart ) {
+                weatherCustomChart = charts.createWeatherChart($('#custom-weather-chart')[0], window.custom_weather);
+            }
         });
 
         callback();
@@ -436,6 +442,10 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         var hasCoverage = true;
         var count = 0;
         while( count < 10000 ) {
+            if( !window.custom_weather ) {
+                hasCoverage = false;
+                break;
+            }
 
             var m = (cDate.getMonth()+1)+'';
             var y = cDate.getFullYear();
@@ -495,6 +505,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
             var t = [date];
             for( var key in window.custom_weather[date] ) {
+                if( key == 'nrel' ) continue;
                 if( arr.length == 0 ) headers.push(key);
                 t.push(window.custom_weather[date][key]);
             }
@@ -507,7 +518,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             return;
         }
 
-        var html = '<table class="table table-striped"><tr>';
+        var html = '<div style="overflow:auto;max-height:600px"><table class="table table-striped"><tr>';
 
         arr.sort(function(a, b){
             var d1 = new Date(a[0]+"-01").getTime();
@@ -531,7 +542,12 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             html += '<tr><td>'+arr[i].join('</td><td>')+'</td></tr>';
         }
 
-        $('#custom-weather-panel').html(html+"</table>");
+        $('#custom-weather-panel').html(html+'</table></div><div id="custom-weather-chart"></div>');
+
+        setTimeout(function(){
+            weatherCustomChart = charts.createWeatherChart($('#custom-weather-chart')[0], window.custom_weather);
+        }, 1000);
+
     }
 
     var showRawOutput = function(results) {
@@ -858,6 +874,9 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                         $("#input-weather-" + key + "-" + i).val("");
                 }
             }
+
+            // create the chart
+            inputForm.updateAverageChart();
 
             // load tree
             this.loadTree(setup.tree);

@@ -330,10 +330,6 @@ define(["require"],function(require) {
             ele.find('.status').html('<div class="alert alert-danger">'+msg+'</div>');
         }
 
-  		function checkErrors() {
-
-  		}
-
   		return {
   			init : init
   		}

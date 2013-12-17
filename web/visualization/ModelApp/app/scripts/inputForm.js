@@ -1,6 +1,10 @@
 define(['require'],function(require){
     var app = null;
     var gdrive = null;
+    var charts = null;
+
+    var weatherAverageChart = null;
+    var weatherAverageChartData = {};
 
     var SETUP_TEMPLATE = 
     	'<div>'+
@@ -25,7 +29,7 @@ define(['require'],function(require){
          '<div>';
 
     var GOOLEDRIVE_TREE_TEMPLATE =
-    	'<div style="padding:15px 0 5px 0;border-bottom:1px solid #eee;margin-bottom:5px;height: 50px">'+
+    	'<div style="padding:15px 0 5px 0;margin-bottom:5px;height: 50px">'+
     		'<div class="btn-group pull-right" id="tree-sub-menu">'+
   				'<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">'+
     				'<span id="loaded-tree-name">Default Tree</span> <span class="caret"></span>'+
@@ -36,7 +40,7 @@ define(['require'],function(require){
     				'<li style="display:none"><a id="share-tree-btn" class="btn btn-default" style="display:none;margin-left:10px"><i class="icon-share"></i> Share Tree</a></li>'+
   				'</ul>'+
 			'</div>'+
-			'<div><input type="checkbox" id="compare-trees" /> Compare Trees</div>'+
+			'<div style="display:none"><input type="checkbox" id="compare-trees" /> Compare Trees</div>'+
 		'</div>';
 
 	var INPUT_TEMPLATE = 
@@ -106,7 +110,9 @@ define(['require'],function(require){
 					'</div>'+
 					'</div>'+
 					'<div id="custom-weather-panel" style="display:none;margin-top:20px"></div>'+
-					'<div id="average-weather-panel"><table class="table table-striped table-condensed weather-table" style="margin-top:20px">';
+					'<div id="average-weather-panel">'+
+					'<div style="padding:10px;color:#888">Select location to set the average weather data</div>'+
+					'<table class="table table-striped table-condensed weather-table" style="margin-top:20px">';
 
 		table += "<tr>";
 		for( var i = 0; i < cols.length; i++ ) {
@@ -125,7 +131,7 @@ define(['require'],function(require){
 			}
 			table += "</tr>";
 		}
-		return table+"</table></div>";
+		return table+'</table><div id="average-weather-chart"></div></div>';
 		
 	}
 	
@@ -154,13 +160,16 @@ define(['require'],function(require){
 		q.setQuery('SELECT *');
 		q.send(function(response){
 			var table = JSON.parse(response.getDataTable().toJSON());
-			
+
 			for( var i = 0; i < table.rows.length; i++ ) {
+				var m = i+'';
+				weatherAverageChartData[m] = {};
 				for( var j = 1; j < table.cols.length; j++ ) {
 					$("#input-weather-"+cols[j]+"-"+i).val(table.rows[i].c[j] ? table.rows[i].c[j].v : "");
 				}
 			}
-			
+
+			updateAverageChart();
 			checkDone();
 		});
 		
@@ -184,7 +193,20 @@ define(['require'],function(require){
 		
 		$("#current-location").html(lng+", "+lat+" <a href='"+window.location.href.replace(/#.*/,'')+
 		                            "?ll="+lng+","+lat+"' target='_blank'><i class='icon-link'></i></a>");
-		
+	}
+
+	function updateAverageChart() {
+		weatherAverageChartData = {};
+
+		for( var i = 0; i < 12; i++ ) {
+			weatherAverageChartData[i+''] = {};
+			for( var j = 1; j < cols.length; j++ ) {
+				var val = $("#input-weather-"+cols[j]+"-"+i).val();
+				if( val && val.length > 0 ) weatherAverageChartData[i+''][cols[j]] = parseInt(val);
+				else weatherAverageChartData[i+''][cols[j]] = 0;
+			}
+		}
+		weatherAverageChart = charts.createWeatherChart($('#average-weather-chart')[0], weatherAverageChartData);
 	}
 	
 	function _selectWeatherLocation() {
@@ -315,6 +337,8 @@ define(['require'],function(require){
 	function create(ele) {
         app = require('app');
         gdrive = require('gdrive');
+        charts = require('charts');
+
         var weatherFileReader = require('weatherFileReader');
 
         weatherFileReader.init();
@@ -440,6 +464,11 @@ define(['require'],function(require){
 			}
 		});
 
+		$(window).on('resize', function(){
+			if( weatherAverageChart ){
+				weatherAverageChart = charts.createWeatherChart($('#average-weather-chart')[0], weatherAverageChartData);
+			} 
+		});
 		
 		_setWeatherData();	
 	}
@@ -484,6 +513,7 @@ define(['require'],function(require){
 
 	
 	return {
-		create : create
+		create : create,
+		updateAverageChart: updateAverageChart
 	}	
 });

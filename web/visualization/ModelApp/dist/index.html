@@ -37,7 +37,12 @@
     </script>
 	
      <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
-	 <link rel="stylesheet" href="styles/2f9f172b.main.css">
+	 <!-- build:css({.tmp,app}) styles/main.css -->
+     <link rel="stylesheet" href="styles/main.css">
+	 <link rel="stylesheet" type="text/css" href="styles/style.css">
+     <link rel="stylesheet" href="bower_components/owlcarousel/owl-carousel/owl.carousel.css">
+     <link rel="stylesheet" href="bower_components/owlcarousel/owl-carousel/owl.theme.css">
+     <!-- endbuild -->
 
 
 </head>
@@ -53,7 +58,9 @@
     	<div id="status" style="font-size:14px">Visualization package</div>
     </div>
 
-    <script data-main="scripts/c2aa39db.main" src="bower_components/requirejs/require.js"></script>
+    <!-- build:js scripts/main.js -->
+    <script data-main="scripts/main" src="bower_components/requirejs/require.js"></script>
+    <!-- endbuild -->
 
 </body>
 </html>
