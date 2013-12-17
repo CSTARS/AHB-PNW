@@ -19,10 +19,12 @@ var m3PG = {
     m3PGIO.readAllConstants(plantation); //both tree constants and plantation/management constants
     
     var weatherMap = [];
+    // real data, not average
+    var customWeatherMap = {};
     
     var plantingParams = {};
     //plantation instead of datemap
-    m3PGIO.readWeather(weatherMap, plantingParams); //at this point weather map is a map of weather json objects, indexed at month 0
+    m3PGIO.readWeather(weatherMap, plantingParams, customWeatherMap); //at this point weather map is a map of weather json objects, indexed at month 0
     //also reads in the manage stuff (date coppice, etc) and soil parameters.
    
     var currentDate = plantingParams["datePlanted"];
@@ -63,7 +65,15 @@ var m3PG = {
   
   runCurrentSetup: function(lengthOfGrowth,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,weatherMap, plantation){
     
-    var weatherThisMonth = weatherMap[currentMonth];
+    var m = currentMonth+'';
+    if( m.length == 0 ) m = '0'+m;
+    
+    var weatherThisMonth;
+    if( customWeatherMap[currentDate.getFullYear()+'-'+m] ) {
+    	weatherThisMonth = customWeatherMap[currentDate.getFullYear()+'-'+m];
+    } else {
+    	weatherThisMonth = weatherMap[currentMonth];
+    }
     
     var firstMonthResults = m3PG.init(plantation,soil);
    
