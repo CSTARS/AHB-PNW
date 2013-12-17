@@ -247,6 +247,7 @@ The Advanced Hardwood Biofuels Northwest project, AHB-NW investigates using popl
                 <div><a href="https://github.com/browserstack/flashblock-detector" target="_blank">flashblock-detector</a></div>
                 <div><a href="http://requirejs.org/" target="_blank">RequireJS</a></div>
             </div>
+            <div style="padding:15px;text-align:center;color:#666;font-size:12px">Copyright &#169; The Regents of the University of California, Davis campus. All rights reserved.</div>
       </div>
       <div class="modal-footer">
         <a class="btn btn-default pull-right" data-dismiss="modal" >Close</a>
@@ -303,6 +304,29 @@ The Advanced Hardwood Biofuels Northwest project, AHB-NW investigates using popl
       </div>
       <div class="modal-footer">
         <a class="btn btn-primary pull-right" id="export-csv">Export</a>
+        <a class="btn btn-default pull-right" style="margin-right: 15px" data-dismiss="modal" >Close</a>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="weatherReader-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <i class="icon-upload-alt"></i> Upload Weather Data
+      </div>
+      <div class="modal-body">
+        <div class="drop-zone-container">
+          <input type="file" id="files" name="file" style="margin:auto" multiple>
+          <div style="margin:10px">- OR -</div>
+          <div id="drop_zone">Drop files here</div>
+          <div id="file_list"></div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
         <a class="btn btn-default pull-right" style="margin-right: 15px" data-dismiss="modal" >Close</a>
       </div>
     </div><!-- /.modal-content -->
