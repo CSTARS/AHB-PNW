@@ -2,6 +2,9 @@ define(["require"],function(require) {
 
     var app = null;
 
+    // add spreadsheet viz source
+    // https://spreadsheets.google.com/tq?tq=select%20*&key=0Av7cUV-o2QQYdHZFYWJNNWpRS1hIVWhGQThlLWZwZWc&usp=drive_web#gid=0
+
 	function init() {
 		var dropZone = document.getElementById('drop_zone');
 		dropZone.addEventListener('dragover', _handleDragOver, false);
@@ -9,8 +12,29 @@ define(["require"],function(require) {
 
 		document.getElementById('files').addEventListener('change', _handleFileSelect, false);
 
+        $('#spreadsheet-weather-input-btn').on('click', function(){
+            _handleGoogleSpreadsheet();
+        });
+        $('#spreadsheet-weather-input').on('keyup', function(e){
+            if( e.which == 13 ) _handleGoogleSpreadsheet();
+        });
+
+        $('#weatherReader-localfile').on('click', function(){
+            $('#weatherReader-localfile-panel').toggle('slow');
+        });
+        $('#weatherReader-spreadsheet').on('click', function(){
+            $('#weatherReader-spreadsheet-panel').toggle('slow');
+        });
+
         app = require('app');
 	}
+
+    function _handleGoogleSpreadsheet() {
+        var filePanel = new WeatherFile();
+        var root = $("#file_list");
+        filePanel.initFromUrl($('#spreadsheet-weather-input').val(), root);
+        $('#spreadsheet-weather-input').val('');  
+    }
 
 	function _handleFileSelect(evt) {
 	    evt.stopPropagation();
@@ -115,7 +139,35 @@ define(["require"],function(require) {
     		ele.find('.filename').html(getName(file));
     		rootEle.append(ele);
 
+            _setHandlers();
+  		}
+
+        function initFromUrl(url, rootEle) {
+            var q = new google.visualization.Query(url);
+            ele.find('.progress').html('Querying spreadsheet...');
+
+            var key = getKey(url);
+            ele.find('.filename').html('<h3 style="border-bottom:1px solid #eee;padding:15px 0 4px 0"><i class="icon-tint"></i> '+
+                'Google spreadsheet'+(key.length > 0 ? '<br /><span style="color:#888;font-size:14px">'+key+'</span>' : '')+'</h3>');
+
+            rootEle.append(ele);
             
+            q.setQuery('SELECT *');
+            q.send(function(response){
+                ele.find('.progress').remove();
+
+                if (response.isError()) {
+                    setError('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+                    return;
+                }
+
+                parse(dtToCsv(response.getDataTable()));
+            });
+
+            _setHandlers();
+        }
+
+        function _setHandlers() {
             ele.find('.map-data-btn').on('click', function(){
                 ele.find('.col-status').toggle('slow');
             });
@@ -132,7 +184,42 @@ define(["require"],function(require) {
                 app.setWeather(data);
                 ele.remove();
             });
-  		}
+        }
+
+        function dtToCsv(dt) {
+            var arr = [[]];
+
+            dt = JSON.parse(dt.toJSON());
+            for( var i = 0; i < dt.cols.length; i++ ) {
+                arr[0].push(dt.cols[i].label);
+            }
+
+            for( var i = 0; i < dt.rows.length; i++ ) {
+                arr.push([]);
+                for( var j = 0; j < dt.rows[i].c.length; j++ ) {
+                    if( !dt.rows[i].c[j] ) arr[i+1].push('');
+                    else arr[i+1].push(dt.rows[i].c[j].v);
+                }
+            }
+
+            var csv = '';
+            for( var i = 0; i < arr.length; i++ ) {
+                csv += arr[i].join(',')+'\n';
+            }
+
+            return csv;
+        }
+
+        function getKey(url) {
+            var parts = url.split('?');
+            if( parts.length == 1 ) return '';
+
+            parts = parts[1].split('&');
+            for( var i = 0; i < parts.length; i++ ) {
+                if( parts[i].split('=')[0] == 'key' ) return parts[i].split('=')[1];
+            }
+            return '';
+        }
 
   		function getName(f) {
   			return ['<h3 style="border-bottom:1px solid #eee;padding:15px 0 4px 0"><i class="icon-tint"></i> ', f.name, 
@@ -335,7 +422,8 @@ define(["require"],function(require) {
         }
 
   		return {
-  			init : init
+  			init : init,
+            initFromUrl : initFromUrl
   		}
 
   	};

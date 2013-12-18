@@ -319,9 +319,31 @@ The Advanced Hardwood Biofuels Northwest project, AHB-NW investigates using popl
       </div>
       <div class="modal-body">
         <div class="drop-zone-container">
-          <input type="file" id="files" name="file" style="margin:auto" multiple="multiple">
-          <div style="margin:10px">- OR -</div>
-          <div id="drop_zone">Drop files here</div>
+          <div class="panel panel-default">
+            <div class="panel-heading" style="cursor:pointer" id="weatherReader-localfile">
+              <h3 class="panel-title">Local File</h3>
+            </div>
+            <div class="panel-body" style="display:none" id="weatherReader-localfile-panel">
+              <input type="file" id="files" name="file" style="margin:auto" multiple="multiple">
+              <div style="margin:10px">- OR -</div>
+              <div id="drop_zone">Drop files here</div>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading" style="cursor:pointer" id="weatherReader-spreadsheet">
+              <h3 class="panel-title">Google Spreadsheet</h3>
+            </div>
+            <div class="panel-body" style="display:none" id="weatherReader-spreadsheet-panel">
+              <div class="input-group">
+                <input id="spreadsheet-weather-input" type="text" class="form-control" placeholder="Google Spreadsheet Url">
+                <span class="input-group-btn">
+                  <button id="spreadsheet-weather-input-btn" class="btn btn-default" type="button">Add</button>
+                </span>
+              </div>
+            </div>
+          </div>
+        
           <div id="file_list"></div>
         </div>
 
