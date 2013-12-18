@@ -30,9 +30,14 @@ define(["require"],function(require) {
 	}
 
     function _handleGoogleSpreadsheet() {
+        var val = $('#spreadsheet-weather-input').val();
+        if( val.length == 0 ) return;
+
+        if( !val.match(/^http.*/ ) ) val = 'https://'+val;
+
         var filePanel = new WeatherFile();
         var root = $("#file_list");
-        filePanel.initFromUrl($('#spreadsheet-weather-input').val(), root);
+        filePanel.initFromUrl(val, root);
         $('#spreadsheet-weather-input').val('');  
     }
 
@@ -55,6 +60,13 @@ define(["require"],function(require) {
 		evt.preventDefault();
 		evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
   	}
+
+    // on add, if the list is empty, let's close the popup
+    function _onComplete() {
+        if( $("#file_list").children().length == 0 ) {
+            $('#weatherReader-modal').modal('hide');
+        }
+    }
 
   	var WeatherFile = function() {
   		var headers = {
@@ -183,6 +195,7 @@ define(["require"],function(require) {
             ele.find('.btn-success').on('click', function(){
                 app.setWeather(data);
                 ele.remove();
+                _onComplete();
             });
         }
 
