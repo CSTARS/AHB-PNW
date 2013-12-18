@@ -1,3 +1,19 @@
+.drop-zone-container {
+  text-align: center;
+}
+
+#drop_zone {
+  border: 2px dashed #bbb;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  padding: 25px;
+  text-align: center;
+  font-size: 20pt;
+  color: #bbb;
+}
+
+
 
 .tab-pane .row .form-group {
 	padding-top : 15px;

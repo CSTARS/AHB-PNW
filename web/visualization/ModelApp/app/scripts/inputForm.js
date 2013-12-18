@@ -1,6 +1,10 @@
 define(['require'],function(require){
     var app = null;
     var gdrive = null;
+    var charts = null;
+
+    var weatherAverageChart = null;
+    var weatherAverageChartData = {};
 
     var SETUP_TEMPLATE = 
     	'<div>'+
@@ -25,14 +29,19 @@ define(['require'],function(require){
          '<div>';
 
     var GOOLEDRIVE_TREE_TEMPLATE =
-    	'<div style="padding:15px 0 5px 0;border-bottom:1px solid #eee;margin-bottom:5px;">'+
-    		'<div class="btn-group">'+
-    			'<a class="btn btn-default" id="gdrive-treepanel-load"><i class="icon-cloud-download"></i> Load</a>'+
-    			'<a class="btn btn-default" id="gdrive-treepanel-save"><i class="icon-cloud-upload"></i> Save</a>'+
-    		'</div>'+
-    		'<a id="share-tree-btn" class="btn btn-default" style="display:none;margin-left:10px"><i class="icon-share"></i> Share</a>'+
-    		'<h5 style="display:none" class="pull-right">Loaded Tree: <span id="loaded-tree-name" class="label label-default"></span></h5>'+
-    	'</div>';
+    	'<div style="padding:15px 0 5px 0;margin-bottom:5px;height: 50px">'+
+    		'<div class="btn-group pull-right" id="tree-sub-menu">'+
+  				'<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">'+
+    				'<span id="loaded-tree-name">Default Tree</span> <span class="caret"></span>'+
+  				'</button>'+
+  				'<ul class="dropdown-menu" role="menu">'+
+    				'<li><a id="gdrive-treepanel-load"><i class="icon-cloud-download"></i> Load Tree</a></li>'+
+    				'<li><a id="gdrive-treepanel-save"><i class="icon-cloud-upload"></i> Save Tree</a></li>'+
+    				'<li style="display:none"><a id="share-tree-btn" class="btn btn-default" style="display:none;margin-left:10px"><i class="icon-share"></i> Share Tree</a></li>'+
+  				'</ul>'+
+			'</div>'+
+			'<div style="display:none"><input type="checkbox" id="compare-trees" /> Compare Trees</div>'+
+		'</div>';
 
 	var INPUT_TEMPLATE = 
 		'<div class="form-group">'+
@@ -94,8 +103,16 @@ define(['require'],function(require){
 			if( attr != "nrel" ) cols.push(attr);
 		}
 		
-		
-		var table = "<table class='table table-striped table-condensed weather-table' style='margin-top:20px'>";
+		var table = '<div style="padding-top:25px"><a class="btn btn-default pull-right" id="load-weather-btn"><i class="icon-upload-alt"></i> Upload</a>'+
+					'<div class="btn-group" id="weather-input-toggle">'+
+						'<button type="button" class="btn btn-default active">Averages</button>'+
+						'<button type="button" class="btn btn-default">Actual</button>'+
+					'</div>'+
+					'</div>'+
+					'<div id="custom-weather-panel" style="display:none;margin-top:20px"></div>'+
+					'<div id="average-weather-panel">'+
+					'<div style="padding:10px;color:#888">Select location to set the average weather data</div>'+
+					'<table class="table table-striped table-condensed weather-table" style="margin-top:20px">';
 
 		table += "<tr>";
 		for( var i = 0; i < cols.length; i++ ) {
@@ -114,7 +131,7 @@ define(['require'],function(require){
 			}
 			table += "</tr>";
 		}
-		return table+"</table>";
+		return table+'</table><div id="average-weather-chart"></div></div>';
 		
 	}
 	
@@ -143,13 +160,16 @@ define(['require'],function(require){
 		q.setQuery('SELECT *');
 		q.send(function(response){
 			var table = JSON.parse(response.getDataTable().toJSON());
-			
+
 			for( var i = 0; i < table.rows.length; i++ ) {
+				var m = i+'';
+				weatherAverageChartData[m] = {};
 				for( var j = 1; j < table.cols.length; j++ ) {
 					$("#input-weather-"+cols[j]+"-"+i).val(table.rows[i].c[j] ? table.rows[i].c[j].v : "");
 				}
 			}
-			
+
+			updateAverageChart();
 			checkDone();
 		});
 		
@@ -173,7 +193,20 @@ define(['require'],function(require){
 		
 		$("#current-location").html(lng+", "+lat+" <a href='"+window.location.href.replace(/#.*/,'')+
 		                            "?ll="+lng+","+lat+"' target='_blank'><i class='icon-link'></i></a>");
-		
+	}
+
+	function updateAverageChart() {
+		weatherAverageChartData = {};
+
+		for( var i = 0; i < 12; i++ ) {
+			weatherAverageChartData[i+''] = {};
+			for( var j = 1; j < cols.length; j++ ) {
+				var val = $("#input-weather-"+cols[j]+"-"+i).val();
+				if( val && val.length > 0 ) weatherAverageChartData[i+''][cols[j]] = parseInt(val);
+				else weatherAverageChartData[i+''][cols[j]] = 0;
+			}
+		}
+		weatherAverageChart = charts.createWeatherChart($('#average-weather-chart')[0], weatherAverageChartData);
 	}
 	
 	function _selectWeatherLocation() {
@@ -304,6 +337,13 @@ define(['require'],function(require){
 	function create(ele) {
         app = require('app');
         gdrive = require('gdrive');
+        charts = require('charts');
+
+        var weatherFileReader = require('weatherFileReader');
+
+        weatherFileReader.init();
+
+
 		var model, m, attr, config;
 		
         var inputs = $.extend(true, {}, app.getModel());
@@ -353,10 +393,11 @@ define(['require'],function(require){
 
 			    // add the google drive btn from trees
 			    if( model =='tree' ) {
-			    	content += GOOLEDRIVE_TREE_TEMPLATE;
+			    	content += _createTreeInput(model, inputs);
+			    } else {
+			    	content += _generateInputs(0, model, '', model, inputs[model]);
 			    }
 
-				content += _generateInputs(0, model, '', model, inputs[model]);
 				content += '</div>';
 			}
 			
@@ -380,7 +421,21 @@ define(['require'],function(require){
 		ele.find("#gdrive-treepanel-save").on('click', function(){
 			gdrive.showSaveTreePanel();
 		});
-		
+
+		// set tree input handlers
+		$("#compare-trees").on('click', function(){
+			if( $(this).is(':checked') ) {
+				$("#single-tree-content").hide();
+				$("#compare-tree-content").show();
+				$("#tree-sub-menu").hide();
+			} else {
+				$("#single-tree-content").show();
+				$("#compare-tree-content").hide();
+				$("#tree-sub-menu").show();
+			}
+		});
+
+		// set pill click handlers
 		$('#input_tabs a').click(function (e) {
 			  e.preventDefault()
 			  $(this).tab('show')
@@ -388,13 +443,77 @@ define(['require'],function(require){
 		$('#tab_inputs_weather').tab('show');
 		
 		$('.select-weather-location').on('click', _selectWeatherLocation);
+
+
+		$('#weatherReader-modal').modal({show:false});
+		$('#load-weather-btn').on('click', function(){
+			$('#weatherReader-modal').modal('show');
+		});
 		
-		_setWeatherData();
+		$("#weather-input-toggle .btn").on('click', function(){
+			$('#weather-input-toggle .btn.active').removeClass('active');
+			$(this).addClass('active');
+
+			if( $(this).html() == 'Averages' ) {
+				$('#average-weather-panel').show();
+				$('#custom-weather-panel').hide();
+			} else {
+				app.setWeather();
+				$('#average-weather-panel').hide();
+				$('#custom-weather-panel').show();
+			}
+		});
+
+		$(window).on('resize', function(){
+			if( weatherAverageChart ){
+				weatherAverageChart = charts.createWeatherChart($('#average-weather-chart')[0], weatherAverageChartData);
+			} 
+		});
 		
+		_setWeatherData();	
+	}
+
+	function _createTreeInput(model, inputs) {
+		var content = "";
+		content += GOOLEDRIVE_TREE_TEMPLATE;
+
+		content += '<div id="single-tree-content">';
+		content += _generateInputs(0, model, '', model, inputs[model]);
+		content += '</div>';
+
+		content += '<div id="compare-tree-content" style="display:none">'+
+					'<ul class="nav nav-tabs">'+
+						'<li class="active"><a href="#tree1" data-toggle="tab">Tree 1</a></li>'+
+  						'<li><a href="#tree2" data-toggle="tab">Tree 2</a></li>'+
+					'</ul>'+
+					'<div class="tab-content">'+
+	  					'<div class="tab-pane active" id="tree1">'+
+	  						'<div class="well" style="text-align:center;margin-top:10px">'+
+	  							'<div class="btn-group">'+
+									'<button type="button" class="btn btn-default active">Custom</button>'+
+									'<button type="button" class="btn btn-default">Select Tree</button>'+
+								'</div>'+
+	  						'</div>'+
+	  						_generateInputs(0, model, 't1', model, inputs[model])+
+	  					'</div>'+
+	  					'<div class="tab-pane active" id="tree2">'+
+	  						'<div class="well" style="text-align:center;margin-top:10px" >'+
+	  							'<div class="btn-group">'+
+									'<button type="button" class="btn btn-default active">Custom</button>'+
+									'<button type="button" class="btn btn-default">Select Tree</button>'+
+								'</div>'+
+	  						'</div>'+
+	  						_generateInputs(0, model, 't2', model, inputs[model])+
+	  					'</div>'+
+  					'</div>'+
+  				 '</div>';
+
+		return content;
 	}
 
 	
 	return {
-		create : create
+		create : create,
+		updateAverageChart: updateAverageChart
 	}	
 });

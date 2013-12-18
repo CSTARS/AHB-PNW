@@ -19,10 +19,12 @@ var m3PG = {
     m3PGIO.readAllConstants(plantation); //both tree constants and plantation/management constants
     
     var weatherMap = [];
+    // real data, not average
+    var customWeatherMap = {};
     
     var plantingParams = {};
     //plantation instead of datemap
-    m3PGIO.readWeather(weatherMap, plantingParams); //at this point weather map is a map of weather json objects, indexed at month 0
+    m3PGIO.readWeather(weatherMap, plantingParams, customWeatherMap); //at this point weather map is a map of weather json objects, indexed at month 0
     //also reads in the manage stuff (date coppice, etc) and soil parameters.
    
     var currentDate = plantingParams["datePlanted"];
@@ -50,7 +52,7 @@ var m3PG = {
     
     //var keysInOrder = ["Date", "VPD", "fVPD", "fT", "fFrost", "PAR", "xPP", "Intcptn","ASW","CumIrrig","Irrig","StandAge","LAI","CanCond","Transp","fSW","fAge","PhysMod","pR","pS","litterfall","NPP","WF","WR","WS", "W"];    
     
-    m3PG.runCurrentSetup(lengthOfGrowth,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,weatherMap, plantation)
+    m3PG.runCurrentSetup(lengthOfGrowth,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,weatherMap,customWeatherMap, plantation)
     
     
     //init all - will be p,
@@ -61,9 +63,17 @@ var m3PG = {
     
   },
   
-  runCurrentSetup: function(lengthOfGrowth,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,weatherMap, plantation){
+  runCurrentSetup: function(lengthOfGrowth,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,weatherMap,customWeatherMap, plantation){
     
-    var weatherThisMonth = weatherMap[currentMonth];
+    var m = (currentMonth+1)+'';
+    if( m.length == 1 ) m = '0'+m;
+    
+    var weatherThisMonth;
+    if( customWeatherMap[currentDate.getFullYear()+'-'+m] ) {
+    	weatherThisMonth = customWeatherMap[currentDate.getFullYear()+'-'+m];
+    } else {
+    	weatherThisMonth = weatherMap[currentMonth];
+    }
     
     var firstMonthResults = m3PG.init(plantation,soil);
    
@@ -129,8 +139,15 @@ var m3PG = {
         manage.coppice = false; 
       }
       
-      
-      weatherThisMonth = weatherMap[currentMonth]; //increment the month
+      m = (currentMonth+1)+'';
+      if( m.length == 1 ) m = '0'+m;
+    
+          var weatherThisMonth;
+	    if( customWeatherMap[currentDate.getFullYear()+'-'+m] ) {
+	    	weatherThisMonth = customWeatherMap[currentDate.getFullYear()+'-'+m];
+	    } else {
+	    	weatherThisMonth = weatherMap[currentMonth];
+	    }
       
       nextMonthResults = this.singleStep(plantation, soil, weatherThisMonth, manage, currentMonthResults); //TODO: switch up trees here when after the first harvest
       

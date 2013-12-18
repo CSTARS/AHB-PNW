@@ -100,7 +100,7 @@ require.config({
     }
 });
 
-require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel','flashblock-detector'], function ($, bootstrap, app, gdrive) {
+require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel','flashblock-detector', 'weatherFileReader'], function ($, bootstrap, app, gdrive) {
 
     window.hideInitLoading = null;
     function initLoading() {

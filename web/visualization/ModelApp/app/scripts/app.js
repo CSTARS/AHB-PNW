@@ -13,6 +13,8 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 	 var debug = false;
 	 var devmode = false;
 
+    var weatherCustomChart = null;
+
      // row raw data does a lot of processing of the results and the current state of what's
      // being displayed.  Go ahead an setup the csv data at this point, then if the user
      // decides to export, we are all set to to;
@@ -278,6 +280,10 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
         $(window).resize(function(){
             charts.resize();
+
+            if( weatherCustomChart ) {
+                weatherCustomChart = charts.createWeatherChart($('#custom-weather-chart')[0], window.custom_weather);
+            }
         });
 
         callback();
@@ -317,21 +323,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         if ($("#runbtn, #runbtn-sm").hasClass("disabled")) return;
         $("#runbtn, #runbtn-sm").addClass("disabled").html("Running...");
 
-        // TODO: this sucks :/ ....
-        // make sure all the weather is set.  #1 thing people will mess up
-        for ( var i = 0; i < 12; i++) {
-            for ( var j = 1; j < inputs.weather.length; j++) {
-                var c = inputs.weather[j];
-                var val = parseFloat($("#input-weather-" + c + "-" + i).val());
-                if( !val && val != 0 ) {
-                    alert("Missing weather data: "+c+" for month "+i+"\n\n"+
-                          "Did you select a location (Setup) and/or are all weather/soil fields filled out?");
-                    $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
-                    return;
-                }
-            }
-        }
-    
+        if( !checkWeather() ) return;
     
         // let UI process for a sec before we tank it
         // TODO: this should be preformed w/ a webworker
@@ -432,6 +424,129 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         setTimeout(function() {
             $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
         }, 250);
+
+    }
+
+    // make sure all the weather is set.  #1 thing people will mess up
+    var checkWeather = function() {
+        // first get current months we are going to run,
+        var start = $("#input-manage-DatePlanted").val();
+
+        var end = $("#input-manage-DateFinalHarvest").val().split("-");
+        var eMonth = parseInt(end[1]);
+        var eYear = parseInt(end[0]);
+
+        var cDate = new Date(start);
+
+        // now see if we have custom weather coverage
+        var hasCoverage = true;
+        var count = 0;
+        while( count < 10000 ) {
+            if( !window.custom_weather ) {
+                hasCoverage = false;
+                break;
+            }
+
+            var m = (cDate.getMonth()+1)+'';
+            var y = cDate.getFullYear();
+            if( m.length == 1 ) m = '0'+m;
+
+            if( cDate.getMonth()+1 == eMonth && y == eYear ) {
+                break;
+            } else if( !window.custom_weather[y+'-'+m] ) {
+                hasCoverage = false;
+                break;
+            }
+
+            cDate.setMonth(cDate.getMonth()+1);
+            count++;
+        }
+
+        if( hasCoverage ) return true;
+
+        // if not make sure we have averages selected
+        for ( var i = 0; i < 12; i++) {
+            for ( var j = 1; j < inputs.weather.length; j++) {
+                var c = inputs.weather[j];
+                var val = parseFloat($("#input-weather-" + c + "-" + i).val());
+                if( !val && val != 0 ) {
+                    alert("Missing weather data: "+c+" for month "+i+"\n\n"+
+                          "Did you select a location (Setup) and/or are all weather/soil fields filled out?");
+                    $("#runbtn, #runbtn-sm").removeClass("disabled").html("<i class='icon-play'></i> Run");
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    var setWeather = function(data) {
+        if( !window.custom_weather ) window.custom_weather = {};
+
+        if( data ) {
+            for( var key in data ) {
+
+                // clean up date format
+                var date = key;
+                if ( date.split('-')[1].length != 2 ) {
+                    date = date.split('-');
+                    date = date[0]+"-0"+date[1];
+                }
+
+                window.custom_weather[date] = data[key];
+            }
+        }
+
+        // create array so we can sort
+        var arr = [];
+        var headers = ['date'];
+        for( var date in window.custom_weather ) {
+
+            var t = [date];
+            for( var key in window.custom_weather[date] ) {
+                if( key == 'nrel' ) continue;
+                if( arr.length == 0 ) headers.push(key);
+                t.push(window.custom_weather[date][key]);
+            }
+
+            arr.push(t);
+        }
+
+        if( arr.length == 0 ) {
+            $('#custom-weather-panel').html("No weather data has been uploaded.");
+            return;
+        }
+
+        var html = '<div style="overflow:auto;max-height:600px"><table class="table table-striped"><tr>';
+
+        arr.sort(function(a, b){
+            var d1 = new Date(a[0]+"-01").getTime();
+            var d2 = new Date(b[0]+"-01").getTime();
+
+            if( d1 < d2 ) {
+                return 1;
+            } else if( d1 > d2 ) {
+                return -1;
+            }
+            console.log(3);
+            return 0; 
+        });
+
+        for( var i = 0; i < headers.length; i++ ) {
+            html += '<th>'+headers[i]+'</th>';
+        }
+        html += '</tr>';
+
+        for( var i = 0; i < arr.length; i++ ) {
+            html += '<tr><td>'+arr[i].join('</td><td>')+'</td></tr>';
+        }
+
+        $('#custom-weather-panel').html(html+'</table></div><div id="custom-weather-chart"></div>');
+
+        setTimeout(function(){
+            weatherCustomChart = charts.createWeatherChart($('#custom-weather-chart')[0], window.custom_weather);
+        }, 1000);
 
     }
 
@@ -553,7 +668,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             }
 
         },
-        readWeather : function(weatherMap, plantingParams) {
+        readWeather : function(weatherMap, plantingParams, customWeatherMap) {
             var datePlanted = $("#input-manage-DatePlanted").val();
             if (datePlanted && datePlanted != "") {
                 plantingParams.datePlanted = new Date($("#input-manage-DatePlanted").val());
@@ -596,6 +711,13 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             }
 
             window.weather = weatherMap;
+
+            if( window.custom_weather ) {
+                for( var date in window.custom_weather ) {
+                    window.custom_weather[date].nrel = window.custom_weather[date].rad / 0.0036;
+                    customWeatherMap[date] = window.custom_weather[date];
+                }
+            }
 
             return weatherMap;
         },
@@ -671,10 +793,11 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         exportSetup : function() {
             window.variations = {};
             this.readFromInputs();
-            this.readWeather([], {});
+            this.readWeather([], {}, {});
 
             var ex = {
                 weather : window.weather,
+                custom_weather : window.custom_weather,
                 tree : window.tree,
                 plantation : window.plantation,
                 manage : window.manage,
@@ -752,6 +875,15 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                 }
             }
 
+            if( setup.custom_weather ) {
+                window.custom_weather = setup.custom_weather;
+            } else {
+                window.custom_weather = {};
+            }
+
+            // create the chart
+            inputForm.updateAverageChart();
+
             // load tree
             this.loadTree(setup.tree);
 
@@ -810,6 +942,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         showRawOutput : showRawOutput,
         outputDefinitions : outputDefinitions,
         qs : qs,
-        loadModelCode : loadModelCode
+        loadModelCode : loadModelCode,
+        setWeather : setWeather
     };
 });
