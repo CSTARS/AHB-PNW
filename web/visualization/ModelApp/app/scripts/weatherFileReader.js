@@ -165,7 +165,7 @@ define(["require"],function(require) {
             for( var i = 1; i < csvTable.length; i++ ) {
                 if( headers.date.col < csvTable[i].length ) {
                     var p = csvTable[i][headers.date.col].split("-");
-                    if( p.length != 3 || p.length != 3 ) return setError("Date: "+csvTable[i][headers.date.col]+" is not a valid format (yyyy-mm-dd or yyyy-mm)");
+                    if( p.length != 3 && p.length != 2 ) return setError("Date: "+csvTable[i][headers.date.col]+" is not a valid format (yyyy-mm-dd or yyyy-mm)");
 
                     if( !dates[p[0]] ) dates[p[0]] = [];
                     var mmdd = p[1];
@@ -204,7 +204,7 @@ define(["require"],function(require) {
             ele.find('.col-status').html(html+'</table>');
 
 
-            if( matched.length != headerRow.length ) {
+            if( matched.length != 7 ) {
                 // create select element for missing col's
                 ele.find('.status select').append($('<option value="">[Select Column]</option>'));
 
@@ -289,7 +289,11 @@ define(["require"],function(require) {
   		function setData() {
             data = {};
             for( var i = 1; i < csvTable.length; i++ ) {
+                if( csvTable[i].length < 7 ) continue; // bad row
+
                 var date = csvTable[i][headers.date.col];
+
+                if( !date ) continue; // bad row
 
                 if( date.split('-').length == 3 ) date = date.split("-").splice(0,2).join("-");
                 data[date] = {};
@@ -297,7 +301,7 @@ define(["require"],function(require) {
                 for( var key in headers ) {
                     if( key == 'date' ) continue;
 
-                    data[date][key] = parseInt(csvTable[i][headers[key].col]);
+                    data[date][key] = parseFloat(csvTable[i][headers[key].col]);
                 }
             }
   		}
