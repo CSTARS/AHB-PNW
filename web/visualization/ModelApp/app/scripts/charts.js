@@ -18,7 +18,7 @@ define(["require"],function(require) {
         title : 'Weather',
         height : 300,
         vAxes: [{
-                title: "Radiation (MJ/day); Temperature (^C); Due Point (^C); Daylight (h)",
+                title: "Radiation (MJ/day); Temperature (^C); Dew Point (^C); Daylight (h)",
                 minValue : -5,
                 maxValue : 35
               },{
@@ -421,7 +421,7 @@ define(["require"],function(require) {
         dt.addColumn('string', 'Month');
         dt.addColumn('number', 'Min Temperature');
         dt.addColumn('number', 'Max Temperature');
-        dt.addColumn('number', 'Due Point');
+        dt.addColumn('number', 'Dew Point');
         dt.addColumn('number', 'Precipitation');
         dt.addColumn('number', 'Radiation');
         dt.addColumn('number', 'Daylight');
