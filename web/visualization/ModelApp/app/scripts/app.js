@@ -875,6 +875,12 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                 }
             }
 
+            if( setup.custom_weather ) {
+                window.custom_weather = setup.custom_weather;
+            } else {
+                window.custom_weather = {};
+            }
+
             // create the chart
             inputForm.updateAverageChart();
 
