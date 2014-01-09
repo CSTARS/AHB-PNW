@@ -146,7 +146,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             }
         }, 
         WR : {
-            label : "Leaf Biomass",
+            label : "Root Biomass",
             units : "Mg/ha",
             description : "",
             fn : function(prev_WR, cur_dW, cur_pR, turnover, prev_WR, cur_RootP) { 
@@ -574,7 +574,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
         $("#output-content").html("").append(tabs).append(contents);
         $("#rawOutputTabs").tab();
-   
+
         csvResults = {
             config : m3PGIO.exportSetup(),
             data : {}
@@ -603,6 +603,9 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
                 // set header row
                 if( j == 0 ) {
+                    csvResults.data[key][j].push('month');
+                    csvResults.data[key][j].push('date');
+
                     table += "<tr><th>Month</th><th>Date</th>";
                     for( var z = 0; z < results.length; z++ ) {
                         table += "<th>";
@@ -614,7 +617,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                         }
 
                         if( tmp.length == 0 ) {
-                            csvResults.data[key][j].push[key];
+                            csvResults.data[key][j].push(key);
                             table += key;
                         } else {
                             csvResults.data[key][j].push(tmp.join(" "));
@@ -629,6 +632,10 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                     if( m < 10 ) m = '0'+m;
 
                     table += "<tr><td>"+j+"</td><td>"+date.getFullYear()+'-'+m+"</td>";
+
+                    csvResults.data[key][j].push(j);
+                    csvResults.data[key][j].push(date.getFullYear()+'-'+m);
+
                     var v;
                     for( var z = 0; z < results.length; z++ ) {
                         v = results[z].output[j][chartRows[key]];
