@@ -6,16 +6,19 @@ var http = require('http');
 var fs = require('fs');
 
 //for paris
-//var start = 1987;
-//var stop = 1998;
+var start = 1987;
+var stop = 1998;
+var location = "Paris-Aeroport_Charles_De_Gaulle";
+var id = "71570";
+// precip is missing for a couple years
 //var location = "Paris_Le_Bourget";
 //var id = "71500";
 
 // for belgium
-var start = 1995;
-var stop = 2010;
-var location = "Antwerpen_Deurne";
-var id = "64500";
+//var start = 1995;
+//var stop = 2010;
+//var location = "Antwerpen_Deurne";
+//var id = "64500";
 
 var total = 0;
 var requests = 0;
