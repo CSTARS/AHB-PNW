@@ -320,6 +320,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
     
     var runModel = function(isRt) {
+
         if ($("#runbtn, #runbtn-sm").hasClass("disabled")) return;
         $("#runbtn, #runbtn-sm").addClass("disabled").html("Running...");
 
@@ -328,6 +329,8 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         // let UI process for a sec before we tank it
         // TODO: this should be preformed w/ a webworker
         setTimeout(function() {
+            ga('send', 'event', 'ui', 'interaction', 'model-run', 1);
+
             // read everything so the variations are set
             window.variations = {};
             m3PGIO.readFromInputs();
@@ -350,6 +353,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
             // we are only running once
             if ( params.length == 0 ) {
+                ga('send', 'event', 'ui', 'interaction', 'model-run-singleParam', 1);
 
                 runCallback = function(rows) {
                     showResults(rows);
@@ -357,6 +361,8 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                 m3PG.run(monthsToRun());
 
             } else {
+                ga('send', 'event', 'ui', 'interaction', 'model-run-variation', 1);
+
                 // set variation order
                 var runs = [];
                 for( var i = 0; i < window.variations[params[0]].length; i++ ) {

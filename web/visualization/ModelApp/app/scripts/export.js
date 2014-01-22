@@ -50,6 +50,8 @@ define(["gdrive"],function(gdrive) {
 
 		// export as csv
 	function exportCsv(results) {
+		ga('send', 'event', 'ui', 'interaction', 'export-drive-csv', 1);
+
 		$("#export-csv").addClass("disabled").html("Exporting...");
 
 		var name = $("#export-name").val();

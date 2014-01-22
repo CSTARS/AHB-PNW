@@ -182,7 +182,10 @@ define(["require"],function(require) {
         
     }
 
-    function print(chartContainer) { 
+    function print(chartContainer) {
+        ga('send', 'event', 'ui', 'interaction', 'print-chart', 1);
+
+
 	    var disp_setting="toolbar=yes,location=no,directories=yes,menubar=yes,"; 
         disp_setting+="scrollbars=yes,width=800, height=600, left=25, top=25";
         
@@ -258,6 +261,9 @@ define(["require"],function(require) {
     }
     
     function showPopup() {
+        ga('send', 'event', 'ui', 'interaction', 'show-chart-popup', 1);
+
+
         sliderPopup.find(".owl-theme").html("");
         $('body').scrollTop(0).css('overflow','hidden').append(sliderPopupBg).append(sliderPopup);
 

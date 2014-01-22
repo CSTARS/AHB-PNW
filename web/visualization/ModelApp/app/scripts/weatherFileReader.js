@@ -30,6 +30,8 @@ define(["require"],function(require) {
 	}
 
     function _handleGoogleSpreadsheet() {
+        ga('send', 'event', 'ui', 'interaction', 'load-weather-drive-file', 1);
+
         var val = $('#spreadsheet-weather-input').val();
         if( val.length == 0 ) return;
 
@@ -42,6 +44,8 @@ define(["require"],function(require) {
     }
 
 	function _handleFileSelect(evt) {
+        ga('send', 'event', 'ui', 'interaction', 'load-weather-local-file', 1);
+
 	    evt.stopPropagation();
 	    evt.preventDefault();
 
