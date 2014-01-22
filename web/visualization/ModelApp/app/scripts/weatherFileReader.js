@@ -267,7 +267,7 @@ define(["require"],function(require) {
             var dates = {};
             var displayDates = [];
             for( var i = 1; i < csvTable.length; i++ ) {
-                if( headers.date.col < csvTable[i].length ) {
+                if( headers.date.col < csvTable[i].length && csvTable[i].length >= 7 ) {
                     var p = csvTable[i][headers.date.col].split("-");
                     if( p.length != 3 && p.length != 2 ) return setError("Date: "+csvTable[i][headers.date.col]+" is not a valid format (yyyy-mm-dd or yyyy-mm)");
 
