@@ -1,0 +1,1259 @@
+{
+    "project": {},
+    "files": {
+        "Manage.js": {
+            "name": "Manage.js",
+            "modules": {},
+            "classes": {
+                "manage": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "Model3PG.js": {
+            "name": "Model3PG.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "Plantation.js": {
+            "name": "Plantation.js",
+            "modules": {},
+            "classes": {
+                "plantation": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "PlantationState.js": {
+            "name": "PlantationState.js",
+            "modules": {},
+            "classes": {
+                "plantation_state": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "SingleRunFunctions.js": {
+            "name": "SingleRunFunctions.js",
+            "modules": {
+                "3PG Module": 1
+            },
+            "classes": {
+                "m3PGFunc": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "Soil.js": {
+            "name": "Soil.js",
+            "modules": {},
+            "classes": {
+                "soil": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "Tree.js": {
+            "name": "Tree.js",
+            "modules": {},
+            "classes": {
+                "Tree": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "UserInterface.js": {
+            "name": "UserInterface.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "Weather.js": {
+            "name": "Weather.js",
+            "modules": {},
+            "classes": {
+                "weather": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "3PG Module": {
+            "name": "3PG Module",
+            "submodules": {},
+            "classes": {
+                "manage": 1,
+                "plantation": 1,
+                "plantation_state": 1,
+                "m3PGFunc": 1,
+                "soil": 1,
+                "Tree": 1,
+                "weather": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "Weather.js",
+            "line": 2
+        }
+    },
+    "classes": {
+        "manage": {
+            "name": "manage",
+            "shortname": "manage",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "3PG Module",
+            "file": "Manage.js",
+            "line": 1
+        },
+        "plantation": {
+            "name": "plantation",
+            "shortname": "plantation",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "3PG Module",
+            "file": "Plantation.js",
+            "line": 5
+        },
+        "plantation_state": {
+            "name": "plantation_state",
+            "shortname": "plantation_state",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "3PG Module",
+            "file": "PlantationState.js",
+            "line": 1
+        },
+        "m3PGFunc": {
+            "name": "m3PGFunc",
+            "shortname": "m3PGFunc",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "3PG Module",
+            "namespace": "",
+            "file": "SingleRunFunctions.js",
+            "line": 7,
+            "description": "Class for all the functions that run in a single step of the model"
+        },
+        "soil": {
+            "name": "soil",
+            "shortname": "soil",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "3PG Module",
+            "namespace": "",
+            "file": "Soil.js",
+            "line": 4
+        },
+        "Tree": {
+            "name": "Tree",
+            "shortname": "Tree",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "3PG Module",
+            "namespace": "",
+            "file": "Tree.js",
+            "line": 3
+        },
+        "weather": {
+            "name": "weather",
+            "shortname": "weather",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "3PG Module",
+            "namespace": "",
+            "file": "Weather.js",
+            "line": 2
+        }
+    },
+    "classitems": [
+        {
+            "file": "Manage.js",
+            "line": 5,
+            "itemtype": "attribute",
+            "name": "irrigFrac",
+            "class": "manage"
+        },
+        {
+            "file": "Manage.js",
+            "line": 9,
+            "itemtype": "attribute",
+            "name": "fertility",
+            "class": "manage"
+        },
+        {
+            "file": "Manage.js",
+            "line": 13,
+            "itemtype": "attribute",
+            "name": "coppice",
+            "class": "manage"
+        },
+        {
+            "file": "Model3PG.js",
+            "line": 1,
+            "description": "NOTE:  litterfall modified to account for stand age after coppicing\n+ root max is chosen (not to let it drop) \nlengthOfGrowth is in months",
+            "class": "plantation"
+        },
+        {
+            "file": "Plantation.js",
+            "line": 9,
+            "itemtype": "attribute",
+            "name": "type",
+            "class": "plantation"
+        },
+        {
+            "file": "Plantation.js",
+            "line": 13,
+            "itemtype": "attribute",
+            "name": "StockingDensity",
+            "class": "plantation"
+        },
+        {
+            "file": "Plantation.js",
+            "line": 17,
+            "itemtype": "attribute",
+            "name": "SeedlingMass",
+            "class": "plantation"
+        },
+        {
+            "file": "Plantation.js",
+            "line": 21,
+            "itemtype": "attribute",
+            "name": "stemsPerStump",
+            "class": "plantation"
+        },
+        {
+            "file": "Plantation.js",
+            "line": 25,
+            "itemtype": "attribute",
+            "name": "initialStemsPerStump",
+            "class": "plantation"
+        },
+        {
+            "file": "Plantation.js",
+            "line": 29,
+            "itemtype": "attribute",
+            "name": "pS",
+            "class": "plantation"
+        },
+        {
+            "file": "Plantation.js",
+            "line": 33,
+            "itemtype": "attribute",
+            "name": "pF",
+            "class": "plantation"
+        },
+        {
+            "file": "Plantation.js",
+            "line": 37,
+            "itemtype": "attribute",
+            "name": "pR",
+            "class": "plantation"
+        },
+        {
+            "file": "Plantation.js",
+            "line": 41,
+            "itemtype": "attribute",
+            "name": "seedlingTree",
+            "class": "plantation"
+        },
+        {
+            "file": "Plantation.js",
+            "line": 45,
+            "itemtype": "attribute",
+            "name": "coppicedTree",
+            "class": "plantation"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 5,
+            "itemtype": "attribute",
+            "name": "feedstockHarvest",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 9,
+            "itemtype": "attribute",
+            "name": "coppiceCount",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 13,
+            "itemtype": "attribute",
+            "name": "coppiceAge",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 17,
+            "itemtype": "attribute",
+            "name": "VPD",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 21,
+            "itemtype": "attribute",
+            "name": "fVPD",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 25,
+            "itemtype": "attribute",
+            "name": "fT",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 29,
+            "itemtype": "attribute",
+            "name": "fFrost",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 33,
+            "itemtype": "attribute",
+            "name": "fNutr",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 37,
+            "itemtype": "attribute",
+            "name": "fSW",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 41,
+            "itemtype": "attribute",
+            "name": "fAge",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 45,
+            "itemtype": "attribute",
+            "name": "PAR",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 49,
+            "itemtype": "attribute",
+            "name": "xPP",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 53,
+            "itemtype": "attribute",
+            "name": "Intcptn",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 57,
+            "itemtype": "attribute",
+            "name": "ASW",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 61,
+            "itemtype": "attribute",
+            "name": "CumIrrig",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 65,
+            "itemtype": "attribute",
+            "name": "Irrig",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 69,
+            "itemtype": "attribute",
+            "name": "StandAge",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 73,
+            "itemtype": "attribute",
+            "name": "LAI",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 77,
+            "itemtype": "attribute",
+            "name": "CanCond",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 81,
+            "itemtype": "attribute",
+            "name": "Transp",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 85,
+            "itemtype": "attribute",
+            "name": "PhysMod",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 89,
+            "itemtype": "attribute",
+            "name": "pfs",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 93,
+            "itemtype": "attribute",
+            "name": "pR",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 97,
+            "itemtype": "attribute",
+            "name": "pS",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 101,
+            "itemtype": "attribute",
+            "name": "pF",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 105,
+            "itemtype": "attribute",
+            "name": "litterfall",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 109,
+            "itemtype": "attribute",
+            "name": "NPP",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 113,
+            "itemtype": "attribute",
+            "name": "RootP",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 117,
+            "itemtype": "attribute",
+            "name": "dW",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 121,
+            "itemtype": "attribute",
+            "name": "WF",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 125,
+            "itemtype": "attribute",
+            "name": "WR",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 129,
+            "itemtype": "attribute",
+            "name": "WS",
+            "class": "plantation_state"
+        },
+        {
+            "file": "PlantationState.js",
+            "line": 133,
+            "itemtype": "attribute",
+            "name": "W",
+            "class": "plantation_state"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 14,
+            "description": "list of constants used for computations",
+            "itemtype": "attribute",
+            "name": "constant",
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 71,
+            "description": "Time Dependant Attribute,\nunits='various',\ndescription='This function creates a time dependant function that decays \n(or rises from f0 to f1.  The value (f0+f1)/2 is reached at tm, \nand the slope of the line at tm is given by p.",
+            "itemtype": "method",
+            "name": "tdp",
+            "params": [
+                {
+                    "name": "x",
+                    "description": ""
+                },
+                {
+                    "name": "f",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 87,
+            "itemtype": "method",
+            "name": "lin",
+            "params": [
+                {
+                    "name": "x",
+                    "description": ""
+                },
+                {
+                    "name": "p",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 102,
+            "description": "units='unitless', \ndescription='Canopy Rainfall interception'",
+            "itemtype": "method",
+            "name": "Intcptn",
+            "params": [
+                {
+                    "name": "cur_LAI",
+                    "description": ""
+                },
+                {
+                    "name": "c",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 113,
+            "description": "units='mm', \ndescription='Available Soil Water'",
+            "itemtype": "method",
+            "name": "ASW",
+            "params": [
+                {
+                    "name": "maxASW",
+                    "description": ""
+                },
+                {
+                    "name": "prev_ASW",
+                    "description": ""
+                },
+                {
+                    "name": "date_ppt",
+                    "description": ""
+                },
+                {
+                    "name": "cur_Transp",
+                    "description": ""
+                },
+                {
+                    "name": "cur_Intcptn",
+                    "description": ""
+                },
+                {
+                    "name": "cur_Irrig",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 130,
+            "description": "units='kPA',\ndescription='Mean vapor pressure deficit'",
+            "itemtype": "method",
+            "name": "VPD",
+            "params": [
+                {
+                    "name": "date_tmin",
+                    "description": ""
+                },
+                {
+                    "name": "date_tmax",
+                    "description": ""
+                },
+                {
+                    "name": "date_tdmean",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 143,
+            "description": "units = unitless,\ndescription='Vapor Pressure Deficit Modifier (Poplar)'",
+            "itemtype": "method",
+            "name": "fVPD",
+            "params": [
+                {
+                    "name": "kG",
+                    "description": ""
+                },
+                {
+                    "name": "cur_VPD",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 156,
+            "description": "units = unitless,\ndescription = 'Number of Freeze Days Modifier'",
+            "itemtype": "method",
+            "name": "fFrost",
+            "params": [
+                {
+                    "name": "date_tmin",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 172,
+            "description": "units=unitless,\ndescription='Temperature modifier'",
+            "itemtype": "method",
+            "name": "fT",
+            "params": [
+                {
+                    "name": "tavg",
+                    "description": ""
+                },
+                {
+                    "name": "fT",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 193,
+            "description": "units='mm/mon',\ndescription='Required Irrigation'",
+            "itemtype": "method",
+            "name": "Irrig",
+            "params": [
+                {
+                    "name": "irrigFrac",
+                    "description": ""
+                },
+                {
+                    "name": "cur_Transp",
+                    "description": ""
+                },
+                {
+                    "name": "cur_Intcptn",
+                    "description": ""
+                },
+                {
+                    "name": "date_ppt",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 207,
+            "itemtype": "method",
+            "name": "fSW",
+            "params": [
+                {
+                    "name": "ASW",
+                    "description": ""
+                },
+                {
+                    "name": "maxAWS",
+                    "description": ""
+                },
+                {
+                    "name": "swconst",
+                    "description": ""
+                },
+                {
+                    "name": "swpower",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 230,
+            "description": "units='unitless', \ndescription='Nutritional Fraction, might be based on soil and fertilizer at some point'",
+            "itemtype": "method",
+            "name": "fNutr",
+            "params": [
+                {
+                    "name": "fN0",
+                    "description": ""
+                },
+                {
+                    "name": "FR",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 241,
+            "description": "TODO: why $3 in makefile - ask about it\nunits=unitless \ndescription='Physiological Modifier to conductance and APARu'",
+            "itemtype": "method",
+            "name": "PhysMod",
+            "params": [
+                {
+                    "name": "cur_fVPD",
+                    "description": ""
+                },
+                {
+                    "name": "cur_fSW",
+                    "description": ""
+                },
+                {
+                    "name": "cur_fAge",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 254,
+            "description": "units='gc,m/s', \ndescription='Canopy Conductance'",
+            "itemtype": "method",
+            "name": "CanCond",
+            "params": [
+                {
+                    "name": "PhysMod",
+                    "description": ""
+                },
+                {
+                    "name": "LAI",
+                    "description": ""
+                },
+                {
+                    "name": "cond",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 266,
+            "description": "units='mm/mon' which is also kg/m2/mon\ndescription='Canopy Monthly Transpiration'",
+            "itemtype": "method",
+            "name": "Transp",
+            "params": [
+                {
+                    "name": "date_nrel",
+                    "description": ""
+                },
+                {
+                    "name": "date_daylight",
+                    "description": ""
+                },
+                {
+                    "name": "cur_VPD",
+                    "description": ""
+                },
+                {
+                    "name": "BLcond",
+                    "description": ""
+                },
+                {
+                    "name": "cur_CanCond",
+                    "description": ""
+                },
+                {
+                    "name": "days_per_month",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 303,
+            "description": "units='metric tons Dry Matter/ha',",
+            "itemtype": "method",
+            "name": "NPP",
+            "params": [
+                {
+                    "name": "prev_StandAge",
+                    "description": ""
+                },
+                {
+                    "name": "fullCanAge",
+                    "description": ""
+                },
+                {
+                    "name": "xPP",
+                    "description": ""
+                },
+                {
+                    "name": "k",
+                    "description": ""
+                },
+                {
+                    "name": "prev_LAI",
+                    "description": ""
+                },
+                {
+                    "name": "fVPD",
+                    "description": ""
+                },
+                {
+                    "name": "fSW",
+                    "description": ""
+                },
+                {
+                    "name": "fAge",
+                    "description": ""
+                },
+                {
+                    "name": "alpha",
+                    "description": ""
+                },
+                {
+                    "name": "fNutr",
+                    "description": ""
+                },
+                {
+                    "name": "fT",
+                    "description": ""
+                },
+                {
+                    "name": "fFrost",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 329,
+            "itemtype": "method",
+            "name": "pR",
+            "params": [
+                {
+                    "name": "cur_PhysMod",
+                    "description": ""
+                },
+                {
+                    "name": "cur_pR",
+                    "description": ""
+                },
+                {
+                    "name": "FR",
+                    "description": ""
+                },
+                {
+                    "name": "pR",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 345,
+            "description": "units=mols \ndescription='Monthly PAR in mols / m^2 month' \nmolPAR_MJ [mol/MJ] is a constant Conversion of solar radiation to PAR",
+            "itemtype": "method",
+            "name": "PAR",
+            "params": [
+                {
+                    "name": "date_rad",
+                    "description": ""
+                },
+                {
+                    "name": "molPAR_MJ",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 359,
+            "description": "units='metric tons Dry Matter/ha', \ndescription='maximum potential Primary Production [tDM / ha month],\nNOTE: 10000/10^6 [ha/m2][tDm/gDM] \ngGM_mol [g/mol] is the molecular weight of dry matter",
+            "itemtype": "method",
+            "name": "xPP",
+            "params": [
+                {
+                    "name": "y",
+                    "description": ""
+                },
+                {
+                    "name": "cur_PAR",
+                    "description": ""
+                },
+                {
+                    "name": "gDM_mol",
+                    "description": ""
+                }
+            ],
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 375,
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "SingleRunFunctions.js",
+            "line": 376,
+            "description": "coppice related functions",
+            "itemtype": "method",
+            "name": "coppice",
+            "class": "m3PGFunc",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Soil.js",
+            "line": 8,
+            "itemtype": "attribute",
+            "name": "maxAWS",
+            "class": "soil",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Soil.js",
+            "line": 12,
+            "itemtype": "attribute",
+            "name": "swpower",
+            "class": "soil",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Soil.js",
+            "line": 16,
+            "itemtype": "attribute",
+            "name": "swconst",
+            "class": "soil",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 7,
+            "itemtype": "attribute",
+            "name": "type",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 11,
+            "itemtype": "attribute",
+            "name": "Rttover",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 15,
+            "itemtype": "attribute",
+            "name": "k",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 19,
+            "itemtype": "attribute",
+            "name": "fullCanAge",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 23,
+            "itemtype": "attribute",
+            "name": "kG",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 27,
+            "itemtype": "attribute",
+            "name": "alpha",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 31,
+            "itemtype": "attribute",
+            "name": "fT",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 35,
+            "itemtype": "attribute",
+            "name": "BLcond",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 39,
+            "itemtype": "attribute",
+            "name": "fAge",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 43,
+            "itemtype": "attribute",
+            "name": "fN0",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 47,
+            "itemtype": "attribute",
+            "name": "SLA",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 51,
+            "itemtype": "attribute",
+            "name": "Conductance",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 55,
+            "itemtype": "attribute",
+            "name": "Intcptn",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 59,
+            "itemtype": "attribute",
+            "name": "pR",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 63,
+            "itemtype": "attribute",
+            "name": "y",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 67,
+            "itemtype": "attribute",
+            "name": "pfs",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 71,
+            "itemtype": "attribute",
+            "name": "rootP",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Tree.js",
+            "line": 75,
+            "itemtype": "attribute",
+            "name": "litterfall",
+            "class": "Tree",
+            "module": "3PG Module"
+        },
+        {
+            "file": "UserInterface.js",
+            "line": 164,
+            "description": "var weatherMapKeys = [\"month\",\"tmin\",\"tmax\",\"tdmean\",\"ppt\",\"rad\",\"daylight\"];\nrows = []; //init rows for weather\nrows.push(weatherMapKeys);\nlog(weatherMap);\nlog(\"starts here\");\nfor (var monthId in weatherMap){\n  log(monthId);\n  var monthWeather = weatherMap[monthId];\n  log(monthWeather);\n  var row = [];\n  for (var k=0; k<weatherMapKeys.length; k++){\n    var key = weatherMapKeys[k];\n    log(key);\n    row.push(monthWeather[key]);\n  }\n  rows.push(row);\n}\n\nm3PGIO.writeRowsToSheetWithOffset(rows, sheetName, 1, experimentParams.rowOffset);//write columns on the right from the last one. but on the same rows\nexperimentParams.rowOffset = experimentParams.rowOffset + rows.length + 1;",
+            "class": "weather",
+            "module": "3PG Module"
+        },
+        {
+            "file": "UserInterface.js",
+            "line": 258,
+            "class": "weather",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Weather.js",
+            "line": 6,
+            "itemtype": "attribute",
+            "name": "month",
+            "class": "weather",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Weather.js",
+            "line": 10,
+            "itemtype": "attribute",
+            "name": "tmin",
+            "class": "weather",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Weather.js",
+            "line": 14,
+            "itemtype": "attribute",
+            "name": "tmax",
+            "class": "weather",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Weather.js",
+            "line": 18,
+            "itemtype": "attribute",
+            "name": "tdmean",
+            "class": "weather",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Weather.js",
+            "line": 22,
+            "itemtype": "attribute",
+            "name": "ppt",
+            "class": "weather",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Weather.js",
+            "line": 26,
+            "itemtype": "attribute",
+            "name": "rad",
+            "class": "weather",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Weather.js",
+            "line": 30,
+            "itemtype": "attribute",
+            "name": "nrel",
+            "class": "weather",
+            "module": "3PG Module"
+        },
+        {
+            "file": "Weather.js",
+            "line": 34,
+            "itemtype": "attribute",
+            "name": "daylight",
+            "class": "weather",
+            "module": "3PG Module"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type\nNOTE:  litterfall modified to account for stand age after coppicing\n+ root max is chosen (not to let it drop) \nlengthOfGrowth is in months",
+            "line": " Model3PG.js:1"
+        },
+        {
+            "message": "Missing item type",
+            "line": " SingleRunFunctions.js:375"
+        },
+        {
+            "message": "Missing item type\nvar weatherMapKeys = [\"month\",\"tmin\",\"tmax\",\"tdmean\",\"ppt\",\"rad\",\"daylight\"];\nrows = []; //init rows for weather\nrows.push(weatherMapKeys);\nlog(weatherMap);\nlog(\"starts here\");\nfor (var monthId in weatherMap){\n  log(monthId);\n  var monthWeather = weatherMap[monthId];\n  log(monthWeather);\n  var row = [];\n  for (var k=0; k<weatherMapKeys.length; k++){\n    var key = weatherMapKeys[k];\n    log(key);\n    row.push(monthWeather[key]);\n  }\n  rows.push(row);\n}\n\nm3PGIO.writeRowsToSheetWithOffset(rows, sheetName, 1, experimentParams.rowOffset);//write columns on the right from the last one. but on the same rows\nexperimentParams.rowOffset = experimentParams.rowOffset + rows.length + 1;",
+            "line": " UserInterface.js:164"
+        },
+        {
+            "message": "Missing item type",
+            "line": " UserInterface.js:258"
+        }
+    ]
+}

@@ -352,22 +352,22 @@ var model = {
 	            CumIrrig: {
 	                value: -1,
 	                units: "",
-	                description: ""
+	                description: "Cumulative irrigation"
 	            },
 	            Irrig: {
 	                value: -1,
 	                units: "",
-	                description: ""
+	                description: "Irrigation"
 	            },
 	            StandAge: {
 	                value: -1,
 	                units: "",
-	                description: ""
+	                description: "Age of the tree"
 	            },
 	            LAI: {
 	                value: -1,
 	                units: "",
-	                description: ""
+	                description: "Leaf Area Index"
 	            },
 	            CanCond: {
 	                value: -1,
@@ -564,7 +564,7 @@ var model = {
 	    		irrigFrac : {
 	    			value : 1,
 	    			units : "",
-	    			description : ""
+	    			description : "Irrigation fraction: 1 = fully irrigated, 0 = no irrigation. Any values between 0 and 1 are acceptable"
 	    		},
 	    		fertility : {
 	    			value : 0.7,
