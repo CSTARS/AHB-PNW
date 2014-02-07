@@ -51,8 +51,8 @@ m3PGFunc.constant = function(c) {
     },
     Qb:{
         value:0.8,
-        units:"",
-        description:""
+        units:"unitless",
+        description:"slope of net vs. solar radiation relationship"
     },
     gDM_mol:{
         value:24,

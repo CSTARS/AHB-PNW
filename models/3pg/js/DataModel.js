@@ -251,33 +251,33 @@ var model = {
 	            },
 	            StockingDensity: {
 	                value: 3587,
-	                units: "",
-	                description: ""
+	                units: "Trees/hectar",
+	                description: "Number of trees planted per hectar"
 	            },
 	            SeedlingMass: {
 	                value: 0.0004,
-	                units: "",
-	                description: ""
+	                units: "kG",
+	                description: "Mass of the seedling"
 	            },
 	            pS: {
 	                value: 0.1,
-	                units: "",
-	                description: ""
+	                units: "unitless",
+	                description: "Proportion of seedling mass going into stem"
 	            },
 	            pF: {
 	                value: 0,
-	                units: "",
-	                description: ""
+	                units: "unitless",
+	                description: "Proportion of seedling mass going into foliage"
 	            },
 	            pR: {
 	                value: 0.9,
-	                units: "",
-	                description: ""
+	                units: "unitless",
+	                description: "Proportion of seedling mass going into root"
 	            }
 	        }
 	    },
 	    plantation_state: {
-	        description: "TODO",
+	        description: "Plantation state class, containing all intemediate values at every timestep of the model",
 	        value: {
 	            feedstockHarvest: {
 	                value: -1,
@@ -291,38 +291,38 @@ var model = {
 	            },
 	            coppiceAge: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units: "month",
+	                description: "Age of tree at the time of coppice"
 	            },
 	            VPD: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units="kPA",
+					description="Mean vapor pressure deficit"
 	            },
 	            fVPD: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units = "unitless",
+					description='Vapor Pressure Deficit Modifier (Poplar)'
 	            },
 	            fT: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units="unitless",
+	                description='Temperature modifier'
 	            },
 	            fFrost: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units = "unitless",
+					description = 'Number of Freeze Days Modifier'
 	            },
 	            fNutr: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units='unitless', 
+					description='Nutritional Fraction, might be based on soil and fertilizer at some point'
 	            },
 	            fSW: {
 	                value: -1,
 	                units: "",
-	                description: ""
+	                description: "Soil water modifier"
 	            },
 	            fAge: {
 	                value: -1,
@@ -331,63 +331,63 @@ var model = {
 	            },
 	            PAR: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units="mols", 
+					description='Monthly PAR in mols / m^2 month' 
 	            },
 	            xPP: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units: "metric tons Dry Matter/ha",
+	                description: "maximum potential Primary Production"
 	            },
 	            Intcptn: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units: "unitless",
+	                description: "Canopy rainfall interception"
 	            },
 	            ASW: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units: "mm",
+	                description: "Available soil water"
 	            },
 	            CumIrrig: {
 	                value: -1,
-	                units: "",
+	                units: "mm",
 	                description: "Cumulative irrigation"
 	            },
 	            Irrig: {
 	                value: -1,
-	                units: "",
-	                description: "Irrigation"
+	                units: "mm/mon",
+	                description: "Required irrigation"
 	            },
 	            StandAge: {
 	                value: -1,
-	                units: "",
+	                units: "month",
 	                description: "Age of the tree"
 	            },
 	            LAI: {
 	                value: -1,
 	                units: "",
-	                description: "Leaf Area Index"
+	                description: "Leaf area index"
 	            },
 	            CanCond: {
 	                value: -1,
 	                units: "",
-	                description: ""
+	                description: "Canopy conductance"
 	            },
 	            Transp: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units: "mm/mon",
+	                description: "Canopy monthly transpiration"
 	            },
 	            PhysMod: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units: "unitless",
+	                description: "Physiological Modifier to conductance and APARu"
 	            },
 	            pfs: {
 	                value: -1,
 	                units: "",
-	                description: ""
+	                description: "Ratio of foliage to stem partitioning"
 	            },
 	            pR: {
 	                value: -1,
@@ -411,13 +411,13 @@ var model = {
 	            },
 	            NPP: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units: "metric tons Dry Matter/ha",
+	                description: "Net Primary Productivity"
 	            },
 	            RootP: {
 	                value: -1,
 	                units: "",
-	                description: ""
+	                description: "Root productivity"
 	            },
 	            dW: {
 	                value: -1,
@@ -426,23 +426,23 @@ var model = {
 	            },
 	            WF: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units: "bdt/ha",
+	                description: "Foliage yield"
 	            },
 	            WR: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units: "bdt/ha",
+	                description: "Root yield"
 	            },
 	            WS: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units: "bdt/ha",
+	                description: "Stem yield"
 	            },
 	            W: {
 	                value: -1,
-	                units: "",
-	                description: ""
+	                units: "bdt/ha",
+	                description: "Total yield: root + stem + foliage"
 	            }
 	        }
 	    },
@@ -452,50 +452,50 @@ var model = {
 	            maxaws: {
 	                value: -1,
 	                units: "",
-	                description: ""
+	                description: "Maximum available soil water"
 	            },
 	            swpower: {
 	                value: -1,
 	                units: "",
-	                description: ""
+	                description: "power parameter based on clay content of soil"
 	            },
 	            swconst: {
 	                value: -1,
 	                units: "",
-	                description: ""
+	                description: "constant parameter based on clay content of soil"
 	            }
 	        }
 	    },
 	    weather: {
 	        month: {
 	            value: -1,
-	            units: "",
-	            description: ""
+	            units: "unitless",
+	            description: "The month number since planting"
 	        },
 	        tmin: {
 	            value: -1,
-	            units: "",
-	            description: ""
+	            units: "Celcius",
+	            description: "Minimum temperature for growth"
 	        },
 	        tmax: {
 	            value: -1,
-	            units: "",
-	            description: ""
+	            units: "Celcius",
+	            description: "Maximum temperature for growth"
 	        },
 	        tdmean: {
 	            value: -1,
-	            units: "",
-	            description: ""
+	            units: "Celcius",
+	            description: "Dew point temperature"
 	        },
 	        ppt: {
 	            value: -1,
 	            units: "",
-	            description: ""
+	            description: "Precipitation"
 	        },
 	        rad: {
 	            value: -1,
 	            units: "",
-	            description: ""
+	            description: "Solar radiation"
 	        },
 	        nrel: {
 	            value: -1,
@@ -533,7 +533,7 @@ var model = {
 	            },
 	            VPDconv: {
 	                value: 0.000622,
-	                units: "?",
+	                units: "",
 	                description: "Convert VPD to saturation deficit = 18/29/1000"
 	            },
 	            Qa: {
@@ -543,8 +543,8 @@ var model = {
 	            },
 	            Qb: {
 	                value: 0.8,
-	                units: "",
-	                description: ""
+	                units: "unitless",
+	                description: "slope of net vs. solar radiation relationship"
 	            },
 	            gDM_mol: {
 	                value: 24,
@@ -569,7 +569,7 @@ var model = {
 	    		fertility : {
 	    			value : 0.7,
 	    			units : "",
-	    			description : ""
+	    			description : "Soil fertility"
 	    		},
                 DatePlanted : {
                     value : "_date_",
