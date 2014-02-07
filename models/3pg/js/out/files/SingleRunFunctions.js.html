@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>SingleRunFunctions.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title=""></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/m3PGFunc.html">m3PGFunc</a></li>
+            
+                <li><a href="../classes/manage.html">manage</a></li>
+            
+                <li><a href="../classes/plantation.html">plantation</a></li>
+            
+                <li><a href="../classes/plantation_state.html">plantation_state</a></li>
+            
+                <li><a href="../classes/soil.html">soil</a></li>
+            
+                <li><a href="../classes/Tree.html">Tree</a></li>
+            
+                <li><a href="../classes/weather.html">weather</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/3PG Module.html">3PG Module</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: SingleRunFunctions.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+
+@module 3PG Module
+**/
+
+
+/**
+Class for all the functions that run in a single step of the model
+
+@class m3PGFunc 
+**/
+var m3PGFunc = {};
+
+/**
+list of constants used for computations
+
+@attribute constant
+**/
+m3PGFunc.constant = function(c) {
+//    log(&quot;constant:&quot;+c);
+    var constant={
+    days_per_month:{
+        value:30.4,
+        units:&quot;days/mo&quot;,
+        description:&quot;Number of Days in an average month&quot;
+    },
+    e20:{
+        value:2.2,
+        units:&quot;vp/t&quot;,
+        description:&quot;Rate of change of saturated VP with T at 20C&quot;
+    },
+    rhoAir:{
+        value:1.2,
+        units:&quot;kg/m^3&quot;,
+        description:&quot;Density of air&quot;
+    },
+    lambda:{
+        value:2460000,
+        units:&quot;J/kg&quot;,
+        description:&quot;Latent heat of vapourisation of h2o&quot;
+    },
+    VPDconv:{
+        value:0.000622,
+        units:&quot;?&quot;,
+        description:&quot;Convert VPD to saturation deficit = 18/29/1000&quot;
+    },
+    Qa:{
+        value:-90,
+        units:&quot;W/m^2&quot;,
+        description:&quot;Intercept of net radiation versus solar radiation relationship&quot;
+    },
+    Qb:{
+        value:0.8,
+        units:&quot;&quot;,
+        description:&quot;&quot;
+    },
+    gDM_mol:{
+        value:24,
+        units:&quot;g/mol(C)&quot;,
+        description:&quot;Molecular weight of dry matter&quot;
+    },
+    molPAR_MJ:{
+        value:2.3,
+        units:&quot;mol(C)/MJ&quot;,
+        description:&quot;Conversion of solar radiation to PAR&quot;
+    }
+    };
+    return constant[c].value;
+}
+
+/**
+Time Dependant Attribute,
+units=&#x27;various&#x27;,
+description=&#x27;This function creates a time dependant function that decays 
+(or rises from f0 to f1.  The value (f0+f1)/2 is reached at tm, 
+and the slope of the line at tm is given by p.
+@method tdp
+@param x
+@param f
+**/
+m3PGFunc.tdp = function(x,f) {
+  var p=f.f1 + (f.f0-f.f1)*Math.exp(-Math.log(2)*Math.pow((x/f.tm),f.n));
+//  log(&quot;f(&quot;+x+&quot;;f0,f1,tm,n)=&quot;+p+&quot;;&quot;+f.f0+&quot;,&quot;+f.f1+&quot;,&quot;+f.tm+&quot;,&quot;+f.n);
+  return p;
+}
+
+/**
+@method lin
+@param x
+@param p
+*/
+m3PGFunc.lin = function(x, p){
+    if (x&lt;0) {
+	return p.mn;
+    }
+    if (x&gt;p.xmax) {
+	return p.xmax;
+    }
+    return p.mn + (p.mx-p.mn)*(x/p.xmax);
+}
+
+/**
+units=&#x27;unitless&#x27;, 
+description=&#x27;Canopy Rainfall interception&#x27;
+@method Intcptn
+@param cur_LAI
+@param c
+*/
+m3PGFunc.Intcptn = function(cur_LAI, c){
+    return Math.max(c.mn,c.mn + (c.mx - c.mn) * Math.min(1 , cur_LAI / c.lai));
+}
+
+/**
+units=&#x27;mm&#x27;, 
+description=&#x27;Available Soil Water&#x27;
+@method ASW
+@param maxASW
+@param prev_ASW
+@param date_ppt
+@param cur_Transp
+@param cur_Intcptn
+@param cur_Irrig
+*/
+m3PGFunc.ASW = function(maxASW, prev_ASW, date_ppt, cur_Transp, cur_Intcptn, cur_Irrig){
+  return Math.min(maxASW*10, Math.max(prev_ASW + date_ppt - (cur_Transp + cur_Intcptn * date_ppt) + cur_Irrig, 0));
+}
+
+//TODO: double check the appropriate use of tdmean (dew point temp)
+//TODO: take constants out
+/**
+units=&#x27;kPA&#x27;,
+description=&#x27;Mean vapor pressure deficit&#x27;
+@method VPD
+@param date_tmin
+@param date_tmax
+@param date_tdmean
+*/
+m3PGFunc.VPD = function(date_tmin, date_tmax, date_tdmean){
+  return (0.6108 / 2 * (Math.exp(date_tmin * 17.27 / (date_tmin + 237.3) ) + Math.exp(date_tmax * 17.27 / (date_tmax + 237.3) ) ) ) - (0.6108 * Math.exp(date_tdmean * 17.27 / (date_tdmean + 237.3) ) );
+}
+
+
+/**
+units = unitless,
+description=&#x27;Vapor Pressure Deficit Modifier (Poplar)&#x27;
+@method fVPD
+@param kG
+@param cur_VPD
+*/
+m3PGFunc.fVPD = function(kG, cur_VPD){
+ return Math.exp(-1 * kG * cur_VPD); 
+}
+
+//TODO: take constants out
+// make a meaningful tempvar name
+/**
+units = unitless,
+description = &#x27;Number of Freeze Days Modifier&#x27;
+@method fFrost
+@param date_tmin
+*/
+m3PGFunc.fFrost = function(date_tmin) {
+  var tempVar = -1.0;
+  if (date_tmin &gt;= 0){
+    tempVar = 1.0;
+  } //else -1.0
+  
+  return 0.5 * (1.0 + tempVar * Math.sqrt(1 - Math.exp(-1 * Math.pow((0.17 * date_tmin) , 2) * (4 / 3.14159 + 0.14 * Math.pow( (0.17 * date_tmin) , 2) ) / (1 + 0.14 * Math.pow((0.17 * date_tmin) , 2) ) ) ) ); 
+}
+
+//TODO - better naming?: tmin, tmax = weather Topt, Tmax, Tmin = tree params
+/**
+units=unitless,
+description=&#x27;Temperature modifier&#x27;
+@method fT
+@param tavg
+@param fT
+*/
+m3PGFunc.fT = function(tavg, fT){
+    var f;
+  if (tavg &lt;= fT.mn || tavg &gt;= fT.mx){
+     f=0;
+  }else {
+     f = ( (tavg - fT.mn) / (fT.opt - fT.mn) )  *  
+             Math.pow ( ( (fT.mx - tavg) / (fT.mx - fT.opt) ), 
+                        ( (fT.mx - fT.opt) / (fT.opt - fT.mn) ) 
+                      );
+  }
+//  log(&quot;fT(x):mn,opt,mx=f:fT(&quot;+tavg+&quot;):&quot;+fT.mn+&quot;,&quot;+fT.opt+&quot;,&quot;+fT.mx+&quot;=&quot;+f);
+    return(f);
+}
+
+/**
+units=&#x27;mm/mon&#x27;,
+description=&#x27;Required Irrigation&#x27;
+@method Irrig
+@param irrigFrac
+@param cur_Transp
+@param cur_Intcptn
+@param date_ppt
+*/
+m3PGFunc.Irrig = function(irrigFrac, cur_Transp, cur_Intcptn, date_ppt){
+   return Math.max(0 , irrigFrac * (cur_Transp - (1 - cur_Intcptn) * date_ppt) );
+}
+
+//TODO: get units and description
+/**
+@method fSW
+@param ASW
+@param maxAWS
+@param swconst
+@param swpower
+*/
+m3PGFunc.fSW = function(ASW, maxAWS, swconst, swpower) {
+    var fSW;
+    if (swconst == 0 || maxAWS==0) {
+	fSW=0;
+    } else {
+	var omr = 1 - (ASW/10)/maxAWS; // One Minus Ratio
+	if (omr &lt; 0.001) {
+	    fSW=1;
+	} else {
+	    fSW=(1-Math.pow(omr,swpower))/(1+Math.pow(omr/swconst,swpower));
+	}
+    }
+//    log(&#x27;f(ASW,max,S_c,S_p),omr=f(&#x27;+ASW+&#x27;,&#x27;+maxAWS+&#x27;,&#x27;+swconst+&#x27;,&#x27;+swpower+&#x27;)=&#x27;+omr+&#x27;,&#x27;+fSW);
+    return fSW;
+}
+
+/**
+units=&#x27;unitless&#x27;, 
+description=&#x27;Nutritional Fraction, might be based on soil and fertilizer at some point&#x27;
+@method fNutr
+@param fN0
+@param FR
+*/
+m3PGFunc.fNutr = function(fN0, FR){
+  return fN0 + (1 - fN0) * FR;
+}
+
+/**
+TODO: why $3 in makefile - ask about it
+units=unitless 
+description=&#x27;Physiological Modifier to conductance and APARu&#x27;
+@method PhysMod
+@param cur_fVPD
+@param cur_fSW
+@param cur_fAge
+*/
+m3PGFunc.PhysMod = function(cur_fVPD, cur_fSW, cur_fAge){
+   return Math.min(cur_fVPD , cur_fSW) * cur_fAge;
+}
+
+/**
+units=&#x27;gc,m/s&#x27;, 
+description=&#x27;Canopy Conductance&#x27;
+@method CanCond
+@param PhysMod
+@param LAI
+@param cond
+*/
+m3PGFunc.CanCond = function(PhysMod, LAI, cond){
+   return Math.max(cond.mn , cond.mx * PhysMod * Math.min(1 , LAI / cond.lai) );
+}
+
+/**
+units=&#x27;mm/mon&#x27; which is also kg/m2/mon
+description=&#x27;Canopy Monthly Transpiration&#x27;
+@method Transp
+@param date_nrel
+@param date_daylight
+@param cur_VPD
+@param BLcond
+@param cur_CanCond
+@param days_per_month
+*/
+m3PGFunc.Transp = function(date_nrel, date_daylight, cur_VPD, BLcond, cur_CanCond, days_per_month){
+    var VPDconv = m3PGFunc.constant(&#x27;VPDconv&#x27;);
+    var lambda = m3PGFunc.constant(&#x27;lambda&#x27;);
+    var rhoAir = m3PGFunc.constant(&#x27;rhoAir&#x27;);
+    var e20 = m3PGFunc.constant(&#x27;e20&#x27;);
+    var Qa = m3PGFunc.constant(&#x27;Qa&#x27;);
+    var Qb = m3PGFunc.constant(&#x27;Qb&#x27;);
+    var days_per_month = typeof days_per_month !== &#x27;undefined&#x27; ? days_per_month : m3PGFunc.constant(&#x27;days_per_month&#x27;);
+
+//    netrad=-90 + 0.8 * (date_nrel * 277.778 / date_daylight);
+//    defTerm= 1.2 * 2460000 * 0.00622 * cur_VPD * 0.2);
+//    div = (1 + 2.2 + 0.2 / CanCond;
+//    transp 30.4 * ((2.2 * netrad + defTerm) / div) * date_daylight * 3600 / 2460000  
+    // date_daylight = hours
+    // nrel is in MJ/m^2/day convert to Wh/m^2/day
+   var netRad = Qa + Qb * ((date_nrel * 277.778) / date_daylight);
+    var defTerm = rhoAir * lambda * VPDconv * cur_VPD * BLcond;
+    var div = 1 + e20 + BLcond / cur_CanCond;
+    // Convert daylight to secs.
+    var Transp=  days_per_month * ( (e20 * netRad + defTerm ) / div ) * date_daylight * 3600 / lambda;
+//    log(&#x27;R+V/D=&#x27;+e20*netRad+&#x27;+&#x27;+defTerm+&#x27;/&#x27;+div)
+//    log(&#x27;f(nrel,daylight,VPD,BL,cond): f(&#x27;+date_nrel+&#x27;,&#x27;+date_daylight+&#x27;,&#x27;+cur_VPD+&#x27;,&#x27;+BLcond+&#x27;,&#x27;+cur_CanCond+&#x27;)=&#x27;+Transp);
+    return Transp;
+}
+
+//TODO: description
+/**
+units=&#x27;metric tons Dry Matter/ha&#x27;, 
+@method NPP
+@param prev_StandAge
+@param fullCanAge
+@param xPP
+@param k
+@param prev_LAI
+@param fVPD
+@param fSW
+@param fAge
+@param alpha
+@param fNutr
+@param fT
+@param fFrost
+*/
+m3PGFunc.NPP = function(prev_StandAge, fullCanAge, xPP, k, prev_LAI, fVPD, fSW, fAge, alpha, fNutr, fT, fFrost){
+  var CanCover = 1;
+  if (prev_StandAge &lt; fullCanAge){
+    CanCover = prev_StandAge / fullCanAge;
+  } 
+
+  return xPP * (1 - (Math.exp(-k * prev_LAI) ) ) * CanCover * Math.min(fVPD , fSW) * fAge * alpha * fNutr * fT * fFrost;
+}
+
+//TODO: units and description
+/**
+@method pR
+@param cur_PhysMod
+@param cur_pR
+@param FR
+@param pR
+*/
+m3PGFunc.pR = function(cur_PhysMod, cur_pR,FR,pR){
+    var p =(pR.mx * pR.mn) / 
+         (pR.mn + (pR.mx - pR.mn) * cur_PhysMod * (pR.m0 + (1 - pR.m0) * FR) );
+// This was added by quinn to limit root growth.
+    return p*Math.pow(p/cur_pR,2);
+}
+
+
+//TODO: mols or mols per m^2?
+/**
+units=mols 
+description=&#x27;Monthly PAR in mols / m^2 month&#x27; 
+molPAR_MJ [mol/MJ] is a constant Conversion of solar radiation to PAR
+@method PAR
+@param date_rad
+@param molPAR_MJ
+*/
+m3PGFunc.PAR = function(date_rad, molPAR_MJ){
+    var molPAR_MJ = typeof molPAR_MJ !== &#x27;undefined&#x27; ? 
+                    molPAR_MJ : m3PGFunc.constant(&#x27;molPAR_MJ&#x27;);
+    return date_rad * m3PGFunc.constant(&#x27;days_per_month&#x27;) * molPAR_MJ;
+}
+
+/**
+units=&#x27;metric tons Dry Matter/ha&#x27;, 
+description=&#x27;maximum potential Primary Production [tDM / ha month],
+NOTE: 10000/10^6 [ha/m2][tDm/gDM] 
+gGM_mol [g/mol] is the molecular weight of dry matter
+@method xPP
+@param y
+@param cur_PAR
+@param gDM_mol
+*/
+m3PGFunc.xPP = function(y, cur_PAR, gDM_mol){
+    gDM_mol = typeof gDM_mol !== &#x27;undefined&#x27; ? 
+    gDM_mol : m3PGFunc.constant(&#x27;gDM_mol&#x27;);
+    return y * cur_PAR * gDM_mol / 100;
+}
+      
+/*** FUNCTIONS FOR COPPICING */
+/**
+coppice related functions
+@method coppice
+*/
+m3PGFunc.coppice = {};
+
+// Coppice Functions are based on Diameter on Stump, NOT DBH.
+// Calculates the pfs based on the stem weight in KG
+m3PGFunc.coppice.pfs = function(stem, p) {
+  var avDOB = Math.pow( ( stem / p.stemCnt / p.stemC) , (1 / p.stemP) );
+    var ppfs= p.pfsC * Math.pow(avDOB , p.pfsP);
+//    log(&quot;avDOB:&quot;+avDOB+&quot;ppfs:&quot;+ppfs);
+  return Math.min(p.pfsMx,ppfs);
+}
+m3PGFunc.coppice.RootP = function(cur_npp, cur_nppTarget, WR,W,pRx,frac) {
+  var nppRes = cur_nppTarget - cur_npp;
+  var rootPP;
+  if (nppRes &gt; 0 &amp;&amp; WR/W &gt; pRx ) {
+//      log(nppRes+&quot;&lt;&quot;+WR*(WR/W - pRx)+&quot;*&quot;+frac);
+      rootPP = Math.min(nppRes,WR*(WR/W - pRx)*frac);
+  } else {
+    rootPP = 0; 
+ }
+  return rootPP;
+}
+
+// NODE EXPORT HOOK
+if (typeof module !== &#x27;undefined&#x27; &amp;&amp; module.exports) {
+    exports.dump = function() {
+        var objStr = &quot;m3PGFunc={&quot;;
+        for( var key in m3PGFunc ) {
+            if( typeof m3PGFunc[key] == &#x27;function&#x27; ) {
+                objStr += key+&quot;:&quot;+m3PGFunc[key].toString()+&quot;,&quot;;
+            } else {
+                objStr += key+&quot;:&quot;+JSON.stringify(m3PGFunc[key])+&quot;,&quot;;
+            }
+        }
+        return objStr.replace(/,$/,&#x27;&#x27;)+&quot;};&quot;;
+    }
+    
+    exports.testFunctions = function() {
+        var key, args, funcStr, assignments;
+        var ret = &quot;&quot;;
+        
+        for( key in m3PGFunc ) {
+            if( typeof m3PGFunc[key] == &#x27;function&#x27; ) {
+                funcStr = &quot;\nCREATE OR REPLACE FUNCTION &quot;+key+&quot;(&quot;;
+                
+                args = getArguments(m3PGFunc[key]);
+                
+                for( var i = 0; i &lt; args.length; i++ ) {
+                    if( args[i].replace(/\s/g,&#x27;&#x27;).length &gt; 0 ) {
+                        funcStr += &quot;\&quot;&quot;+args[i].replace(/\s/g,&#x27;&#x27;)+&quot;\&quot; float, &quot;;
+                    }
+                }
+                funcStr = funcStr.replace(/,\s$/,&#x27;&#x27;)+&quot;) RETURNS\nfloat AS $$\n&quot;;
+                funcStr += getBody(m3PGFunc[key])+&quot;\n&quot;;
+                ret += funcStr + &quot;$$ LANGUAGE plv8 IMMUTABLE STRICT;\n&quot;;
+            }
+        }
+        return ret;
+    }
+    
+    function getArguments(f) {
+        return f.toString().split(&quot;(&quot;)[1].split(&quot;)&quot;)[0].replace(/\s/,&#x27;&#x27;).split(&quot;,&quot;);
+    }
+    
+    function getBody(f) {
+        var parts = f.toString().split(&quot;)&quot;);
+        var body = parts[1];
+        parts.splice(0,1);
+        return parts.join(&#x27;)&#x27;).replace(/^\s*{/,&#x27;&#x27;).replace(/}[\n\s]*$/,&#x27;&#x27;);
+    }
+}
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
