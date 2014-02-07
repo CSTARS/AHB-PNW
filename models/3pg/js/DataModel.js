@@ -302,22 +302,22 @@ var model = {
 	            fVPD: {
 	                value: -1,
 	                units = "unitless",
-					description='Vapor Pressure Deficit Modifier (Poplar)'
+					description="Vapor Pressure Deficit Modifier (Poplar)"
 	            },
 	            fT: {
 	                value: -1,
 	                units="unitless",
-	                description='Temperature modifier'
+	                description="Temperature modifier"
 	            },
 	            fFrost: {
 	                value: -1,
 	                units = "unitless",
-					description = 'Number of Freeze Days Modifier'
+					description = "Number of Freeze Days Modifier"
 	            },
 	            fNutr: {
 	                value: -1,
-	                units='unitless', 
-					description='Nutritional Fraction, might be based on soil and fertilizer at some point'
+	                units="unitless", 
+					description="Nutritional Fraction, might be based on soil and fertilizer at some point"
 	            },
 	            fSW: {
 	                value: -1,
@@ -332,7 +332,7 @@ var model = {
 	            PAR: {
 	                value: -1,
 	                units="mols", 
-					description='Monthly PAR in mols / m^2 month' 
+					description="Monthly PAR in mols / m^2 month" 
 	            },
 	            xPP: {
 	                value: -1,
