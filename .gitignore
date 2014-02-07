@@ -3,6 +3,8 @@
 *.swp
 *.swo
 
+web/visualization/ModelApp/phonegap/3pg-model/platforms/android
+
 web/visualization/ModelApp/phonegap/3pg-model/plugins
 web/visualization/ModelApp/.tmp
 web/visualization/ModelApp/.sass-cache
