@@ -45,6 +45,11 @@ define(["require","Oauth","gdriveRT"],function(require) {
 		$("#about-modal").modal({
 			show : false
 		});
+
+		// the about modal link is created below, so why not...
+		$("#help-modal").modal({
+			show : false
+		});
 		
 		// set the 'update' btn click handler
 		$("#save-update-btn").on('click', function() {
@@ -241,6 +246,7 @@ define(["require","Oauth","gdriveRT"],function(require) {
 		var btn = $('<li class="dropdown">'
 				+ '<a class="dropdown-toggle" style="cursor:pointer">Login<b class="caret"></b></a>'
 				+ '<ul class="dropdown-menu">'
+				+ '<li><a id="help"><i class="icon-question-sign"></i> Help</a></li>'
 				+ '<li><a id="about"><i class="icon-info-sign"></i> About</a></li>'
 				+ '<li><a id="login-with-google"><i class="icon-signin"></i> Login with Google</a></li>'
 				+ '</ul></li>');
@@ -254,6 +260,11 @@ define(["require","Oauth","gdriveRT"],function(require) {
 		btn.find('#about').on('click', function() {
 			btn.toggleClass('open');
 			$("#about-modal").modal('show');
+		});
+
+		btn.find('#help').on('click', function() {
+			btn.toggleClass('open');
+			showHelp();
 		});
 
 		// login click handler
@@ -282,6 +293,7 @@ define(["require","Oauth","gdriveRT"],function(require) {
 				+ '<li style="display:none"><a id="share-btn"><i class="icon-share"></i> Share Model</a></li>'
 				+ '<li style="display:none"><a id="open-in-drive" target="_blank"><i class="icon-external-link-sign"></i> Open in Google Drive</a></li>' 
 				+ '<li><a id="load"><i class="icon-cloud-download"></i> Load Model</a></li>'
+				+ '<li><a id="help"><i class="icon-question-sign"></i> Help</a></li>' 
 				+ '<li><a id="about"><i class="icon-info-sign"></i> About</a></li>' 
 				+ '<li><a id="logout"><i class="icon-signout"></i> Logout</a></li>' 
 				+ '</ul></li>');
@@ -358,6 +370,11 @@ define(["require","Oauth","gdriveRT"],function(require) {
 		btn.find('#about').on('click', function() {
 			btn.toggleClass('open');
 			$("#about-modal").modal('show');
+		});
+
+		btn.find('#help').on('click', function() {
+			btn.toggleClass('open');
+			showHelp();
 		});
 
 		// show the 'load from drive' panel
