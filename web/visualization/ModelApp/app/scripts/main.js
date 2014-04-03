@@ -151,7 +151,7 @@ require(['jquery', 'bootstrap','app','gdrive', 'config', 'owlCarousel','flashblo
 		    });
     };
 
-    if( chartsLoaded ) {
+    if( window.chartsLoaded ) {
         onChartsLoaded();
     } else {
         chartsCallback = onChartsLoaded;

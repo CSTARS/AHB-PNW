@@ -60,72 +60,26 @@
 
     <div class="row"><div class="col-md-5">
     
-		<section id="inputs">
-	                <div class="page-header">
-	                        <h1>Inputs <a class='btn btn-default select-weather-location' style="margin-left:25px"><i class='icon-map-marker'></i> Location</a></h1>
-	                </div>
-	               <div id="inputs-content"></div>
-	    </section>
-    
-    </div><div class="col-md-7">
-    
-	    <section id="chart">
-	                <div class="page-header">
-	                        <h1>Charts 
-	                           <a class="btn btn-default" style="margin-left:25px" id="select-charts-title-btn"><i class="icon-plus"></i> Add</a>
-                               <div class="btn-group" id="chart-type-btn-group">
-                                    <button type="button" class="btn btn-default active chart-type-toggle" value="line" >Basic</button>
-                                    <button type="button" class="btn btn-default chart-type-toggle" value="timeline" >Interactive</button>
-                                </div>
-	                           <a class="btn btn-default pull-right" id="show-chartspopup-btn" ><i class="icon-fullscreen"></i></a>
-	                        </h1>
-	                </div>
-	               <div id="chart-content">
-	                   <div style="text-align:center;"><i class="icon-bar-chart blank-icon"></i></div>
-	                   <div style="text-align:center;maring-top:25px;font-size:20px;color:#ccc">
-	                       First, <a class="btn btn-primary show-config"><i class="icon-wrench"></i> Setup</a> Model.<br />
-	                       Click <i class="icon-play"></i> Run at any time to rerun model.
-	                   </div>
+    <section id="inputs">
+        <div class="page-header">
+	       <h1>Setup <a class='btn btn-default show-config' style="margin-left:25px"><i class='icon-cogs'></i> Advanced</a></h1>
+	    </div>
 
-	               </div>
-	    </section>
-    
-    </div></div>
-    
-    <section id="output">
-            <div class="page-header">
-                    <h1>Raw Output <a class='btn btn-default' id="show-export-csv" style="margin-left:25px;display:none"><i class='icon-external-link'></i> Export CSV</a></h1>
-            </div>
-           <div id="output-content" style="overflow:hidden">
-                    <div style="text-align:center;"><i class="icon-table blank-icon"></i></div>
-           </div>
-     </section>
-    
-</div>
-
-<div id="root-config" style="padding: 50px 20px; display: none">
-
-  <h1>Configure Model</h2>
-  <div style="color:#888; padding: 5px 15px 15px 15px; margin-bottom: 30px">
-    Set default values for your the model.  These values are a starting place to work from.  You can then use the <b>Inputs</b> section to further modify the various input parameters for the model.
+  <div style="color:#888; padding: 5px 15px 15px 15px;">
+    Set default values for your the model.  These values are a starting place to work from.  You can then use the <b><i class='icon-cogs'></i> Advanced</b> section to further modify the various input parameters for the model.
   </div>
 
+  <ul class="nav nav-pills" id="config_pills">
+        <li class="active"><a href="#config-tree" id="tab_config_tree" data-toggle="pill">Tree</a></li>
+        <li class=""><a href="#config-plantation" id="tab_config_plantation" data-toggle="pill">Plantation</a></li>
+        <li class=""><a href="#config-soil" id="tab_config_soil" data-toggle="pill">Soil</a></li>
+        <li class=""><a href="#config-weather" id="tab_config_weather" data-toggle="pill">Weather</a></li>
+  </ul>
 
-  <h3>Biomass Distribution Model: 
-    <div class="btn-group btn-group">
-      <button type="button" class="btn btn-default active">3PG</button>
-      <button type="button" class="btn btn-default">ALS</button>
-    </div>
-  </h3>
-  <div style="color:#888; padding: 5px 15px 15px 15px; margin-bottom: 30px">
-    Helper text about what the differences are.
-  </div>
+  <div class="pill-content" style="margin-top: 20px">
+    <div class="pill-pane active" id="config-tree">
 
-  <div class="row">
-    <div class="col-md-6">
-      <h3 class="config-header">Tree</h3>
-
-      <div class="form-horizontal" role="form">
+        <div class="form-horizontal" role="form">
         <div class="form-group"> 
           <label for="config-tree-default" class="col-sm-4 control-label">
               <input type="radio" name="tree-config" id="config-tree-default" > Default
@@ -160,10 +114,8 @@
         </div>
       </div>
 
-
     </div>
-    <div class="col-md-6">
-      <h3 class="config-header">Plantation</h3>
+    <div class="pill-pane" id="config-plantation">
 
       <div class="form-horizontal" role="form">
         <div class="form-group"> 
@@ -199,49 +151,101 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-6">
-      <h3 class="config-header">Soil</h3>
-
-      <div class="form-horizontal" role="form">
-        <div class="form-group"> 
-          <label for="config-soil-default" class="col-sm-4 control-label">
-              <input type="radio" name="soil-config" id="config-soil-default" > Dirty
-          </label>
-          <div class="col-sm-8">
-               It's dirty
-          </div>
-        </div>
-        <div class="form-group"> 
-          <label for="config-soil-Beaupre" class="col-sm-4 control-label">
-              <input type="radio" name="soil-config" id="config-soil-Beaupre" > Salty
-          </label>
-          <div class="col-sm-8">
-               Don't eat
-          </div>
-        </div>
-        <div class="form-group"> 
-          <label for="config-soil-Robusta" class="col-sm-4 control-label">
-              <input type="radio" name="soil-config" id="soil-tree-Robusta" > Fun
-          </label>
-          <div class="col-sm-8">
-               Great to play in
-          </div>
-        </div>
-      </div>
 
     </div>
-    <div class="col-md-6">
-      <h3 class="config-header">Weather</h3>
-      <div id="gmap-2" style="height:350px;width:100%;border:1px solid #ccc"></div>
+    <div class="pill-pane" id="config-soil">
+
+        <div class="form-horizontal" role="form">
+            <div class="form-group"> 
+              <label for="config-soil-default" class="col-sm-4 control-label">
+                  <input type="radio" name="soil-config" id="config-soil-default" > Dirty
+              </label>
+              <div class="col-sm-8">
+                   It's dirty
+              </div>
+            </div>
+            <div class="form-group"> 
+              <label for="config-soil-Beaupre" class="col-sm-4 control-label">
+                  <input type="radio" name="soil-config" id="config-soil-Beaupre" > Salty
+              </label>
+              <div class="col-sm-8">
+                   Don't eat
+              </div>
+            </div>
+            <div class="form-group"> 
+              <label for="config-soil-Robusta" class="col-sm-4 control-label">
+                  <input type="radio" name="soil-config" id="soil-tree-Robusta" > Fun
+              </label>
+              <div class="col-sm-8">
+                   Great to play in
+              </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="pill-pane" id="config-weather">
+        <div id="gmap-2" style="height:350px;width:100%;border:1px solid #ccc"></div>
         click map to select location
         <button id="locate-button" class="btn btn-success pull-right" style="margin-top:5px"><i class="icon-screenshot"></i>&nbsp;Locate Me</button>
     </div>
+
+    </section>
+    
+    </div><div class="col-md-7">
+    
+	    <section id="chart">
+	                <div class="page-header">
+	                        <h1>Charts 
+	                           <a class="btn btn-default" style="margin-left:25px" id="select-charts-title-btn"><i class="icon-plus"></i> Add</a>
+                               <div class="btn-group" id="chart-type-btn-group">
+                                    <button type="button" class="btn btn-default active chart-type-toggle" value="line" >Basic</button>
+                                    <button type="button" class="btn btn-default chart-type-toggle" value="timeline" >Interactive</button>
+                                </div>
+	                           <a class="btn btn-default pull-right" id="show-chartspopup-btn" ><i class="icon-fullscreen"></i></a>
+	                        </h1>
+	                </div>
+	               <div id="chart-content">
+	                   <div style="text-align:center;"><i class="icon-bar-chart blank-icon"></i></div>
+	                   <div style="text-align:center;maring-top:25px;font-size:20px;color:#ccc">
+	                       First, setup model using parameters on left.<br />
+	                       Click <i class="icon-play"></i> Run at any time to rerun model.
+	                   </div>
+
+	               </div>
+	    </section>
+    
+    </div></div>
+    
+    <section id="output">
+            <div class="page-header">
+                    <h1>Raw Output <a class='btn btn-default' id="show-export-csv" style="margin-left:25px;display:none"><i class='icon-external-link'></i> Export CSV</a></h1>
+            </div>
+           <div id="output-content" style="overflow:hidden">
+                    <div style="text-align:center;"><i class="icon-table blank-icon"></i></div>
+           </div>
+     </section>
+    
+</div>
+
+<div id="root-config" style="padding: 50px 20px; display: none">
+
+  <div class="page-header">
+          <h1>Advanced Configuration</h1>
   </div>
 
+  <h3>Biomass Distribution Model: 
+    <div class="btn-group btn-group">
+      <button type="button" class="btn btn-default active">3PG</button>
+      <button type="button" class="btn btn-default">ALS</button>
+    </div>
+  </h3>
+  <div style="color:#888; padding: 5px 15px 15px 15px; margin-bottom: 30px">
+    Helper text about what the differences are.
+  </div>
+
+  <div id="inputs-content"></div>
+
+  
 
   <div style="text-align: center">
     <a class="btn btn-default hide-config">Update</a> 
