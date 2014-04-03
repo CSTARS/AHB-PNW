@@ -1,5 +1,5 @@
 /*global define */
-define(["gdrive","charts","inputForm","export"], function (gdrive, charts, inputForm, exporter) {
+define(["gdrive","charts","inputForm","export", "config"], function (gdrive, charts, inputForm, exporter, config) {
 
      var runCallback = null;
      var _3pgModel = null;
@@ -278,6 +278,13 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
              }, 700);
        });
 
+        $('.show-config').on('click', function(){
+            config.show();
+        });
+        $('.hide-config').on('click', function(){
+            config.hide();
+        });
+
         $(window).resize(function(){
             charts.resize();
 
@@ -322,7 +329,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
     var runModel = function(isRt) {
 
         if ($("#runbtn, #runbtn-sm").hasClass("disabled")) return;
-        $("#runbtn, #runbtn-sm").addClass("disabled").html("Running...");
+        $("#runbtn, #runbtn-sm").addClass("disabled").html("<i class='icon-spinner icon-spin'></i> Running...");
 
         if( !checkWeather() ) return;
     

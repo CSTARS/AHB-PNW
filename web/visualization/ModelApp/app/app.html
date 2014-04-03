@@ -48,7 +48,7 @@
     </div>
 </div>
 
-<div class="" id="root" style="padding: 50px 20px">
+<div id="root-main" style="padding: 50px 20px">
 
     <div class="row">
       <div class="col-md-6">
@@ -83,9 +83,10 @@
 	               <div id="chart-content">
 	                   <div style="text-align:center;"><i class="icon-bar-chart blank-icon"></i></div>
 	                   <div style="text-align:center;maring-top:25px;font-size:20px;color:#ccc">
-	                       Select <i class="icon-map-marker"></i> Location to run model.<br />
+	                       First, <a class="btn btn-primary show-config"><i class="icon-wrench"></i> Setup</a> Model.<br />
 	                       Click <i class="icon-play"></i> Run at any time to rerun model.
 	                   </div>
+
 	               </div>
 	    </section>
     
@@ -101,6 +102,154 @@
      </section>
     
 </div>
+
+<div id="root-config" style="padding: 50px 20px; display: none">
+
+  <h1>Configure Model</h2>
+  <div style="color:#888; padding: 5px 15px 15px 15px; margin-bottom: 30px">
+    Set default values for your the model.  These values are a starting place to work from.  You can then use the <b>Inputs</b> section to further modify the various input parameters for the model.
+  </div>
+
+
+  <h3>Biomass Distribution Model: 
+    <div class="btn-group btn-group">
+      <button type="button" class="btn btn-default active">3PG</button>
+      <button type="button" class="btn btn-default">ALS</button>
+    </div>
+  </h3>
+  <div style="color:#888; padding: 5px 15px 15px 15px; margin-bottom: 30px">
+    Helper text about what the differences are.
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="config-header">Tree</h3>
+
+      <div class="form-horizontal" role="form">
+        <div class="form-group"> 
+          <label for="config-tree-default" class="col-sm-4 control-label">
+              <input type="radio" name="tree-config" id="config-tree-default" > Default
+          </label>
+          <div class="col-sm-8">
+               Our best guess
+          </div>
+        </div>
+        <div class="form-group"> 
+          <label for="config-tree-Beaupre" class="col-sm-4 control-label">
+              <input type="radio" name="tree-config" id="config-tree-Beaupre" > Beaupre
+          </label>
+          <div class="col-sm-8">
+               Described in the Pontailler 1999 paper
+          </div>
+        </div>
+        <div class="form-group"> 
+          <label for="config-tree-Robusta" class="col-sm-4 control-label">
+              <input type="radio" name="tree-config" id="config-tree-Robusta" > Robusta
+          </label>
+          <div class="col-sm-8">
+               Described in the Pontailler 1999 paper
+          </div>
+        </div>
+        <div class="form-group"> 
+          <label for="config-tree-awesome" class="col-sm-4 control-label">
+              <input type="radio" name="tree-config" id="config-tree-awesome" > Super awesome
+          </label>
+          <div class="col-sm-8">
+               See name
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="col-md-6">
+      <h3 class="config-header">Plantation</h3>
+
+      <div class="form-horizontal" role="form">
+        <div class="form-group"> 
+          <label for="config-plantation-default" class="col-sm-4 control-label">
+              <input type="radio" name="plantation-config" id="config-plantation-default" > Greenwood
+          </label>
+          <div class="col-sm-8">
+               How Greenwood does it
+          </div>
+        </div>
+        <div class="form-group"> 
+          <label for="config-plantation-Beaupre" class="col-sm-4 control-label">
+              <input type="radio" name="plantation-config" id="config-plantation-Beaupre" > France
+          </label>
+          <div class="col-sm-8">
+               Described in the Pontailler 1999 paper
+          </div>
+        </div>
+        <div class="form-group"> 
+          <label for="config-plantation-Robusta" class="col-sm-4 control-label">
+              <input type="radio" name="plantation-config" id="plantation-tree-Robusta" > Scotland
+          </label>
+          <div class="col-sm-8">
+               Described in paper
+          </div>
+        </div>
+        <div class="form-group"> 
+          <label for="config-plantation-awesome" class="col-sm-4 control-label">
+              <input type="radio" name="plantation-config" id="plantation-tree-awesome" > Foobar
+          </label>
+          <div class="col-sm-8">
+               another one
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="config-header">Soil</h3>
+
+      <div class="form-horizontal" role="form">
+        <div class="form-group"> 
+          <label for="config-soil-default" class="col-sm-4 control-label">
+              <input type="radio" name="soil-config" id="config-soil-default" > Dirty
+          </label>
+          <div class="col-sm-8">
+               It's dirty
+          </div>
+        </div>
+        <div class="form-group"> 
+          <label for="config-soil-Beaupre" class="col-sm-4 control-label">
+              <input type="radio" name="soil-config" id="config-soil-Beaupre" > Salty
+          </label>
+          <div class="col-sm-8">
+               Don't eat
+          </div>
+        </div>
+        <div class="form-group"> 
+          <label for="config-soil-Robusta" class="col-sm-4 control-label">
+              <input type="radio" name="soil-config" id="soil-tree-Robusta" > Fun
+          </label>
+          <div class="col-sm-8">
+               Great to play in
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-md-6">
+      <h3 class="config-header">Weather</h3>
+      <div id="gmap-2" style="height:350px;width:100%;border:1px solid #ccc"></div>
+        click map to select location
+        <button id="locate-button" class="btn btn-success pull-right" style="margin-top:5px"><i class="icon-screenshot"></i>&nbsp;Locate Me</button>
+    </div>
+  </div>
+
+
+  <div style="text-align: center">
+    <a class="btn btn-default hide-config">Update</a> 
+    <a class="btn btn-default hide-config">Cancel</a>
+  </div>
+
+</div>
+
 
 <div class="modal fade" id="select-weather-modal">
   <div class="modal-dialog">

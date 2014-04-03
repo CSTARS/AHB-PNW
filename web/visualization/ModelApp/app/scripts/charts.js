@@ -1,4 +1,4 @@
-define(["require"],function(require) {
+define(["jquery", "require"],function(jquery, require) {
     var app = null;
 
     // only draw charts if width has changed

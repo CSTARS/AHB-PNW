@@ -31,34 +31,34 @@ module.exports = function (grunt) {
                 ],
                 tasks: ['copy:styles', 'autoprefixer']
             },
-            livereload: {
-                options: {
-                    livereload: '<%= connect.options.livereload %>'
-                },
-                files: [
-                    '<%= yeoman.app %>/*.html',
-                    '.tmp/styles/{,*/}*.css',
-                    '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
-                    '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
-                ]
-            }
+            //livereload: {
+            //    options: {
+            //        livereload: '<%= connect.options.livereload %>'
+            //    },
+            //    files: [
+            //        '<%= yeoman.app %>/*.html',
+            //        '.tmp/styles/{,*/}*.css',
+            //        '{.tmp,<%= yeoman.app %>}/scripts/{,*/}*.js',
+            //        '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
+            //    ]
+            //}
         },
         connect: {
             options: {
                 port: 9000,
-                livereload: 35729,
+                //livereload: 35729,
                 // change this to '0.0.0.0' to access the server from outside
-                hostname: 'localhost'
+                hostname: '0.0.0.0'
             },
-            livereload: {
-                options: {
-                    open: true,
-                    base: [
-                        '.tmp',
-                        '<%= yeoman.app %>'
-                    ]
-                }
-            },
+            //livereload: {
+            //    options: {
+            //        open: true,
+            //        base: [
+            //            '.tmp',
+            //            '<%= yeoman.app %>'
+            //        ]
+            //    }
+            //},
             server: {
               options: {
                 keepalive: true,
