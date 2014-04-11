@@ -154,7 +154,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             }
         }, 
         WS : {
-            label : "Steam Biomass",
+            label : "Stem Biomass",
             units : "Mg/ha",
             description : "",
             fn : function(prev_WS, cur_dW, cur_pS) { return prev_WS + cur_dW * cur_pS }
