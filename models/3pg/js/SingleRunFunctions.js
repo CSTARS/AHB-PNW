@@ -280,11 +280,29 @@ m3PGFunc.coppice = {};
 // Coppice Functions are based on Diameter on Stump, NOT DBH.
 // Calculates the pfs based on the stem weight in KG
 m3PGFunc.coppice.pfs = function(stem, p) {
+//    log(" Math.pow( ( "+stem+" / "+p.stemCnt+" / "+p.stemC+") , (1 / "+p.stemP+") )");
   var avDOB = Math.pow( ( stem / p.stemCnt / p.stemC) , (1 / p.stemP) );
     var ppfs= p.pfsC * Math.pow(avDOB , p.pfsP);
-//    log("avDOB:"+avDOB+"ppfs:"+ppfs);
+//    log("stem:"+stem+" avDOB:"+avDOB+" ppfs:"+ppfs);
   return Math.min(p.pfsMx,ppfs);
 }
+
+// Calculates the pfs based on stem with in G.  Uses volume Index as guide
+m3PGFunc.coppice.pfs_via_VI = function (stemG,wsVI,laVI,SLA) {
+    if (stemG < 10) {
+	stemG=10;
+    }
+    var VI = Math.pow( (stemG / wsVI.stems_per_stump / wsVI.constant),(1 / wsVI.power) );
+//    log(VI+" = Math.pow( ("+stemG+" / "+wsVI.stems_per_stump+" / "+wsVI.constant+"),(1 / "+wsVI.power+") )");
+    var la = laVI.constant * Math.pow(VI,laVI.power);
+//    log( la+" = "+laVI.constant+" * Math.pow("+VI,laVI.power+")");
+    var wf = 1000 * (la / SLA);  // Foilage Weight in g;
+//    log(wf+" = 1000 * ("+la+" / "+SLA+")");  // Foilage Weight in g;
+    var pfs = wf/stemG;
+//    log(pfs+" = "+wf+"/"+stemG);
+    return pfs;
+}
+
 m3PGFunc.coppice.RootP = function(cur_npp, cur_nppTarget, WR,W,pRx,frac) {
   var nppRes = cur_nppTarget - cur_npp;
   var rootPP;
