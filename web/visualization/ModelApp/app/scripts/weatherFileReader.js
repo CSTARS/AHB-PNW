@@ -30,6 +30,8 @@ define(["require"],function(require) {
 	}
 
     function _handleGoogleSpreadsheet() {
+        ga('send', 'event', 'ui', 'interaction', 'load-weather-drive-file', 1);
+
         var val = $('#spreadsheet-weather-input').val();
         if( val.length == 0 ) return;
 
@@ -42,6 +44,8 @@ define(["require"],function(require) {
     }
 
 	function _handleFileSelect(evt) {
+        ga('send', 'event', 'ui', 'interaction', 'load-weather-local-file', 1);
+
 	    evt.stopPropagation();
 	    evt.preventDefault();
 
@@ -160,7 +164,7 @@ define(["require"],function(require) {
 
             var key = getKey(url);
             ele.find('.filename').html('<h3 style="border-bottom:1px solid #eee;padding:15px 0 4px 0"><i class="icon-tint"></i> '+
-                'Google spreadsheet'+(key.length > 0 ? '<br /><span style="color:#888;font-size:14px">'+key+'</span>' : '')+'</h3>');
+                'Google Spreadsheet'+(key.length > 0 ? '<br /><span style="color:#888;font-size:14px">'+key+'</span>' : '')+'</h3>');
 
             rootEle.append(ele);
             
@@ -263,7 +267,7 @@ define(["require"],function(require) {
             var dates = {};
             var displayDates = [];
             for( var i = 1; i < csvTable.length; i++ ) {
-                if( headers.date.col < csvTable[i].length ) {
+                if( headers.date.col < csvTable[i].length && csvTable[i].length >= 7 ) {
                     var p = csvTable[i][headers.date.col].split("-");
                     if( p.length != 3 && p.length != 2 ) return setError("Date: "+csvTable[i][headers.date.col]+" is not a valid format (yyyy-mm-dd or yyyy-mm)");
 

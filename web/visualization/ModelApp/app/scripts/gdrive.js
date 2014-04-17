@@ -45,6 +45,11 @@ define(["require","Oauth","gdriveRT"],function(require) {
 		$("#about-modal").modal({
 			show : false
 		});
+
+		// the about modal link is created below, so why not...
+		$("#help-modal").modal({
+			show : false
+		});
 		
 		// set the 'update' btn click handler
 		$("#save-update-btn").on('click', function() {
@@ -106,6 +111,8 @@ define(["require","Oauth","gdriveRT"],function(require) {
 	 * Save the current model as a new google drive file
 	 ***/
 	function _saveNewFile() {
+		ga('send', 'event', 'ui', 'interaction', 'save-drive-file', 1);
+
 		// grab the name of the new file
 		var name = $("#save-name-input").val();
 		if( name.length == 0 ) { // we always want a name, alert and quit
@@ -171,6 +178,8 @@ define(["require","Oauth","gdriveRT"],function(require) {
 	 * Update the currently loaded google drive file
 	 ***/
 	function _updateCurrentFile() {
+		ga('send', 'event', 'ui', 'interaction', 'update-drive-file', 1);
+
 		// let the user know what we are doing
 		_setSaveMessage('<i class="icon-spinner icon-spin"></i> Updating...','info');
 
@@ -237,6 +246,7 @@ define(["require","Oauth","gdriveRT"],function(require) {
 		var btn = $('<li class="dropdown">'
 				+ '<a class="dropdown-toggle" style="cursor:pointer">Login<b class="caret"></b></a>'
 				+ '<ul class="dropdown-menu">'
+				+ '<li><a id="help"><i class="icon-question-sign"></i> Help</a></li>'
 				+ '<li><a id="about"><i class="icon-info-sign"></i> About</a></li>'
 				+ '<li><a id="login-with-google"><i class="icon-signin"></i> Login with Google</a></li>'
 				+ '</ul></li>');
@@ -252,8 +262,14 @@ define(["require","Oauth","gdriveRT"],function(require) {
 			$("#about-modal").modal('show');
 		});
 
+		btn.find('#help').on('click', function() {
+			btn.toggleClass('open');
+			showHelp();
+		});
+
 		// login click handler
 		btn.find('#login-with-google').on('click',function() {
+			ga('send', 'event', 'ui', 'interaction', 'user-login', 1);
 			btn.toggleClass('open');
 			signIn(function(token) {
 				_setUserInfo();
@@ -277,6 +293,7 @@ define(["require","Oauth","gdriveRT"],function(require) {
 				+ '<li style="display:none"><a id="share-btn"><i class="icon-share"></i> Share Model</a></li>'
 				+ '<li style="display:none"><a id="open-in-drive" target="_blank"><i class="icon-external-link-sign"></i> Open in Google Drive</a></li>' 
 				+ '<li><a id="load"><i class="icon-cloud-download"></i> Load Model</a></li>'
+				+ '<li><a id="help"><i class="icon-question-sign"></i> Help</a></li>' 
 				+ '<li><a id="about"><i class="icon-info-sign"></i> About</a></li>' 
 				+ '<li><a id="logout"><i class="icon-signout"></i> Logout</a></li>' 
 				+ '</ul></li>');
@@ -331,6 +348,8 @@ define(["require","Oauth","gdriveRT"],function(require) {
 
 		// click handler for share btn
 		btn.find("#share-btn").on('click', function(){
+			ga('send', 'event', 'ui', 'interaction', 'open-drive-share', 1);
+
 			// has the share client been loaded
 			if( client == null ) {
 				// load the share popup
@@ -353,6 +372,11 @@ define(["require","Oauth","gdriveRT"],function(require) {
 			$("#about-modal").modal('show');
 		});
 
+		btn.find('#help').on('click', function() {
+			btn.toggleClass('open');
+			showHelp();
+		});
+
 		// show the 'load from drive' panel
 		btn.find('#load').on('click', function() {
 			btn.toggleClass('open');
@@ -369,6 +393,8 @@ define(["require","Oauth","gdriveRT"],function(require) {
 
 		// load the user out				
 		btn.find('#logout').on('click', function() {
+			ga('send', 'event', 'ui', 'interaction', 'user-logout', 1);
+
 			btn.toggleClass('open');
 
 			// kill the access token
@@ -464,6 +490,8 @@ define(["require","Oauth","gdriveRT"],function(require) {
 		
 		// add click handler for each file
 		$("#gdrive-file-list a").on('click', function(){
+			ga('send', 'event', 'ui', 'interaction', 'load-drive-model', 1);
+
 			var id = $(this).attr("id");
 
 			// let the user know what we are doing
@@ -539,6 +567,8 @@ define(["require","Oauth","gdriveRT"],function(require) {
 		
 		// add click handler for titles
 		$("#gdrive-file-list a").on('click', function(){
+			ga('send', 'event', 'ui', 'interaction', 'load-drive-tree', 1);
+
 			var id = $(this).attr("id");
 			var name = $(this).attr("name");
 
@@ -925,6 +955,7 @@ define(["require","Oauth","gdriveRT"],function(require) {
 	}
 
 	function runModelRt() {
+		ga('send', 'event', 'ui', 'interaction', 'run-model-remote', 1);
 		gdriveRT.runModelRt();
 	}
 

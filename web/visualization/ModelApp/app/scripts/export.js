@@ -50,6 +50,8 @@ define(["gdrive"],function(gdrive) {
 
 		// export as csv
 	function exportCsv(results) {
+		ga('send', 'event', 'ui', 'interaction', 'export-drive-csv', 1);
+
 		$("#export-csv").addClass("disabled").html("Exporting...");
 
 		var name = $("#export-name").val();
@@ -98,6 +100,9 @@ define(["gdrive"],function(gdrive) {
 
 			var key = keys[index];
 			var csv = "";
+
+			// TODO: add month and date
+
 			for( var i = 0; i < data[key].length; i++ ) {
 				if( data[key][i].length == 0 ) continue; // ignore the blank rows
 

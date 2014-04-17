@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>UserInterface.js</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title=""></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: </em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/m3PGFunc.html">m3PGFunc</a></li>
+            
+                <li><a href="../classes/manage.html">manage</a></li>
+            
+                <li><a href="../classes/plantation.html">plantation</a></li>
+            
+                <li><a href="../classes/plantation_state.html">plantation_state</a></li>
+            
+                <li><a href="../classes/soil.html">soil</a></li>
+            
+                <li><a href="../classes/Tree.html">Tree</a></li>
+            
+                <li><a href="../classes/weather.html">weather</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/3PG Module.html">3PG Module</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: UserInterface.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+
+// this is required to be copied inside spreadsheet
+// ie.. it cannot be side loaded
+
+// this is required to be copied inside spreadsheet
+// ie.. it cannot be side loaded
+function onOpen() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var menuEntries;
+  menuEntries = [
+    {name: &quot;Run tests from sheet TestSetup&quot;, functionName: &quot;runModelXTest&quot;},
+    {name: &quot;2 years like GreenWood&quot;, functionName: &quot;runModel31&quot;},
+    {name: &quot;Model 4 Months&quot;, functionName: &quot;runModel4&quot;},
+    {name: &quot;Model 2 Years&quot;, functionName: &quot;runModel24&quot;},
+    {name: &quot;Model 5 Years&quot;, functionName: &quot;runModel60&quot;},
+    {name: &quot;Model 10 Years&quot;, functionName: &quot;runModel120&quot;}];
+  ss.addMenu(&quot;Action&quot;, menuEntries);
+}
+
+
+function runModel31(){
+  m3PG.run(31);  
+}
+
+function runModel4(){
+  m3PG.run(4);
+}  
+
+function runModel24(){
+  m3PG.run(24);
+}
+
+
+function runModelXTest(){
+  // assume planted in march, cut in september
+  //var allTestValues = readTestInputs(&quot;Form Responses 1&quot;);
+  var allTestValues = m3PGIO.readTestInputs(&quot;TestSetup&quot;);
+  
+  //loop over var names, values, output var names
+  
+  //column names are assumed, and the lack of whitespace between comma-separated values.
+  var inputVarNameArray = allTestValues[&quot;Input Variable&quot;];
+  var inputVarValsArray = allTestValues[&quot;Input Values&quot;];
+  var outputVarNameArray = allTestValues[&quot;Output Variable&quot;];
+  
+  //////////Set up the original version of the model:////////////
+  
+  //work with offsets and weather data later
+  
+
+  ////////////////loop over different scenarios////////////////
+  for (var testNum = 0; testNum&lt;inputVarNameArray.length; testNum++){
+    var locationAsString = allTestValues[&quot;Location&quot;][testNum] + &quot;&quot;;
+    var yearToCoppice;
+    var coppiceInterval;
+    var monthToCoppice;
+    //Global Variables Array
+    
+    var g = {};
+    m3PGIO.readAllConstants(g); //global variables are an array of key-value pairs. INCLUDES SOIL DEPENDENT ONES - Separate?
+    
+    var experimentParams = {};
+    experimentParams.columnOffset = 0;
+    experimentParams.rowOffset = 0;
+    
+    Logger.log(&quot;experimentParams= &quot; + experimentParams);
+    
+    //calculate fNutr and add here;
+    g.fNutr=m3PGFunc.fNutr(g.fN0, g.FR);
+    
+    var inputVarName = inputVarNameArray[testNum];
+    var inputVarValsAsText = inputVarValsArray[testNum] + &quot;&quot;; //important hack to make sure this value is a string even when it&#x27;s a single number
+    inputVarValsAsText.replace(/\s/g, &quot;&quot;);
+    var inputVarVals = inputVarValsAsText.split(&#x27;,&#x27;);
+    
+    var outputVarNameAsText = outputVarNameArray[testNum];
+    outputVarNameAsText.split(&quot; &quot;).join(&quot;&quot;); //FOR some reason nothing works in removing white spaces?? FIXME: make this work later
+    var outputVarName = outputVarNameAsText;    
+    
+    var weatherMap = {};
+    var s = {}; //soilMap
+    var dateMap = {};
+    m3PGIO.readWeatherFromRequest(weatherMap, s, dateMap, locationAsString.split(&quot;,&quot;));
+    //add dates of the experiment setup
+    dateMap[&quot;datePlanted&quot;] = allTestValues[&quot;Planted Date&quot;][testNum];
+    dateMap[&quot;dateCoppiced&quot;] = allTestValues[&quot;Coppice Date&quot;][testNum];
+    dateMap[&quot;yearsPerCoppice&quot;] = allTestValues[&quot;Coppice Interval Years&quot;][testNum];
+    var dateEnd = new Date(allTestValues[&quot;Grow Until Date&quot;][testNum]);
+    var dateStart = new Date(dateMap[&quot;datePlanted&quot;]);
+    //Logger.log(allTestValues[&quot;Grow Until Date&quot;][testNum]);
+    //Logger.log(&quot;dateStart=&quot;+dateStart+&quot;; dateEnd=&quot; + dateEnd+&quot;; passed=&quot; + ((dateEnd.getYear()-dateStart.getYear())*12 + dateEnd.getMonth()-dateStart.getMonth()));
+    
+    var lengthOfGrowth = ((dateEnd.getYear()-dateStart.getYear())*12 + dateEnd.getMonth()-dateStart.getMonth()); //in months
+    var currentDate = new Date(dateMap[&quot;datePlanted&quot;]);
+    
+    //TODO: deal with output variables - AKA get only them and then print them
+    
+    
+    var sheetName = &quot;Test: &quot; + allTestValues[&quot;Test Name&quot;][testNum];
+    runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,experimentParams);
+    for (var k = 0; k&lt;inputVarVals.length; k++){
+      var willCoppice = false;
+      var isCoppiced = false;
+      currentDate = new Date(dateMap[&quot;datePlanted&quot;]);
+      
+      var plantedMonth = currentDate.getMonth();
+      var currentMonth = currentDate.getMonth();
+      
+      if (dateMap[&quot;dateCoppiced&quot;] != undefined){
+        yearToCoppice = dateMap[&quot;dateCoppiced&quot;].getYear();
+        monthToCoppice = dateMap[&quot;dateCoppiced&quot;].getMonth();
+        coppiceInterval = dateMap[&quot;yearsPerCoppice&quot;];
+        willCoppice = true;
+      }
+      
+      //log(&quot;Month of Planting = &quot; + currentMonth);
+      
+      var step = 0;
+      
+      var d = weatherMap[currentMonth];
+      
+      //log(d);
+      
+      var keysInOrder = [&quot;Date&quot;, &quot;VPD&quot;, &quot;fVPD&quot;, &quot;fT&quot;, &quot;fFrost&quot;, &quot;PAR&quot;, &quot;xPP&quot;, &quot;Intcptn&quot;,&quot;ASW&quot;,&quot;CumIrrig&quot;,&quot;Irrig&quot;,&quot;StandAge&quot;,&quot;LAI&quot;,&quot;CanCond&quot;,&quot;Transp&quot;,&quot;fSW&quot;,&quot;fAge&quot;,&quot;PhysMod&quot;,&quot;pR&quot;,&quot;pS&quot;,&quot;litterfall&quot;,&quot;NPP&quot;,&quot;WF&quot;,&quot;WR&quot;,&quot;WS&quot;, &quot;W&quot;];    
+      
+      var runCoppicedVersion = (allTestValues[&quot;Model Type&quot;] == &quot;coppice&quot;);
+      runSubsequentTimesXTest(runCoppicedVersion,inputVarName,inputVarVals[k], experimentParams, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVarName);
+    }
+    
+    //here we&#x27;ll write the test setup at the bottom of the results so that the same setup can be rerun when we need it.
+    recordTestSetupForFutureReference(allTestValues, testNum, experimentParams, sheetName, g); 
+  }
+  
+}  
+
+function recordTestSetupForFutureReference(allTestValues, testNum, experimentParams, sheetName, g){
+  var row1 = [];
+  var row2 = [];
+  var rows = [];
+  for (var key in allTestValues){
+    row1.push(key);
+    row2.push(allTestValues[key][testNum]);
+  }
+  rows.push(row1);
+  rows.push(row2);
+  
+  experimentParams.rowOffset = experimentParams.rowOffset + 2;
+  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, 1, experimentParams.rowOffset);//write columns on the right from the last one. but on the same rows
+  experimentParams.rowOffset = experimentParams.rowOffset + rows.length + 1;
+  
+  rows = [];
+  //var row = [];
+  //row.push(?? headers ??)
+  for (var key in g){ //iterate over global variables
+    var row = [];
+    row.push(key);
+    row.push(g[key]);
+    rows.push(row);
+  }
+  
+  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, 1, experimentParams.rowOffset);//write columns on the right from the last one. but on the same rows
+  experimentParams.rowOffset = experimentParams.rowOffset + rows.length + 1;
+  
+  /**Weather/soil aren&#x27;t needed = they are fetched from location. Plant copice date are also in the test setup
+  var weatherMapKeys = [&quot;month&quot;,&quot;tmin&quot;,&quot;tmax&quot;,&quot;tdmean&quot;,&quot;ppt&quot;,&quot;rad&quot;,&quot;daylight&quot;];
+  rows = []; //init rows for weather
+  rows.push(weatherMapKeys);
+  log(weatherMap);
+  log(&quot;starts here&quot;);
+  for (var monthId in weatherMap){
+    log(monthId);
+    var monthWeather = weatherMap[monthId];
+    log(monthWeather);
+    var row = [];
+    for (var k=0; k&lt;weatherMapKeys.length; k++){
+      var key = weatherMapKeys[k];
+      log(key);
+      row.push(monthWeather[key]);
+    }
+    rows.push(row);
+  }
+  
+  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, 1, experimentParams.rowOffset);//write columns on the right from the last one. but on the same rows
+  experimentParams.rowOffset = experimentParams.rowOffset + rows.length + 1;
+  */
+}
+
+function runFirstTimeXTest(sheetName,lengthOfGrowth,currentDate,experimentParams){
+  
+  //init main data structure
+  var rows = [];
+  var newRow = [];
+  newRow.push(&quot;Date&quot;);
+  newRow.push(&quot;Month Of Growth&quot;);
+  //2 columns added
+  experimentParams.columnOffset = 2;
+  rows.push(newRow);
+  experimentParams.rowOffset = experimentParams.rowOffset + 1;
+  
+  for (var i = 0; i &lt; lengthOfGrowth; i++) {     
+    newRow = [];
+    newRow.push((currentDate.getMonth()+1) + &quot;/&quot; + currentDate.getYear());
+    newRow.push(i);
+    rows.push(newRow);
+    experimentParams.rowOffset = experimentParams.rowOffset + 1;
+    
+    currentDate.setMonth(currentDate.getMonth() + 1);      
+  }
+  
+  m3PGIO.writeRowsToNewSheet(rows, sheetName); 
+}
+
+
+function runSubsequentTimesXTest(runCoppicedVersion,inputVarName, inputVarValue, experimentParams, sheetName,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,outputVariable){
+  //NOTE: only constant variables are modifiable for now (AKA globals &quot;g&quot;)
+  g[inputVarName] = inputVarValue;
+  
+  //big loop here //outputVariable + &quot;,&quot; + // &lt;= ommited for now - only one y var
+  var header = inputVarName + &quot;=&quot; + inputVarValue; //TODO: deal with upper/lower cases?
+  
+  //TODO: take out computation part (wher you replace x values)  
+  var reprintHeaders = false;
+  var resultRows = m3PG.runCurrentSetup(runCoppicedVersion,lengthOfGrowth,g,d,s,keysInOrder,step,plantedMonth,currentDate,currentMonth,yearToCoppice,monthToCoppice,coppiceInterval,willCoppice,isCoppiced,weatherMap,reprintHeaders);  
+  var index = resultRows[0].indexOf(outputVariable);
+  
+  var rows = [];
+  // key =&gt; var inputVar = inputVars[k];
+  // index = k = column to print into
+  //write out test results
+  
+  var currentRow = [];
+  currentRow.push(header);
+  rows.push(currentRow); //the header is set,
+  //now loop over actual results
+  for (var i = 1; i &lt; resultRows.length; i++) {       
+    // Logger.log(&quot;resultRows[i][index] = &quot; + resultRows[i][index]);
+    currentRow = [];
+    currentRow.push(resultRows[i][index]);
+    rows.push(currentRow);
+  }
+  
+  //PROBLEM HERE (make column offset?)
+  //big loop here
+  experimentParams.columnOffset = experimentParams.columnOffset + 1;
+  m3PGIO.writeRowsToSheetWithOffset(rows, sheetName, experimentParams.columnOffset,1);//write columns on the right from the last one. but on the same rows
+  
+}
+
+
+function runModel60(){
+  m3PG.run(60);
+} 
+
+function runModel120(){
+  m3PG.run(120);
+}  
+
+/** this function with use default value when user value not provided. Otherwhise NA? */
+function defaultOrUser(defaultVal, userVal) {
+  if (userVal == undefined || userVal==&quot;&quot;){
+    return defaultVal;
+  } else {
+    return userVal;
+  }
+}
+
+try {
+  var source = UrlFetchApp.fetch(&quot;https://raw.github.com/CSTARS/AHB-PNW/master/models/3pg/js/InputOutput.js&quot;).getContentText();
+  eval(source);
+  
+  source = UrlFetchApp.fetch(&quot;https://raw.github.com/CSTARS/AHB-PNW/master/models/3pg/js/Model3PG.js&quot;).getContentText();
+  eval(source);
+  
+  source = UrlFetchApp.fetch(&quot;https://raw.github.com/CSTARS/AHB-PNW/master/models/3pg/js/SingleRunFunctions.js&quot;).getContentText();
+  eval(source);
+  
+}catch (e){
+  Logger.log(e);
+}
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

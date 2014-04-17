@@ -146,7 +146,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             }
         }, 
         WR : {
-            label : "Leaf Biomass",
+            label : "Root Biomass",
             units : "Mg/ha",
             description : "",
             fn : function(prev_WR, cur_dW, cur_pR, turnover, prev_WR, cur_RootP) { 
@@ -154,7 +154,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             }
         }, 
         WS : {
-            label : "Steam Biomass",
+            label : "Stem Biomass",
             units : "Mg/ha",
             description : "",
             fn : function(prev_WS, cur_dW, cur_pS) { return prev_WS + cur_dW * cur_pS }
@@ -320,6 +320,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
     
     var runModel = function(isRt) {
+
         if ($("#runbtn, #runbtn-sm").hasClass("disabled")) return;
         $("#runbtn, #runbtn-sm").addClass("disabled").html("Running...");
 
@@ -328,6 +329,8 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         // let UI process for a sec before we tank it
         // TODO: this should be preformed w/ a webworker
         setTimeout(function() {
+            ga('send', 'event', 'ui', 'interaction', 'model-run', 1);
+
             // read everything so the variations are set
             window.variations = {};
             m3PGIO.readFromInputs();
@@ -350,6 +353,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
             // we are only running once
             if ( params.length == 0 ) {
+                ga('send', 'event', 'ui', 'interaction', 'model-run-singleParam', 1);
 
                 runCallback = function(rows) {
                     showResults(rows);
@@ -357,6 +361,8 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                 m3PG.run(monthsToRun());
 
             } else {
+                ga('send', 'event', 'ui', 'interaction', 'model-run-variation', 1);
+
                 // set variation order
                 var runs = [];
                 for( var i = 0; i < window.variations[params[0]].length; i++ ) {
@@ -551,6 +557,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
     }
 
     var showRawOutput = function(results) {
+
         // selected in the charts output
         var vars = $("#chartTypeInput").val();
 
@@ -573,7 +580,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
 
         $("#output-content").html("").append(tabs).append(contents);
         $("#rawOutputTabs").tab();
-   
+
         csvResults = {
             config : m3PGIO.exportSetup(),
             data : {}
@@ -589,6 +596,8 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             results[i].output = clean;
         }
 
+        var cDate = new Date($("#input-manage-DatePlanted").val());
+
         var table, row;
         for( var key in chartRows ) {
             table = "<table class='table table-striped'>";
@@ -596,12 +605,14 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
             csvResults.data[key] = [];
 
             for( var j = 0; j < results[0].output.length; j++ ){
-
                 csvResults.data[key][j] = [];
 
                 // set header row
                 if( j == 0 ) {
-                    table += "<tr><th>Month</th>";
+                    csvResults.data[key][j].push('month');
+                    csvResults.data[key][j].push('date');
+
+                    table += "<tr><th>Month</th><th>Date</th>";
                     for( var z = 0; z < results.length; z++ ) {
                         table += "<th>";
                         var tmp = [];
@@ -612,7 +623,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                         }
 
                         if( tmp.length == 0 ) {
-                            csvResults.data[key][j].push[key];
+                            csvResults.data[key][j].push(key);
                             table += key;
                         } else {
                             csvResults.data[key][j].push(tmp.join(" "));
@@ -621,16 +632,25 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
                     }
 
                     table += "</tr>";
-                }
+                } else {
+                    var date = new Date(cDate.getYear()+1900, cDate.getMonth()+j, cDate.getDate());
+                    var m = date.getMonth()+1;
+                    if( m < 10 ) m = '0'+m;
 
-                table += "<tr><td>"+j+"</td>";
-                var v;
-                for( var z = 0; z < results.length; z++ ) {
-                    v = results[z].output[j][chartRows[key]];
-                    table += "<td>"+v+"</td>";
-                    csvResults.data[key][j].push(v);
+                    table += "<tr><td>"+j+"</td><td>"+date.getFullYear()+'-'+m+"</td>";
+
+                    csvResults.data[key][j].push(j);
+                    csvResults.data[key][j].push(date.getFullYear()+'-'+m);
+
+                    var v;
+                    for( var z = 0; z < results.length; z++ ) {
+                        v = results[z].output[j][chartRows[key]];
+                        table += "<td>"+v+"</td>";
+                        csvResults.data[key][j].push(v);
+                    }
+                    table += "</tr>";  
                 }
-                table += "</tr>";        
+                     
             }
             $("#rawout" + key).html(table+"</table>");
         }

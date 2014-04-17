@@ -181,22 +181,10 @@
       <div class="modal-body">
 
             <div style="text-align:center">
-              <img src="logo_196.png" style="width:58px;height:58px;vertical-align:top;margin-right:15px" />
-              <span class="letter" data-letter="A">A</span>
-              <span class="letter" data-letter="H">H</span>
-              <span class="letter" data-letter="B">B</span>
-              &nbsp;
-              <span class="letter" data-letter="-">-</span>
-              &nbsp;
-              <span class="letter" data-letter="3">3</span>
-              <span class="letter" data-letter="P">P</span>
-              <span class="letter" data-letter="G">G</span>
-              &nbsp;
-              <span class="letter" data-letter="M">M</span>
-              <span class="letter" data-letter="o">o</span>
-              <span class="letter" data-letter="d">d</span>
-              <span class="letter" data-letter="e">e</span>
-              <span class="letter" data-letter="l">l</span>
+              <h2 style="margin-top:0px">
+                <img src="logo_196.png" style="width:58px;height:58px;vertical-align:top;margin-right:25px" />
+                <span style="vertical-align:bottom">AHB - 3PG Model</span>
+              </h2>
             </div>
             <p style="text-align:center">
               System For Advanced Biofuels Production From Woody Biomass In The Pacific Northwest
@@ -256,6 +244,28 @@ The Advanced Hardwood Biofuels Northwest project, AHB-NW investigates using popl
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<div class="modal fade" id="help-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <i class="icon-question-sign"></i> Help
+      </div>
+      <div class="modal-body" style="padding:9px">
+
+          <div id="videoRoot"></div>
+
+          <div style="padding:15px;text-align:center;color:#666;font-size:12px">Copyright &#169; The Regents of the University of California, Davis campus. All rights reserved.</div>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-default pull-right" data-dismiss="modal" >Close</a>
+      </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 
 <div class="modal fade" id="load-modal">
   <div class="modal-dialog">
@@ -338,7 +348,7 @@ The Advanced Hardwood Biofuels Northwest project, AHB-NW investigates using popl
               <div class="input-group">
                 <input id="spreadsheet-weather-input" type="text" class="form-control" placeholder="Google Spreadsheet Url">
                 <span class="input-group-btn">
-                  <button id="spreadsheet-weather-input-btn" class="btn btn-default" type="button">Add</button>
+                  <button id="spreadsheet-weather-input-btn" class="btn btn-default" type="button" style="padding-bottom:7px">Add</button>
                 </span>
               </div>
             </div>
@@ -355,4 +365,9 @@ The Advanced Hardwood Biofuels Northwest project, AHB-NW investigates using popl
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<div style="padding:25px 10px 5px 10px;text-align:center;color:#666;font-size:12px">Copyright &#169; The Regents of the University of California, Davis campus. All rights reserved.</div>
+<div style="text-align:center" style="padding-top:20px">
+    <a style="cursor:pointer;text-decoration:none" onclick="showHelp()"><i class="icon-question-sign"></i> Help</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+    <a style="cursor:pointer;text-decoration:none" onclick="showAbout()"><i class="icon-info-sign"></i> About</a>
+</div>
+
+<div style="padding:5px 10px 5px 10px;text-align:center;color:#666;font-size:12px">Copyright &#169; The Regents of the University of California, Davis campus. All rights reserved.</div>

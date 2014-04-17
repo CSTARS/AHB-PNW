@@ -148,6 +148,8 @@ define(['require'],function(require){
 	}
 	
 	function _queryWeatherData(lng, lat, callback) {
+		ga('send', 'event', 'ui', 'interaction', 'weather-data-query', 1);
+
 		var url = "http://alder.bioenergy.casil.ucdavis.edu:8080/vizsource/rest?view=pointToWeather("+lng+","+lat+",8192)"
 		var q = new google.visualization.Query(url);
 		var resps = 0;

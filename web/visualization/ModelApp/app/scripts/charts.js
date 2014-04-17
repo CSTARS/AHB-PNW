@@ -18,7 +18,7 @@ define(["require"],function(require) {
         title : 'Weather',
         height : 300,
         vAxes: [{
-                title: "Radiation (MJ/day); Temperature (^C); Due Point (^C); Daylight (h)",
+                title: "Radiation (MJ/day); Temperature (^C); Dew Point (^C); Daylight (h)",
                 minValue : -5,
                 maxValue : 35
               },{
@@ -182,7 +182,10 @@ define(["require"],function(require) {
         
     }
 
-    function print(chartContainer) { 
+    function print(chartContainer) {
+        ga('send', 'event', 'ui', 'interaction', 'print-chart', 1);
+
+
 	    var disp_setting="toolbar=yes,location=no,directories=yes,menubar=yes,"; 
         disp_setting+="scrollbars=yes,width=800, height=600, left=25, top=25";
         
@@ -258,6 +261,9 @@ define(["require"],function(require) {
     }
     
     function showPopup() {
+        ga('send', 'event', 'ui', 'interaction', 'show-chart-popup', 1);
+
+
         sliderPopup.find(".owl-theme").html("");
         $('body').scrollTop(0).css('overflow','hidden').append(sliderPopupBg).append(sliderPopup);
 
@@ -319,15 +325,12 @@ define(["require"],function(require) {
         var col = 0;
 
         var dt = new google.visualization.DataTable();
-
-        // for animation
-        //var init = new google.visualization.DataTable();
         
         if( chartType == 'timeline' ) {
             dt.addColumn('date', 'Month');        
         } else {
-            dt.addColumn('number', 'Month'); 
-            //init.addColumn('number', 'Month');
+            //dt.addColumn('number', 'Month'); 
+            dt.addColumn('string', 'Month');
         }
 
         // set the first column
@@ -339,11 +342,9 @@ define(["require"],function(require) {
                 }
                 label = label.replace(/,\s$/,'');
                 dt.addColumn('number', label);        
-                //init.addColumn('number', label);
             }
         } else {
             dt.addColumn('number', type);   
-            //init.addColumn('number', type);        
         }
 
         // find the column we want to chart
@@ -357,34 +358,30 @@ define(["require"],function(require) {
         var cDate = new Date($("#input-manage-DatePlanted").val());
 
         var data = [];
-        //var idata = [];
         var max = 0;
         // create the [][] array for the google chart
         for ( var i = 1; i < cData[0].output.length; i++) {
             if (typeof cData[0].output[i][col] === 'string') continue;
             
             var row = [];
-            //var irow = [];
+            var date = new Date(cDate.getYear()+1900, cDate.getMonth()+i, cDate.getDate());
             if( chartType == "timeline" ) {
                 // add on month
-                cDate
-                row.push(new Date(cDate.getYear()+1900, cDate.getMonth()+i, cDate.getDate()));
+                row.push(date);
             } else {
-                row.push(i);
-                //irow.push(i);
+                var m = date.getMonth()+1;
+                if( m < 10 ) m = '0'+m;
+                row.push(i+': '+date.getFullYear()+'-'+m);
             }
 
             for ( var j = 0; j < cData.length; j++) {
                 if( cData[j].output[i][col] > max ) max = cData[j].output[i][col];
                 row.push(cData[j].output[i][col]);
-                //irow.push(0);
             }
             data.push(row);
-            //idata.push(irow);
         }
 
         dt.addRows(data);
-        //init.addRows(idata);
         
         if( app.outputDefinitions[type] ) {
             var desc = app.outputDefinitions[type];
@@ -418,23 +415,8 @@ define(["require"],function(require) {
             var chart = new google.visualization.AnnotatedTimeLine(panel[0]);
             chart.draw(dt, options);
         } else {
-            /*if( animate ) {
-                // let's animate a little bit
-                options.animation = {duration: 500};
-                options.vAxis = {maxValue:max};
-
-                var chart = new google.visualization.LineChart(panel[0]);
-                chart.draw(init, options);
-
-                delete options.max;
-                // let ui breat ;)
-                setTimeout(function(){
-                    chart.draw(dt, options);
-                },100);
-            } else {*/
-                var chart = new google.visualization.LineChart(panel[0]);
-                chart.draw(dt, options);
-            //}
+            var chart = new google.visualization.LineChart(panel[0]);
+            chart.draw(dt, options);
         }
     }
 
@@ -445,7 +427,7 @@ define(["require"],function(require) {
         dt.addColumn('string', 'Month');
         dt.addColumn('number', 'Min Temperature');
         dt.addColumn('number', 'Max Temperature');
-        dt.addColumn('number', 'Due Point');
+        dt.addColumn('number', 'Dew Point');
         dt.addColumn('number', 'Precipitation');
         dt.addColumn('number', 'Radiation');
         dt.addColumn('number', 'Daylight');

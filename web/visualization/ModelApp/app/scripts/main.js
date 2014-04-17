@@ -157,6 +157,20 @@ require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel','flashblock-detecto
         chartsCallback = onChartsLoaded;
     }
 
+    window.showAbout = function(){
+        $("#about-modal").modal('show');
+    };
+
+    window.showHelpInit = false;
+    window.showHelp = function() {
+        $("#help-modal").modal('show');
+        if( !showHelpInit ) {
+            showHelpInit = true;
+            setTimeout(function(){
+                $("#videoRoot").html('<iframe width="560" height="315" src="//www.youtube.com/embed/CjMs8lDPqbw" frameborder="0" allowfullscreen></iframe>');
+            }, 500);
+        }
+    }
 		
 	// override the log function
 	window.log = function(msg) {
