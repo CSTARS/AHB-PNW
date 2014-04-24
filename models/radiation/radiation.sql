@@ -9,7 +9,7 @@ do language plv8 ' load_module("radiation");';
 -- @class extraterrestrial_radiation_t
 -- @classdesc The resultant object from the SolRad.extraterrestrial_radiation() call.
 
-CREATE TYPE extraterrestrial_radiation_t as 
+CREATE TYPE public.extraterrestrial_radiation_t as 
 (
 	"date" date,
 	"doy" integer,
@@ -21,18 +21,18 @@ CREATE TYPE extraterrestrial_radiation_t as
 	"solar_declination" float
 );
 
-create or replace function extraterrestrial_radiation (day date,lat float)
+create or replace function public.extraterrestrial_radiation (day date,lat float)
 RETURNS extraterrestrial_radiation_t AS $$
 	return SolRad.extraterrestrial_radiation(day,lat);
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
 
-create or replace function solar_radiation (rad extraterrestrial_radiation_t  ,n float)
+create or replace function public.solar_radiation (rad extraterrestrial_radiation_t  ,n float)
 RETURNS float AS $$
 	return SolRad.solar_radiation(rad,n);
 $$ LANGUAGE plv8 IMMUTABLE STRICT;
 
-create or replace function daylight_hours (rad extraterrestrial_radiation_t  ,Rs float)
+create or replace function public.daylight_hours (rad extraterrestrial_radiation_t  ,Rs float)
 RETURNS float AS $$
 	return SolRad.daylight_hours(rad,Rs);
 $$ LANGUAGE plv8 IMMUTABLE STRICT;

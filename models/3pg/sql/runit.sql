@@ -1,8 +1,8 @@
---drop schema m3pgjs cascade;
---create schema m3pgjs;
+drop schema m3pgjs cascade;
+create schema m3pgjs;
 set search_path=m3pgjs,public;
---\i plv8_startup.sql
--- \i types.sql
+\i plv8_startup.sql
+\i types.sql
 \i  tree_and_plantation.sql
 -- --\i example_locations.sql
 -- -- If you've modified the js script, then use \reload_modules.sql

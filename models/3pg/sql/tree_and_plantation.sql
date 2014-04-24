@@ -36,6 +36,16 @@ create type pR_t as (
  turnover float
 );
 
+drop type if exists pfs_t cascade;
+create type pfs_t as (
+ "stemCnt" float,
+ "stemC" float,
+ "stemP" float,
+ "pfsMx" float,
+ "pfsP" float,
+ "pfsC" float
+);
+
 drop type if exists rootP_t cascade;
 create type rootP_t as (
 "frac" float,
@@ -43,14 +53,17 @@ create type rootP_t as (
 "efficiency" float
 );
 
-drop type if exists pfs_t cascade;
-create type pfs_t as (
-       "stemCnt" float,
-       "stemC"   float,
-       "stemP" float,
-       "pfsMx" float,
-       "pfsP"  float,
-       "pfsC"  float
+drop type if exists wsVI_t cascade;
+create type wsVI_t as (
+"constant" float,
+"power" float,
+"stems_per_stump" float
+);
+
+drop type if exists laVI_t cascade;
+create type laVI_t as (
+"constant" float,
+"power"  float
 );
 
 drop type if exists tree_t cascade;
@@ -72,7 +85,9 @@ CREATE TYPE tree_t as (
 "y" float,
 pfs pfs_t,
 "rootP" rootP_t,
-litterfall tdp_t
+litterfall tdp_t,
+"wsVI" wsVI_t,
+"laVI" laVI_t 
 );
 
 -- This could also be an external table
@@ -92,9 +107,8 @@ INSERT INTO tree (type,"fullCanAge", "kG", "alpha", "fT", "BLcond", "fAge", "fN0
 ('v-cd-mw-stick',1.5, 0.5, 0.08, (0,20,50)::fT_t, 0.03,(1,0,47.5,3.5)::tdp_t, 0.26, (19,10,5,2)::tdp_t, (0.0001,0.02, 2.6)::cond_t, (0,0.24,7.3)::intcpt_t, (0.17,0.7,.5,0.02)::pR_t, 0.47, (1, 0.18, 2.4, 2, -0.772, 1.3)::pfs_t, (0.01, 10, 0.5)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
 ('v-wm-mw',0.7, 0.5, 0.08, (0,30,50)::fT_t, 0.03, (1,0,47.5,3.5)::tdp_t, .26, (19,10.8,5,2)::tdp_t, (0.0001,0.02, 2.6)::cond_t, (0,0.24,7.3)::intcpt_t, (0.17,0.7,0.5,0.02)::pR_t, 0.47, (2.8, 0.18, 2.4, 2, -0.772, 1.3)::pfs_t, (0.2,10,0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
 ('v-wm-mw-stick',1.5, 0.5, 0.08, (0,30,50)::fT_t, 0.03,(1,0,47.5,3.5)::tdp_t, 0.26, (19,10,5,2)::tdp_t, (0.0001,0.02, 2.6)::cond_t, (0,0.24,7.3)::intcpt_t, (0.17,0.7,.5,0.02)::pR_t, 0.47, (1, 0.18, 2.4, 2, -0.772, 1.3)::pfs_t, (0.01, 10, 0.5)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5),
-('fischer2013',0, 0.85, 0.08, (5,20,40)::fT_t, 0.2, (1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.033, 3.33)::cond_t, (0,0.24,7.3)::intcpt_t, (0.25,0.34,0,0.005)::pR_t, 0.47, (2.8, 0.18, 2.4, 2, -1.161976, 1.91698)::pfs_t, (1,10,0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5)
+('fischer2013',0, 0.85, 0.08, (5,20,40)::fT_t, 0.2, (1,0,47.5,3.5)::tdp_t, 1, (10.8,10.8,1,2)::tdp_t, (0.0001,0.033, 3.33)::cond_t, (0,0.24,7.3)::intcpt_t, (0.25,0.34,0,0.005)::pR_t, 0.47, (2.8, 0.18, 2.4, 2, -1.161976, 1.91698)::pfs_t, (1,10,0.75)::rootP_t, (0.0015,0.03,2,2.5)::tdp_t, 0.5);
 
-;
 
 drop type if exists plantation_t cascade;
 CREATE type plantation_t as (
