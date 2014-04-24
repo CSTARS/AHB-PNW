@@ -79,13 +79,13 @@ ahb.chart = (function() {
 	  		  easing: 'out'
 	  	  },
 	   },
-       optionsPrice : {
+       price : {
 		  title : 'Poplar Adoption',
 		  legend : {
 			  position : 'right'
 		  },
 		  vAxis: {title: "Acres"},
-		  hAxis: {title: "Price for Poplar ($/bdt)"},
+		  hAxis: {title: "Poplar Price ($ / Green Ton)"},
 	  	  animation : {
 	  		  duration: 1000,
 	  		  easing: 'out'
@@ -329,6 +329,7 @@ ahb.chart = (function() {
 			view.hideColumns([2,4]);
 			chart[type].draw(view, options[type]);
 		} else {
+			console.log(type);
 			chart[type].draw(datatable[type], options[type]);
 		}
 	}
