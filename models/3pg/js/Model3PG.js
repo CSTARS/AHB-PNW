@@ -257,7 +257,7 @@ var m3PG = {
     c.RootP = m3PGFunc.coppice.RootP(c.NPP, NPP_target, p.WR, p.W,
 					 tree.pR.mx,tree.rootP.frac);
 
-      if (tree.laVI.constant ) { // Test for that function
+      if (tree.laVI && tree.laVI.constant ) { // Test for that function
 //	  log("using laVI:"+JSON.stringify(tree.laVI));
 	  c.pfs = m3PGFunc.coppice.pfs_via_VI(p.WS*1000000/plantation.StockingDensity, tree.wsVI,tree.laVI,sla);
       } else {
