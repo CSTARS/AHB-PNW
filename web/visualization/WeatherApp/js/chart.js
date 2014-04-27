@@ -135,6 +135,7 @@ ahb.chart = (function() {
 			
 			$(window).trigger("weather-export-event",[datatable.weather, datatable.soil, key]);
 		});
+
 	}
 	
 	function onApiLoad() {
@@ -250,6 +251,16 @@ ahb.chart = (function() {
 		filename = type+"_"+filename;
 		
 		panel.append($('<a class="btn pull-left" href="'+cUrl[type]+'&tq=select *&tqx=out:csv;outFileName:'+filename+'"><i class="icon-download-alt"></i>&nbspDownload CSV</a>'));
+		
+		if( type != "soil") {
+			var print = $('<a class="btn pull-left" style="margin-left:5px"><i class="icon-print"></i>&nbspPrintable Version</a>')
+				.on('click', function(){
+					window.open(chart[type].getImageURI());
+				});
+			panel.append(print);
+		}
+
+
 		panel.append($('<a class="btn pull-right" href="'+cUrl[type]+'&tq=select *" target="_blank"><i class="icon-link"></i>&nbspSource</a>'));
 	}
 	
@@ -329,7 +340,6 @@ ahb.chart = (function() {
 			view.hideColumns([2,4]);
 			chart[type].draw(view, options[type]);
 		} else {
-			console.log(type);
 			chart[type].draw(datatable[type], options[type]);
 		}
 	}
