@@ -14,6 +14,8 @@ ahb.map = (function() {
 	
 	var chartMarker = null;
 	var fusionLayer = null;
+	var eventLayer;
+	var eventListener;
 	
 	function init() {
 		// use the new maps look and feel
@@ -53,7 +55,12 @@ ahb.map = (function() {
 	}
 	
 	function _updateLayer() {
+		if( eventListener != null ) {
+				google.maps.event.removeListener(eventListener);
+		}
 		if( fusionLayer != null ) fusionLayer.setMap(null);
+
+
 		
 		if( ahb.type == 'weather' ) {
 			fusionLayer = new google.maps.FusionTablesLayer({
@@ -71,6 +78,8 @@ ahb.map = (function() {
 			      }],
 				  suppressInfoWindows : true
 				});
+			
+			eventLayer = gmap;
 		} else {
 			fusionLayer = new google.maps.FusionTablesLayer({
 				  query: {
@@ -79,12 +88,15 @@ ahb.map = (function() {
 				  },
 				  suppressInfoWindows : true
 			 });
+			eventLayer = fusionLayer;
 		}
 		
 		fusionLayer.opacity = .8;
 		fusionLayer.setMap(gmap);
+
+
 		
-		google.maps.event.addListener(fusionLayer, 'click', function(e) {
+		eventListener = google.maps.event.addListener(eventLayer, 'click', function(e) {
 			if( chartMarker != null ) chartMarker.setMap(null);
 						
 			var id = "";
