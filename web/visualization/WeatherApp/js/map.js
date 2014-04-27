@@ -1,7 +1,8 @@
 var INIT_MAP_OPTIONS = {
 	centerX: -125,
 	centerY: 42,
-	zoom: 6
+	zoom: 6,
+	scrollwheel: false
 }
 
 var KML_GRID_URL = "";
