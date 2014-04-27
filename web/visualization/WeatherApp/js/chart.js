@@ -75,9 +75,9 @@ ahb.chart = (function() {
 	  			4: {targetAxisIndex:0}
 	  	  },
 	  	  animation:{
-	  		  duration: 1000,
-	  		  easing: 'out'
-	  	  },
+      		  duration: 1000,
+      		  easing: 'out'
+      	  },
 	   },
        price : {
 		  title : 'Poplar Adoption',
@@ -111,11 +111,12 @@ ahb.chart = (function() {
       			3: {type: "line", targetAxisIndex:0},
       			4: {type: "line", targetAxisIndex:0},
       			4: {type: "line", targetAxisIndex:0}
-      	  },
-      	  animation:{
-      		  duration: 1000,
-      		  easing: 'out'
-      	  },
+      	  	}
+      	  	// TODO: get this working
+      	  	//,explorer: {
+      	  	//	axis: 'horizontal'
+      	  	//}
+ 
        },
        soil : {}
     }    
@@ -185,8 +186,12 @@ ahb.chart = (function() {
 	    cll = latLng;
 		
 	    $('#outer-chart-panel').show();
+
 		if( ahb.type == 'weather' ) {
 			$('#bottom-charts').css("visibility", "visible");
+			$('#outer-weather-chart-panel').show();
+			$('#outer-soil-chart-panel').show();
+			_resize();
 
 			cUrl.weather = vizSourceUrl+'?view=pointToWeather('+latLng.lng()+','+latLng.lat()+',8192)';
 			cUrl.poplar = vizSourceUrl+'?view=pointTo3pg('+latLng.lng()+','+latLng.lat()+',8192,\''+ahb.irType+'\')';
@@ -209,9 +214,14 @@ ahb.chart = (function() {
 			sQuery.send(function(response){
 				handleQueryResponse("soil", response)
 			});
+
+			$("#weather-nav").show();
+            $("#soil-nav").show();
+            $("#data-nav").show();
 			
 		} else {
 			$('#bottom-charts').css("visibility", "hidden");
+			_resize();
 			
 			cUrl.price = vizSourceUrl+"?view=bcam_commodity_predictions('"+id+"')";
 			
@@ -222,8 +232,15 @@ ahb.chart = (function() {
 			pQuery.send(function(response){
 				handleQueryResponse("price", response)
 			});
+
+			$("#weather-nav").hide();
+            $("#soil-nav").hide();
+            $("#data-nav").show();
 		}
 		
+		$('html, body').animate({
+			scrollTop: $("#outer-chart-panel").offset().top-55
+		}, 700);
 		
 	}
 	
@@ -250,10 +267,10 @@ ahb.chart = (function() {
 		
 		filename = type+"_"+filename;
 		
-		panel.append($('<a class="btn pull-left" href="'+cUrl[type]+'&tq=select *&tqx=out:csv;outFileName:'+filename+'"><i class="icon-download-alt"></i>&nbspDownload CSV</a>'));
+		panel.append($('<a class="btn btn-default pull-left" href="'+cUrl[type]+'&tq=select *&tqx=out:csv;outFileName:'+filename+'"><i class="icon-table"></i><span class="hidden-xs">&nbspDownload CSV</span></a>'));
 		
 		if( type != "soil") {
-			var print = $('<a class="btn pull-left" style="margin-left:5px"><i class="icon-print"></i>&nbspPrintable Version</a>')
+			var print = $('<a class="btn btn-default pull-left" style="margin-left:5px"><i class="icon-print"></i><span class="hidden-xs">&nbspPrintable Version</span></a>')
 				.on('click', function(){
 					window.open(chart[type].getImageURI());
 				});
@@ -261,7 +278,7 @@ ahb.chart = (function() {
 		}
 
 
-		panel.append($('<a class="btn pull-right" href="'+cUrl[type]+'&tq=select *" target="_blank"><i class="icon-link"></i>&nbspSource</a>'));
+		panel.append($('<a class="btn btn-default pull-right" href="'+cUrl[type]+'&tq=select *" target="_blank"><i class="icon-link"></i><span class="hidden-xs">&nbspSource</span></a>'));
 	}
 	
 	function handleQueryResponse(type, response) {
@@ -314,13 +331,14 @@ ahb.chart = (function() {
 		panel.html("");
 		
 		// make sure the width is correct
-		var w = panel.parent().width();
-		var h = w / 2;
-		if( type == 'soil') h -= 40;
+		if( type != 'soil' ){
+			var w = panel.parent().width();
+			var h = w / 2;
+			if( type == 'soil') h -= 40;
+			
+			panel.width(w).height(h);
+		}
 		
-		panel.width(w).height(h);
-
-
         if( type == 'weather' ) {
         	chart[type] = new google.visualization.ComboChart(panel[0]);
         } else if ( type == "soil" ) {

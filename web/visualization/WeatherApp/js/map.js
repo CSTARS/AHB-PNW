@@ -1,7 +1,7 @@
 var INIT_MAP_OPTIONS = {
-	centerX: -121,
-	centerY: 35,
-	zoom: 5
+	centerX: -125,
+	centerY: 42,
+	zoom: 6
 }
 
 var KML_GRID_URL = "";
@@ -118,7 +118,7 @@ ahb.map = (function() {
 		
 		var w = map.parent().width();
 		map.width(w);
-		w = w / 2;
+		w = w / 2.5;
 		map.height(w);
 		
 		google.maps.event.trigger(gmap, "resize");

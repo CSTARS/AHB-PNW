@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+	
+	<link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!--<link href="lib/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">-->
+	<link href="lib/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+
+    <link rel="shortcut icon" sizes="196x196" href="logo_196.png">
+    <link rel="shortcut icon" sizes="128x128" href="logo_128.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="logo_128.png">
+    <link rel="apple-touch-icon-precomposed" sizes="128x128" href="logo_128.png">
+
+    <title>AHB - 3PG Data Viewer</title>
+
+	<!-- Libraries -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="lib/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="jslib/jquery.cookie.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false&v=3.12"></script>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+	<script src="https://apis.google.com/js/client.js?onload=initapi"></script>
+	<script type="text/javascript">
+      google.load('visualization', '1', {packages: ['corechart','table']});
+      google.load('gdata', '1.x');  
+      google.setOnLoadCallback(onApisLoad); 
+      
+      var apiCount = 2;
+      function onApisLoad() {}
+    </script>
+	
+
+	
+	<script type="text/javascript">
+		var ahb = {
+			type : "weather",
+			irType : "Irrigated"
+		};
+		
+	      $(window).ready(function(){
+            $('.app-nav').on('click', function(e) {
+                e.preventDefault();
+                $('html, body').animate({
+                    scrollTop: $(this.hash).offset().top-55
+                 }, 700);
+           });
+
+	    	 $("#type-selector button").on('click',function(e){
+                $("#type-selector button").removeClass('active');
+                $(this).addClass('active');
+
+	    		 var id = this.id.replace(/type-/, '');
+	    		 
+	    		 // TODO: update this name in entire app
+	    		 if( id == "3PG" ) id = "weather";
+	    		 
+	    		 if( id == ahb.type ) return;
+	    		 ahb.type = id;
+
+
+                $("#weather-nav").hide();
+                $("#soil-nav").hide();
+                $("#data-nav").hide();
+	    		 
+	    		 if( id != "weather" ) {
+	    			 $("#outer-poplar-chart-panel").hide();
+	    			 $("#poplar-selector").hide();
+                     $('#outer-weather-chart-panel').hide();
+                     $('#outer-soil-chart-panel').hide();
+	    		 } else {
+	    			 $("#poplar-chart-panel").show();
+	    			 $("#outer-poplar-chart-panel").show();
+                     $("#poplar-selector").show();
+	    		 }
+	    		 
+	    		 $(window).trigger('change-type-event',[]);
+	    		 
+	    		 setTimeout(function(){
+	    			 $(window).trigger('resize',[]);
+	    		 },300);
+	    		
+	    		 
+	    	 });
+	    	 $("#poplar-selector button").on('click',function(e){
+                $("#poplar-selector button").removeClass('active');
+
+	    		ahb.irType = $(this).addClass('active').html();
+	    		$(window).trigger('change-irtype-event',[]);
+	    	 });
+	    	 
+	    	 $(window).resize(_resize());
+	    	 _resize();
+	    	 
+	    	 ahb.map.init();
+	    	 ahb.search.init();
+	    	 ahb.chart.init();
+	    	 //ahb.modelExport.init();
+	    	 
+	    	 function _resize() {
+	    		 if($(window).width() < 765) {
+	    			 $(".search-big").hide();
+	    			 $(".search-small").show();
+	    		 } else {
+	    			 $(".search-big").show();
+	    			 $(".search-small").hide();
+	    		 }
+	    	 }
+
+	    	 
+	      });
+	     
+    </script>
+    <script type="text/javascript" src="js/map.js"></script>
+	<script type="text/javascript" src="js/search.js"></script>
+	<script type="text/javascript" src="js/chart.js"></script>
+    
+</head>
+<body style="margin-top: 50px">
+	
+<!-- TITLE BAR -->
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+        <a class="navbar-brand hidden-xs">
+            <img src="logo_128.png" style="width:24px;height:24px" border="0" />
+            <span>AHB - 3PG Data Viewer</span>
+        </a>
+        <a class="navbar-brand visible-xs">
+            <img src="logo_128.png" style="width:24px;height:24px" border="0" />
+        </a>
+    </div>
+
+    <div class="navbar-collapse collapse navbar-main" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li id="data-nav" style="display:none">
+            <a href="#outer-chart-panel" class="app-nav">
+                <span class="hidden-sm"><i class="icon-terminal"></i> Data</span>
+                <span class="visible-sm"><i class="icon-terminal"></i></span>
+            </a>
+        </li>
+        <li id="weather-nav" style="display:none">
+            <a href="#outer-weather-chart-panel" class="app-nav">
+                <span class="hidden-sm"><i class="icon-tint"></i> Weather</span>
+                <span class="visible-sm"><i class="icon-tint"></i></span>
+            </a>
+        </li>
+        <li id="soil-nav" style="display:none">
+            <a href="#outer-soil-chart-panel" class="app-nav">
+                <span class="hidden-sm"><i class="icon-beaker"></i> Soil</span>
+                <span class="visible-sm"><i class="icon-beaker"></i></span>
+            </a>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right"  style="margin-top:8px">
+        <li>
+            <div id="type-selector" class="btn-group pull-right"  style="margin-right:10px">
+                <button id="type-weather" type="button" class="btn btn-primary active"><i class="icon-leaf"></i>&nbsp;3PG</button>
+                <button id="type-price" type="button" class="btn btn-primary"><i class="icon-money"></i>&nbsp;Price</button>
+            </div>
+          </li>
+          <li>
+            <div id="poplar-selector" class="btn-group pull-right" style="margin-right:10px">
+              <button id="poplar-irrigated" type="button" class="btn btn-primary active">Irrigated</button>
+              <button id="poplar-nonirriagated" type="button" class="btn btn-primary">Nonirrigated</button>
+            </div>
+          </li>
+      </ul>
+
+    </div>
+
+    
+    </div>
+</div>
+<!-- END TITLE BAR -->
+
+<div style="padding: 15px">
+    <div>
+          <input type="text" id="search-text" class="form-control" placeholder="Find Location" style="width: 250px; display:inline-block">&nbsp;&nbsp;
+          <button id="search-button" class="btn btn-default"><i class="icon-search"></i><span class="hidden-xs">&nbsp;Search<span></button>&nbsp;&nbsp;
+          <button id="locate-button" class="btn btn-default"><i class="icon-screenshot"></i><span class="hidden-xs">&nbsp;Locate Me</span></button>
+        <div class="well" id="search-results" style="display:none;margin-top:20px"></div>
+    </div>
+
+    <div id="map-outer" style="margin: 10px 50px">
+        <div id="map" class="outer-map-panel" style="height:400px;width:400px"></div>
+        <div style="text-align:center;padding:3px;color:#888;font-style:italic">Click a grid to see 3PG Model Yields or Price data.</div>
+    </div>
+
+
+    <div id="outer-chart-panel" style="display:none">
+        <h1><i class="icon-terminal"></i> Data</h1>
+        <div id="chart-panel" class="chart-panel" style="margin-bottom:10px;height:400px"></div>
+        <div id="download-panel" style="height:75px" class="well"></div>
+    </div>
+
+    <div id="outer-weather-chart-panel" style="display:none">
+        <h1><i class="icon-tint"></i> Weather</h1>
+        <div id="weather-chart-panel" class="chart-panel" style="margin-bottom:10px;height:400px"></div>
+        <div id="weather-download-panel" style="height:75px" class="well"></div>
+    </div>
+
+    <div id="outer-soil-chart-panel" style="display:none;margin-bottom:25px">
+        <h1><i class="icon-beaker"></i> Soil</h1>
+        <div class="chart-panel" style="margin-bottom:10px">
+            <h4 style="text-align:center">Soil</h4>
+            <div id="soil-chart-panel"></div>
+        </div>
+        <div id="soil-download-panel" style="height:75px" class="well"></div>
+    </div>
+
+</div>
+
+
+<div style="text-align:center;margin-top:50px">
+    <a style="text-decoration:none" href="http://alder.bioenergy.casil.ucdavis.edu/3pgModel/"><i class="icon-link"></i> 3pg Model App</a>
+</div>
+
+<div style="padding:5px 10px 5px 10px;text-align:center;color:#666;font-size:12px">Copyright © The Regents of the University of California, Davis campus. All rights reserved.</div>
+
+</body>
+</html>
