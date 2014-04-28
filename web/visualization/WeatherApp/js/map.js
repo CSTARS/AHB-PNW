@@ -15,7 +15,7 @@ ahb.map = (function() {
 	var chartMarker = null;
 	var fusionLayer = null;
 	var eventLayer;
-	var eventListener;
+	var eventListeners = [];
 	
 	function init() {
 		// use the new maps look and feel
@@ -55,9 +55,10 @@ ahb.map = (function() {
 	}
 	
 	function _updateLayer() {
-		if( eventListener != null ) {
-				google.maps.event.removeListener(eventListener);
+		for( var i = 0; i < eventListeners.length; i++ ) {
+			google.maps.event.removeListener(eventListeners[i]);
 		}
+		eventListeners = [];
 		if( fusionLayer != null ) fusionLayer.setMap(null);
 
 
@@ -94,9 +95,7 @@ ahb.map = (function() {
 		fusionLayer.opacity = .8;
 		fusionLayer.setMap(gmap);
 
-
-		
-		eventListener = google.maps.event.addListener(eventLayer, 'click', function(e) {
+		var onClick = function(e) {
 			if( chartMarker != null ) chartMarker.setMap(null);
 						
 			var id = "";
@@ -108,7 +107,15 @@ ahb.map = (function() {
 			});
 			
 			$(window).trigger('query-map-event', [e.latLng, id]);
-		});
+		}
+
+		
+		eventListeners.push(google.maps.event.addListener(eventLayer, 'click', onClick));
+		if( ahb.type == 'weather' ) {
+			eventListeners.push(google.maps.event.addListener(fusionLayer, 'click', onClick));
+		}
+
+
 		
 		
 	}
