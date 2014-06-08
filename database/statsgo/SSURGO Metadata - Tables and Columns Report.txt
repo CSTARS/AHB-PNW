@@ -1,0 +1,11450 @@
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chaashto
+Table Label:
+Horizon AASHTO
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 aashtocl
+2 rvindicator
+
+AASHTO
+RV?
+
+Choice
+Boolean
+
+Varchar
+Char
+
+No
+Yes
+
+254
+3
+
+3 chkey
+4 chaashtokey
+
+Chorizon Key
+Chorizon AASHTO Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+Domain Name
+aashto_group_classification
+
+The Horizon AASHTO table contains the American Association of State Highway Transportation Officials classification(s) for the referenced horizon. One row in this table is marked as the
+representative AASHTO classification for the horizon.
+
+1/11/2012
+
+Page 1
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chconsistence
+Table Label:
+Horizon Consistence
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+1 rupresblkmst
+2 rupresblkdry
+
+Rupture Moist
+Rupture Dry
+
+Choice
+Choice
+
+Varchar
+Varchar
+
+No
+No
+
+254
+254
+
+rupture_resist_block_moist
+rupture_resist_block_dry
+
+Rupture Cement
+Rupture Plate
+Manner of Failure
+Stickiness
+Plasticity
+RV?
+Chorizon Key
+Chorizon Consistence Key
+
+Choice
+Choice
+Choice
+Choice
+Choice
+Boolean
+String
+String
+
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+Char
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+Yes
+Yes
+Yes
+
+254
+254
+254
+254
+254
+3
+30
+30
+
+rupture_resist_block_cem
+rupture_resist_plate
+manner_of_failure
+stickiness
+plasticity
+
+3
+4
+5
+6
+7
+8
+9
+10
+
+rupresblkcem
+rupresplate
+mannerfailure
+stickiness
+plasticity
+rvindicator
+chkey
+chconsistkey
+
+The Horizon Consistence table contains descriptive terms of soil consistence -- rupture resistance, plasticity, and stickiness -- for the referenced horizon. One row in this table is marked as having the
+representative characteristics for the horizon.
+
+1/11/2012
+
+Page 2
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chdesgnsuffix
+Table Label:
+Horizon Designation Suffix
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 desgnsuffix
+2 chkey
+
+Suffix
+Chorizon Key
+
+Choice
+String
+
+Varchar
+Varchar
+
+No
+Yes
+
+254
+30
+
+3 chdesgnsfxkey
+
+Chorizon Designation Suffix Key
+
+String
+
+Varchar
+
+Yes
+
+30
+
+Domain Name
+horz_desgn_letter_suffix
+
+The Horizon Designation Suffix table contains the designation suffix(es), one per row, for the referenced horizon. For example, the "h" and "s" of a Bhs horizon appear as two rows in this table.
+
+1/11/2012
+
+Page 3
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chfrags
+Table Label:
+Horizon Fragments
+
+Column
+Seq Physical Name
+1 fragvol_l
+2 fragvol_r
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+
+fragvol_h
+fragkind
+fragsize_l
+fragsize_r
+fragsize_h
+fragshp
+fraground
+fraghard
+chkey
+chfragskey
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Low
+RV
+
+Integer
+Integer
+
+Smallint
+Smallint
+
+No
+No
+
+High
+Kind
+Low
+RV
+High
+Shape
+Roundness
+Hardness
+Chorizon Key
+Chorizon Fragments Key
+
+Integer
+Choice
+Integer
+Integer
+Integer
+Choice
+Choice
+Choice
+String
+String
+
+Smallint
+Varchar
+Smallint
+Smallint
+Smallint
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+Yes
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+0
+0
+
+100 percent
+100 percent
+
+0
+
+100 percent
+
+254
+
+fragment_kind
+2
+2
+2
+
+254
+254
+254
+30
+30
+
+Domain Name
+
+3000 mm
+3000 mm
+3000 mm
+fragment_shape
+fragment_roundness
+rupture_resist_block_cem
+
+The Horizon Fragments table lists the mineral and organic fragments that generally occur in the referenced horizon. If the Volume % is greater than zero (low=5, RV=10, high=15) in a row, the kind and
+size of fragment in that row exists everywhere this horizon and component occur in the map unit. If the Volume % includes zero (low=0, RV=5, high=10), the kind and size of fragment may exist in
+some places, but not in others.
+
+1/11/2012
+
+Page 4
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chorizon
+Table Label:
+Horizon
+
+Column
+Seq Physical Name
+1 hzname
+2 desgndisc
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Designation
+Disc
+
+String
+Integer
+
+Varchar
+Smallint
+
+No
+No
+
+12
+254
+254
+
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+
+desgnmaster
+desgnmasterprime
+desgnvert
+hzdept_l
+hzdept_r
+hzdept_h
+hzdepb_l
+hzdepb_r
+hzdepb_h
+hzthk_l
+hzthk_r
+
+Master
+Prime
+Sub
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+
+Choice
+Choice
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+
+Varchar
+Varchar
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+
+hzthk_h
+fraggt10_l
+fraggt10_r
+fraggt10_h
+frag3to10_l
+frag3to10_r
+frag3to10_h
+sieveno4_l
+sieveno4_r
+sieveno4_h
+sieveno10_l
+
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Float
+Float
+Float
+Float
+
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+25
+26
+27
+28
+29
+30
+31
+32
+
+sieveno10_r
+sieveno10_h
+sieveno40_l
+sieveno40_r
+sieveno40_h
+sieveno200_l
+sieveno200_r
+sieveno200_h
+
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+
+1/11/2012
+
+Units of
+Size Precision Minimum Maximum Measure
+
+2
+
+Domain Name
+
+99
+horz_desgn_master
+horz_desgn_master_prime
+
+1
+0
+0
+0
+0
+0
+0
+0
+0
+
+9999
+9999
+9999
+9999
+9999
+9999
+9999
+9999
+
+cm
+cm
+cm
+cm
+cm
+cm
+cm
+cm
+
+1
+1
+1
+1
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+
+9999
+100
+100
+100
+100
+100
+100
+100
+100
+100
+100
+
+cm
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+
+1
+1
+1
+1
+1
+1
+1
+1
+
+0
+0
+0
+0
+0
+0
+0
+0
+
+100
+100
+100
+100
+100
+100
+100
+100
+
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+
+Page 5
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chorizon
+Table Label:
+Horizon
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+33 sandtotal_l
+34 sandtotal_r
+
+Low
+RV
+
+Float
+Float
+
+Real
+Real
+
+No
+No
+
+1
+1
+
+0
+0
+
+100 percent
+100 percent
+
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+
+sandtotal_h
+sandvc_l
+sandvc_r
+sandvc_h
+sandco_l
+sandco_r
+sandco_h
+sandmed_l
+sandmed_r
+sandmed_h
+sandfine_l
+
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+
+100
+100
+100
+100
+100
+100
+100
+100
+100
+100
+100
+
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+
+sandfine_r
+sandfine_h
+sandvf_l
+sandvf_r
+sandvf_h
+silttotal_l
+silttotal_r
+silttotal_h
+siltco_l
+siltco_r
+siltco_h
+
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+
+100
+100
+100
+100
+100
+100
+100
+100
+100
+100
+100
+
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+
+57
+58
+59
+60
+61
+62
+63
+64
+
+siltfine_l
+siltfine_r
+siltfine_h
+claytotal_l
+claytotal_r
+claytotal_h
+claysizedcarb_l
+claysizedcarb_r
+
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+
+1
+1
+1
+1
+1
+1
+1
+1
+
+0
+0
+0
+0
+0
+0
+0
+0
+
+100
+100
+100
+100
+100
+100
+100
+100
+
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+
+1/11/2012
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+Page 6
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chorizon
+Table Label:
+Horizon
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+65 claysizedcarb_h
+66 om_l
+
+High
+Low
+
+Float
+Float
+
+Real
+Real
+
+No
+No
+
+1
+2
+
+0
+0
+
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+
+om_r
+om_h
+dbtenthbar_l
+dbtenthbar_r
+dbtenthbar_h
+dbthirdbar_l
+dbthirdbar_r
+dbthirdbar_h
+dbfifteenbar_l
+dbfifteenbar_r
+dbfifteenbar_h
+
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+2
+
+0
+0
+0.02
+0.02
+0.02
+0.02
+0.02
+0.02
+0.02
+0.02
+0.02
+
+100
+100
+2.6
+2.6
+2.6
+2.6
+2.6
+2.6
+2.6
+2.6
+2.6
+
+percent
+percent
+g/cm3
+g/cm3
+g/cm3
+g/cm3
+g/cm3
+g/cm3
+g/cm3
+g/cm3
+g/cm3
+
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+
+dbovendry_l
+dbovendry_r
+dbovendry_h
+partdensity
+ksat_l
+ksat_r
+ksat_h
+awc_l
+awc_r
+awc_h
+wtenthbar_l
+
+Low
+RV
+High
+Dp
+Low
+RV
+High
+Low
+RV
+High
+Low
+
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+
+Float
+Float
+Float
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+2
+2
+2
+2
+4
+4
+4
+2
+2
+2
+1
+
+0.02
+0.02
+0.02
+0.01
+0
+0
+0
+0
+0
+0
+0
+
+2.6
+2.6
+2.6
+5
+705
+705
+705
+0.7
+0.7
+0.7
+2000
+
+g/cm3
+g/cm3
+g/cm3
+g/cm3
+um/s
+um/s
+um/s
+cm/cm
+cm/cm
+cm/cm
+percent
+
+89
+90
+91
+92
+93
+94
+95
+96
+
+wtenthbar_r
+wtenthbar_h
+wthirdbar_l
+wthirdbar_r
+wthirdbar_h
+wfifteenbar_l
+wfifteenbar_r
+wfifteenbar_h
+
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+
+1
+1
+1
+1
+1
+1
+1
+1
+
+0
+0
+0
+0
+0
+0
+0
+0
+
+2000
+2000
+2000
+2000
+2000
+400
+400
+400
+
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+
+1/11/2012
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+100 percent
+100 percent
+
+Page 7
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chorizon
+Table Label:
+Horizon
+
+Column
+Seq Physical Name
+97 wsatiated_l
+98 wsatiated_r
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Low
+RV
+
+Integer
+Integer
+
+Smallint
+Smallint
+
+No
+No
+
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+
+wsatiated_h
+lep_l
+lep_r
+lep_h
+ll_l
+ll_r
+ll_h
+pi_l
+pi_r
+pi_h
+aashind_l
+
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+
+Integer
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Integer
+
+Smallint
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Smallint
+
+aashind_r
+aashind_h
+kwfact
+kffact
+caco3_l
+caco3_r
+caco3_h
+gypsum_l
+gypsum_r
+gypsum_h
+sar_l
+
+RV
+High
+Kw
+Kf
+Low
+RV
+High
+Low
+RV
+High
+Low
+
+Integer
+Integer
+Choice
+Choice
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Float
+
+Smallint
+Smallint
+Varchar
+Varchar
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+121
+122
+123
+124
+125
+126
+127
+128
+
+sar_r
+sar_h
+ec_l
+ec_r
+ec_h
+cec7_l
+cec7_r
+cec7_h
+
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+
+10
+10
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1/11/2012
+
+70 percent
+70 percent
+
+10
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+
+70
+30
+30
+30
+400
+400
+400
+130
+130
+130
+120
+
+0
+0
+
+1
+1
+1
+1
+1
+1
+1
+1
+1
+
+Domain Name
+
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+percent
+
+120
+120
+
+254
+254
+
+soil_erodibility_factor
+soil_erodibility_factor
+
+1
+
+0
+0
+0
+0
+0
+0
+0
+
+110
+110
+110
+120
+120
+120
+9999
+
+1
+1
+1
+1
+1
+1
+1
+1
+
+0
+0
+0
+0
+0
+0
+0
+0
+
+9999
+9999
+15000
+15000
+15000
+400
+400
+400
+
+percent
+percent
+percent
+percent
+percent
+percent
+
+mmhos/cm
+mmhos/cm
+mmhos/cm
+meq/100g
+meq/100g
+meq/100g
+
+Page 8
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chorizon
+Table Label:
+Horizon
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+129 ecec_l
+130 ecec_r
+
+Low
+RV
+
+Float
+Float
+
+Real
+Real
+
+No
+No
+
+1
+1
+
+0
+0
+
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+
+ecec_h
+sumbases_l
+sumbases_r
+sumbases_h
+ph1to1h2o_l
+ph1to1h2o_r
+ph1to1h2o_h
+ph01mcacl2_l
+ph01mcacl2_r
+ph01mcacl2_h
+freeiron_l
+
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+
+Real
+Float
+Float
+Float
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+2
+
+0
+0
+0
+0
+1.8
+1.8
+1.8
+1.8
+1.8
+1.8
+0
+
+400
+300
+300
+300
+11
+11
+11
+11
+11
+11
+100
+
+meq/100g
+meq/100g
+meq/100g
+meq/100g
+
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+
+freeiron_r
+freeiron_h
+feoxalate_l
+feoxalate_r
+feoxalate_h
+extracid_l
+extracid_r
+extracid_h
+extral_l
+extral_r
+extral_h
+
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+2
+2
+2
+2
+2
+1
+1
+1
+2
+2
+2
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+
+100
+100
+150000
+150000
+150000
+250
+250
+250
+150
+150
+150
+
+percent
+percent
+mg/kg
+mg/kg
+mg/kg
+meq/100g
+meq/100g
+meq/100g
+meq/100g
+meq/100g
+meq/100g
+
+153
+154
+155
+156
+157
+158
+159
+160
+
+aloxalate_l
+aloxalate_r
+aloxalate_h
+pbray1_l
+pbray1_r
+pbray1_h
+poxalate_l
+poxalate_r
+
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+Float
+
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+Real
+
+No
+No
+No
+No
+No
+No
+No
+No
+
+1
+1
+1
+1
+1
+1
+1
+1
+
+0
+0
+0
+0
+0
+0
+0
+0
+
+170000
+170000
+170000
+500
+500
+500
+
+mg/kg
+mg/kg
+mg/kg
+mg/kg
+mg/kg
+mg/kg
+mg/kg
+mg/kg
+
+1/11/2012
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+400 meq/100g
+400 meq/100g
+
+percent
+
+Page 9
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chorizon
+Table Label:
+Horizon
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+161 poxalate_h
+162 ph2osoluble_l
+
+High
+Low
+
+Float
+Float
+
+Real
+Real
+
+No
+No
+
+1
+1
+
+0
+0
+
+mg/kg
+5000 mg/kg
+
+163
+164
+165
+166
+167
+168
+169
+
+RV
+High
+Low
+RV
+High
+Excav Diff
+Excav Diff Moisture
+
+Float
+Float
+Float
+Float
+Float
+Choice
+Choice
+
+Real
+Real
+Real
+Real
+Real
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+
+1
+1
+2
+2
+2
+
+0
+0
+0
+0
+0
+
+5000 mg/kg
+5000 mg/kg
+percent
+percent
+percent
+
+254
+254
+
+Component Key
+Chorizon Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+ph2osoluble_r
+ph2osoluble_h
+ptotal_l
+ptotal_r
+ptotal_h
+excavdifcl
+excavdifms
+
+170 cokey
+171 chkey
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+excavation_difficulty_class
+observed_soil_moisture_stat
+us
+
+The Horizon table lists the horizon(s) and related data for the referenced map unit component. If the horizon thickness is greater than zero (low=5, RV=8, high=12), the horizon exists everywhere this
+component occurs. If the horizon thickness includes zero (low=0, RV=1, high=3), the horizon may exist in some places, but not in other places.
+Horizons that have two distinct parts, such as E/B or E&Bt horizons, are recorded twice. Once for the characteristics of the first part; and again on another row, using the same depths and thicknesses,
+for the characteristics of the other part.
+
+1/11/2012
+
+Page 10
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chpores
+Table Label:
+Horizon Pores
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 poreqty_l
+2 poreqty_r
+
+Low
+RV
+
+Float
+Float
+
+Real
+Real
+
+No
+No
+
+3
+4
+5
+6
+7
+8
+9
+
+High
+Size
+Continuity
+Shape
+RV?
+Chorizon Key
+Chorizon Pores Key
+
+Float
+Choice
+Choice
+Choice
+Boolean
+String
+String
+
+Real
+Varchar
+Varchar
+Varchar
+Char
+Varchar
+Varchar
+
+No
+No
+No
+No
+Yes
+Yes
+Yes
+
+poreqty_h
+poresize
+porecont
+poreshp
+rvindicator
+chkey
+chporeskey
+
+Units of
+Size Precision Minimum Maximum Measure
+1
+1
+
+99 pores/area
+99 pores/area
+
+1
+254
+254
+254
+3
+30
+30
+
+0
+0
+0
+
+Domain Name
+
+99 pores/area
+pore_root_size
+pore_continuity_vertical
+pore_shape
+
+The Horizon Pores table lists the voids for the referenced horizon. If the Quantity is greater than zero (low=2, RV=5, high=10) in a row, the voids in that row exist everywhere the horizon and
+component occur in the map unit. If the Quantity includes zero (low=0, RV=2, high=5), the voids may exist in some places, but not in others. More than one row can be marked as an RV row because
+a horizon may have more than one size or shape of void.
+
+1/11/2012
+
+Page 11
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chstruct
+Table Label:
+Horizon Structure
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+1 structgrade
+2 structsize
+
+Grade
+Size
+
+Choice
+Choice
+
+Varchar
+Varchar
+
+No
+No
+
+254
+254
+
+structure_grade
+structure_size
+
+3
+4
+5
+6
+7
+
+Type
+Structure ID
+Parts to Structure ID
+Chorizon Structure Group Key
+Chorizon Structure Key
+
+Choice
+Integer
+Integer
+String
+String
+
+Varchar
+Smallint
+Smallint
+Varchar
+Varchar
+
+No
+No
+No
+Yes
+Yes
+
+254
+
+structtype
+structid
+structpartsto
+chstructgrpkey
+chstructkey
+
+structure_type
+1
+
+30
+30
+
+The Horizon Structure table lists the individual soil structure size, grade, and shape terms for the referenced horizon. Terms in this table are assembled into a structure group string which is recorded in
+the Horizon Structure Group table.
+
+1/11/2012
+
+Page 12
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chstructgrp
+Table Label:
+Horizon Structure Group
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 structgrpname
+2 rvindicator
+
+Structure
+RV?
+
+String
+Boolean
+
+Varchar
+Char
+
+No
+Yes
+
+100
+3
+
+3 chkey
+4 chstructgrpkey
+
+Chorizon Key
+Chorizon Structure Group Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+Domain Name
+
+The Horizon Structure Group table lists the ranges of soil structure for the referenced horizon. The row with the typically occurring structure is marked as being representative. The entry in this table is
+based on grouping of entries in the Horizon Structure table.
+
+1/11/2012
+
+Page 13
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chtext
+Table Label:
+Horizon Text
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+1 recdate
+2 chorizontextkind
+
+Date
+Kind
+
+Date/Time
+Choice
+
+Datetime
+Varchar
+
+No
+No
+
+254
+
+chorizon_text_kind
+
+3 textcat
+4 textsubcat
+5 text
+
+Category
+Subcategory
+Text
+
+Varchar
+No
+Varchar
+No
+Varchar(max) No
+
+20
+20
+
+6 chkey
+7 chtextkey
+
+Chorizon Key
+Chorizon Text Key
+
+String
+String
+Narrative
+Text
+String
+String
+
+Varchar
+Varchar
+
+30
+30
+
+Yes
+Yes
+
+The Horizon Text table contains notes and narrative descriptions related to the referenced horizon. Some notes may provide additional information about the horizon for which there is no explicit
+column for such data. In many cases, the table is empty for a particular horizon.
+
+1/11/2012
+
+Page 14
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chtexture
+Table Label:
+Horizon Texture
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 texcl
+2 lieutex
+
+Texture
+In Lieu
+
+Choice
+Choice
+
+Varchar
+Varchar
+
+No
+No
+
+254
+254
+
+3 chtgkey
+4 chtkey
+
+Chorizon Texture Group Key
+Chorizon Texture Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+Domain Name
+texture_class
+terms_used_in_lieu_of_textur
+e
+
+The Horizon Texture table lists the individual texture(s), or term(s) used in lieu of texture, for the referenced horizon. Only the unmodified texture terms are listed in the Horizon Texture table; modifiers
+are listed in the Horizon Texture Modifier table. For example, a gravelly loamy sand is shown as "GR-LS" in the Horizon Texture Group table, "ls" in the Horizon Texture table, and "gr" in the Horizon
+Texture Modifier table.
+
+1/11/2012
+
+Page 15
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chtexturegrp
+Table Label:
+Horizon Texture Group
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 texture
+2 stratextsflag
+
+Tex Mod & Class
+Stratified?
+
+String
+Boolean
+
+Varchar
+Char
+
+No
+Yes
+
+30
+3
+
+3 rvindicator
+4 texdesc
+
+RV?
+Texture Description
+
+Char
+Yes
+Varchar(max) No
+
+3
+
+5 chkey
+6 chtgkey
+
+Chorizon Key
+Chorizon Texture Group Key
+
+Boolean
+Narrative
+Text
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+30
+30
+
+The Horizon Texture Group table lists the range of textures for the referenced horizon as a concatenation of horizon texture and texture modifier(s). For example, a horizon that is gravelly loamy sand
+in some places and gravelly loamy coarse sand in other places is shown as GR-LS on one row and GR-LCOS on another row in this table. The row with the typically occurring texture is identified as
+the RV row. Stratified textures are shown in one row. For example, a horizon that is stratified gravelly loamy fine sand and cobbly coarse sand is shown as SR- GR-LFS CB-COS on one row and the
+Stratified? column for that row is marked "yes". If two or more textures always occur together but are not stratified, all of the textures are listed on one row and the Stratified? column for that row is
+marked "no".
+
+1/11/2012
+
+Page 16
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chtexturemod
+Table Label:
+Horizon Texture Modifier
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 texmod
+2 chtkey
+
+Modifier
+Chorizon Texture Key
+
+Choice
+String
+
+Varchar
+Varchar
+
+No
+Yes
+
+254
+30
+
+3 chtexmodkey
+
+Chorizon Texture Modifier Key
+
+String
+
+Varchar
+
+Yes
+
+30
+
+Domain Name
+texture_modifier
+
+The Horizon Texture Modifier table lists the texture modifier(s) for the referenced texture. For example, a gravelly loamy sand is shown as "GR-LS" in the Horizon Texture Group table, "ls" in the
+Horizon Texture table, and "gr" in this table.
+
+1/11/2012
+
+Page 17
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: chunified
+Table Label:
+Horizon Unified
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 unifiedcl
+2 rvindicator
+
+Unified
+RV?
+
+Choice
+Boolean
+
+Varchar
+Char
+
+No
+Yes
+
+254
+3
+
+3 chkey
+4 chunifiedkey
+
+Chorizon Key
+Chorizon Unified Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+Domain Name
+unified_soil_classification
+
+The Horizon Unified table contains the Unified Soil Classification(s) for the referenced horizon. One row in the Horizon Unified table is marked as the representative Unified classification for the horizon.
+
+1/11/2012
+
+Page 18
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cocanopycover
+Table Label:
+Component Canopy Cover
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 plantcov
+2 plantsym
+
+Canopy Cover %
+Plant Symbol
+
+Integer
+String
+
+Smallint
+Varchar
+
+No
+Yes
+
+8
+
+3
+4
+5
+6
+
+Scientific Name
+Common Name
+Component Key
+Component Canopy Cover Key
+
+String
+String
+String
+String
+
+Varchar
+Varchar
+Varchar
+Varchar
+
+No
+No
+Yes
+Yes
+
+127
+60
+30
+30
+
+plantsciname
+plantcomname
+cokey
+cocanopycovkey
+
+Units of
+Size Precision Minimum Maximum Measure
+0
+
+Domain Name
+
+100 percent
+
+The Component Canopy Cover table lists the overstory plants that typically occur on the referenced map unit component.
+
+1/11/2012
+
+Page 19
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cocropyld
+Table Label:
+Component Crop Yield
+
+Column
+Seq Physical Name
+1 cropname
+2 yldunits
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+
+nonirryield_l
+nonirryield_r
+nonirryield_h
+irryield_l
+irryield_r
+irryield_h
+cropprodindex
+vasoiprdgrp
+cokey
+cocropyldkey
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+Crop Name
+Units
+
+Choice
+Choice
+
+Varchar
+Varchar
+
+No
+No
+
+254
+254
+
+crop_name
+crop_yield_units
+
+Low
+RV
+High
+Low
+RV
+High
+Prod Index
+VA Soil Prod Grp
+Component Key
+Component Crop Yield Key
+
+Float
+Float
+Float
+Float
+Float
+Float
+Integer
+Choice
+String
+String
+
+Real
+Real
+Real
+Real
+Real
+Real
+Smallint
+Varchar
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+Yes
+Yes
+
+2
+2
+2
+2
+2
+2
+254
+30
+30
+
+0
+0
+0
+0
+0
+0
+0
+
+9999.99
+9999.99
+9999.99
+9999.99
+9999.99
+9999.99
+100
+va_soil_productivity_group
+
+The Component Crop Yield table lists commonly grown crops and their expected range in yields when grown on the referenced map unit component. Yields for the map unit as a whole are given in the
+Mapunit Crop Yield table.
+
+1/11/2012
+
+Page 20
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: codiagfeatures
+Table Label:
+Component Diagnostic Features
+
+Column
+Seq Physical Name
+1 featkind
+2 featdept_l
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+
+featdept_r
+featdept_h
+featdepb_l
+featdepb_r
+featdepb_h
+featthick_l
+featthick_r
+featthick_h
+cokey
+codiagfeatkey
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Kind
+Low
+
+Choice
+Integer
+
+Varchar
+Smallint
+
+No
+No
+
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+Component Key
+Component Diagnostic Features
+Key
+
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+String
+String
+
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+Yes
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+254
+
+diag_horz_feat_kind
+0
+
+9999 cm
+
+0
+0
+0
+0
+0
+0
+0
+0
+
+9999
+9999
+9999
+9999
+9999
+9999
+9999
+9999
+
+cm
+cm
+cm
+cm
+cm
+cm
+cm
+cm
+
+30
+30
+
+The Component Diagnostic Features table lists the typical soil features, such as ochric epipedon or cambic horizon, for the referenced map unit component.
+
+1/11/2012
+
+Page 21
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: coecoclass
+Table Label:
+Component Ecological Classification
+
+Column
+Seq Physical Name
+1 ecoclasstypename
+2 ecoclassref
+3 ecoclassid
+4 ecoclassname
+5 cokey
+6 coecoclasskey
+
+Column Label
+Ecological Classification Type
+Name
+Ecological Classification
+Reference
+Ecological Classification ID
+Ecological Classification Name
+Component Key
+Component Ecological
+Classification Key
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+String
+
+Varchar
+
+Yes
+
+60
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+Narrative
+Text
+String
+String
+
+Varchar
+Yes
+Varchar(max) No
+
+30
+
+Varchar
+Varchar
+
+30
+30
+
+Yes
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+The Component Ecological Classification table identifies the ecological sites typically associated with the referenced map unit component. These may include the official NRCS forestland and rangland
+ecological sites, as well as those of other classification systems, such as the USFS Habitat Types.
+
+1/11/2012
+
+Page 22
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: coeplants
+Table Label:
+Component Existing Plants
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 plantsym
+2 plantsciname
+
+Plant Symbol
+Scientific Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+No
+
+8
+127
+
+3
+4
+5
+6
+7
+
+Common Name
+Understory Prod %
+Range Prod %
+Component Key
+Component Existing Plants Key
+
+String
+Integer
+Integer
+String
+String
+
+Varchar
+Smallint
+Smallint
+Varchar
+Varchar
+
+No
+No
+No
+Yes
+Yes
+
+60
+
+plantcomname
+forestunprod
+rangeprod
+cokey
+coeplantskey
+
+0
+0
+
+Domain Name
+
+100 percent
+100 percent
+
+30
+30
+
+The Component Existing Plants table lists the plants, either rangeland or forestland plants, that typically occur on the referenced map unit component.
+
+1/11/2012
+
+Page 23
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: coerosionacc
+Table Label:
+Component Erosion Accelerated
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 erokind
+2 rvindicator
+
+Kind
+RV?
+
+Choice
+Boolean
+
+Varchar
+Char
+
+No
+Yes
+
+254
+3
+
+3 cokey
+4 coeroacckey
+
+Component Key
+Component Erosion Accelerated
+Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+Domain Name
+erosion_accelerated_kind
+
+The Component Erosion Accelerated table lists the kinds of accelerated erosion that occur on the referenced map unit component. One row in this table is marked as the representative kind of
+accelerated erosion for that component.
+
+1/11/2012
+
+Page 24
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: coforprod
+Table Label:
+Component Forest Productivity
+
+Column
+Seq Physical Name
+1 plantsym
+2 plantsciname
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+
+plantcomname
+siteindexbase
+siteindex_l
+siteindex_r
+siteindex_h
+fprod_l
+fprod_r
+fprod_h
+cokey
+cofprodkey
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Plant Symbol
+Scientific Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+No
+
+8
+127
+
+Common Name
+Site Index Base
+Low
+RV
+High
+Low
+RV
+High
+Component Key
+Component Forest Productivity
+Key
+
+String
+Choice
+Integer
+Integer
+Integer
+Float
+Float
+Float
+String
+String
+
+Varchar
+Varchar
+Smallint
+Smallint
+Smallint
+Real
+Real
+Real
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+Yes
+Yes
+
+60
+254
+
+Domain Name
+
+site_index_curves
+
+2
+2
+2
+
+1
+1
+1
+0
+0
+0
+
+300
+300
+300
+9999
+9999
+9999
+
+30
+30
+
+The Component Forest Productivity table lists the site index and the annual productivity in cubic feet per acre per year (CAMI) of forest overstory tree species that typically occur on the referenced map
+unit component.
+
+1/11/2012
+
+Page 25
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: coforprodo
+Table Label:
+Component Forest Productivity - Other
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 siteindexbase
+2 siteindex_l
+
+Site Index Base
+Low
+
+Choice
+Integer
+
+Varchar
+Smallint
+
+No
+No
+
+3
+4
+5
+6
+7
+8
+9
+
+RV
+High
+Low
+RV
+High
+Units
+Component Forest Productivity
+Key
+Component Forest Productivity
+Other Key
+
+Integer
+Integer
+Float
+Float
+Float
+Choice
+String
+
+Smallint
+Smallint
+Real
+Real
+Real
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+Yes
+
+254
+30
+
+String
+
+Varchar
+
+Yes
+
+30
+
+siteindex_r
+siteindex_h
+fprod_l
+fprod_r
+fprod_h
+fprodunits
+cofprodkey
+
+10 cofprodokey
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+254
+
+site_index_curves
+1
+
+2
+2
+2
+
+300
+
+1
+1
+0
+0
+0
+
+300
+300
+9999
+9999
+9999
+forest_productivity_units
+
+The Component Forest Productivity - Other table lists the site index and annual productivity of forest overstory tree species in units other than cubic feet per acre per year for trees that typically occur
+on the referenced map unit component.
+
+1/11/2012
+
+Page 26
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cogeomordesc
+Table Label:
+Component Geomorphic Description
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 geomftname
+2 geomfname
+
+Feature Type
+Feature Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+50
+
+3
+4
+5
+6
+7
+8
+
+Feature Modifier
+Feature ID
+Exists On Feature ID
+RV?
+Component Key
+Component Geomorphic
+Description Key
+
+String
+Integer
+Integer
+Boolean
+String
+String
+
+Varchar
+Smallint
+Smallint
+Char
+Varchar
+Varchar
+
+No
+No
+No
+Yes
+Yes
+Yes
+
+60
+
+geomfmod
+geomfeatid
+existsonfeat
+rvindicator
+cokey
+cogeomdkey
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+3
+30
+30
+
+The Component Geomorphic Description table lists the geomorphic features on which the referenced map unit component typically occurs.
+
+1/11/2012
+
+Page 27
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cohydriccriteria
+Table Label:
+Component Hydric Criteria
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 hydriccriterion
+2 cokey
+
+Hydric Criterion
+Component Key
+
+Choice
+String
+
+Varchar
+Varchar
+
+No
+Yes
+
+254
+30
+
+3 cohydcritkey
+
+Component Hydric Criteria Key
+
+String
+
+Varchar
+
+Yes
+
+30
+
+Domain Name
+hydric_criteria
+
+The Component Hydric Criteria table lists the hydric soil criteria met for those referenced map unit components that are classified as a "hydric soil."
+
+1/11/2012
+
+Page 28
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cointerp
+Table Label:
+Component Interpretation
+
+Column
+Seq Physical Name
+1 cokey
+2 mrulekey
+3
+4
+5
+6
+7
+8
+9
+10
+11
+
+mrulename
+seqnum
+rulekey
+rulename
+ruledepth
+interpll
+interpllc
+interplr
+interplrc
+
+12 interphr
+13 interphrc
+14
+15
+16
+17
+18
+
+interphh
+interphhc
+nullpropdatabool
+defpropdatabool
+incpropdatabool
+
+19 cointerpkey
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Component Key
+Main Rule Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+Main Rule Name
+Seq
+Rule Key
+Rule Name
+Rule Depth
+Interp Low Low
+Interp Low Low Class
+Interp Low Representative Value
+Interp Low Representative Value
+Class
+Interp High Representative Value
+
+String
+Integer
+String
+String
+Integer
+Float
+String
+Float
+String
+
+Varchar
+Smallint
+Varchar
+Varchar
+Smallint
+Float
+Varchar
+Float
+Varchar
+
+Yes
+Yes
+Yes
+Yes
+Yes
+No
+No
+No
+No
+
+60
+
+Float
+
+Float
+
+No
+
+Interp High Representative Value
+Class
+Interp High High
+Interp High High Class
+Null Property Data Boolean
+Default Property Data Boolean
+Inconsistent Property Data
+Boolean
+Component Interpretation Key
+
+String
+
+Varchar
+
+No
+
+254
+
+Float
+String
+Boolean
+Boolean
+Boolean
+
+Float
+Varchar
+Char
+Char
+Char
+
+No
+No
+No
+No
+No
+
+254
+3
+3
+3
+
+String
+
+Varchar
+
+Yes
+
+30
+
+Domain Name
+
+1
+30
+60
+2
+254
+2
+254
+2
+
+2
+
+The Component Interpretation table lists the predictions of behavior and limiting features for specified uses made for the referenced map unit component.
+
+1/11/2012
+
+Page 29
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: comonth
+Table Label:
+Component Month
+
+Column
+Seq Physical Name
+1 monthseq
+2 month
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Month Sequence
+Month
+
+Integer
+Choice
+
+Smallint
+Varchar
+
+No
+No
+
+254
+
+flooding_ponding_month
+
+254
+254
+254
+254
+
+flooding_frequency_class
+flooding_duration_class
+ponding_frequency_class
+ponding_duration_class
+
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+
+flodfreqcl
+floddurcl
+pondfreqcl
+ponddurcl
+ponddep_l
+ponddep_r
+ponddep_h
+dlyavgprecip_l
+dlyavgprecip_r
+dlyavgprecip_h
+dlyavgpotet_l
+
+Flooding Frequency
+Flooding Duration
+Ponding Frequency
+Ponding Duration
+Low
+RV
+High
+Low
+RV
+High
+Low
+
+Choice
+Choice
+Choice
+Choice
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+
+Varchar
+Varchar
+Varchar
+Varchar
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+14
+15
+16
+17
+
+dlyavgpotet_r
+dlyavgpotet_h
+cokey
+comonthkey
+
+RV
+High
+Component Key
+Component Month Key
+
+Integer
+Integer
+String
+String
+
+Smallint
+Smallint
+Varchar
+Varchar
+
+No
+No
+Yes
+Yes
+
+1
+
+Domain Name
+
+12
+
+0
+0
+0
+0
+0
+0
+0
+
+185
+185
+185
+750
+750
+750
+300
+
+cm
+cm
+cm
+mm
+mm
+mm
+mm
+
+0
+0
+
+300 mm
+300 mm
+
+30
+30
+
+The Component Month table lists the monthly flooding and ponding characteristics for the referenced map unit component. This table has one row for each month of the year.
+
+1/11/2012
+
+Page 30
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: component
+Table Label:
+Component
+
+Column
+Seq Physical Name
+1 comppct_l
+2 comppct_r
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Low
+RV
+
+Integer
+Integer
+
+Smallint
+Smallint
+
+No
+No
+
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+
+comppct_h
+compname
+compkind
+majcompflag
+otherph
+localphase
+slope_l
+slope_r
+slope_h
+slopelenusle_l
+slopelenusle_r
+
+High
+Component Name
+Kind
+Major Component
+SIR phase
+Local Phase
+Low
+RV
+High
+Low
+RV
+
+Integer
+String
+Choice
+Boolean
+String
+String
+Float
+Float
+Float
+Integer
+Integer
+
+Smallint
+Varchar
+Varchar
+Char
+Varchar
+Varchar
+Real
+Real
+Real
+Smallint
+Smallint
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+
+slopelenusle_h
+runoff
+tfact
+wei
+weg
+erocl
+earthcovkind1
+earthcovkind2
+hydricon
+hydricrating
+drainagecl
+
+High
+Runoff Class
+T
+WEI
+WEG
+Erosion Class
+Cover Kind 1
+Cover Kind 2
+Hydric Condition
+Hydric Rating
+Drainage Class
+
+Integer
+Choice
+Integer
+Choice
+Choice
+Choice
+Choice
+Choice
+Choice
+Choice
+Choice
+
+Smallint
+Varchar
+Smallint
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+25
+26
+27
+28
+29
+30
+31
+
+elev_l
+elev_r
+elev_h
+aspectccwise
+aspectrep
+aspectcwise
+geomdesc
+
+Low
+RV
+High
+Aspect Counter Clockwise
+Aspect Representative
+Aspect Clockwise
+Geomorphic Description
+
+Float
+Float
+Float
+Integer
+Integer
+Integer
+Narrative
+Text
+
+Real
+Real
+Real
+Smallint
+Smallint
+Smallint
+Varchar(max)
+
+No
+No
+No
+No
+No
+No
+No
+
+1/11/2012
+
+Units of
+Size Precision Minimum Maximum Measure
+0
+0
+
+100 percent
+100 percent
+
+0
+
+Domain Name
+
+100 percent
+
+60
+254
+3
+40
+40
+
+component_kind
+
+1
+1
+1
+
+0
+0
+0
+0
+0
+
+999
+999
+999
+4000
+4000
+
+percent
+percent
+percent
+meters
+meters
+
+0
+
+4000 meters
+
+254
+
+runoff
+1
+
+254
+254
+254
+254
+254
+254
+254
+254
+1
+1
+1
+
+-300
+-300
+-300
+0
+0
+0
+
+5 tons/acre/yr
+tons/acre/yr
+
+8550
+8550
+8550
+360
+360
+360
+
+wind_erodibility_index
+wind_erodibility_group
+erosion_class
+earth_cover_kind_level_one
+earth_cover_kind_level_two
+hydric_condition
+hydric_rating
+drainage_class
+
+meters
+meters
+meters
+degrees
+degrees
+degrees
+
+Page 31
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: component
+Table Label:
+Component
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+32 albedodry_l
+33 albedodry_r
+
+Low
+RV
+
+Float
+Float
+
+Real
+Real
+
+No
+No
+
+2
+2
+
+0
+0
+
+1
+1
+
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+
+albedodry_h
+airtempa_l
+airtempa_r
+airtempa_h
+map_l
+map_r
+map_h
+reannualprecip_l
+reannualprecip_r
+reannualprecip_h
+ffd_l
+
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+Low
+
+Float
+Float
+Float
+Float
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+
+Real
+Real
+Real
+Real
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+2
+1
+1
+1
+
+0
+-50
+-50
+-50
+0
+0
+0
+0
+0
+0
+0
+
+1
+50
+50
+50
+11500
+11500
+11500
+11500
+11500
+11500
+365
+
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+
+ffd_r
+ffd_h
+nirrcapcl
+nirrcapscl
+nirrcapunit
+irrcapcl
+irrcapscl
+irrcapunit
+cropprodindex
+constreeshrubgrp
+
+RV
+High
+Nirr LCC
+Nirr Subcl
+Nirr LCU
+Irr LCC
+Irr Subcl
+Irr LCU
+Prod Index
+Cons Tree Shrub Group
+
+Integer
+Integer
+Choice
+Choice
+Integer
+Choice
+Choice
+Integer
+Integer
+Choice
+
+Smallint
+Smallint
+Varchar
+Varchar
+Smallint
+Varchar
+Varchar
+Smallint
+Smallint
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+55
+56
+57
+58
+59
+60
+61
+62
+
+wndbrksuitgrp
+rsprod_l
+rsprod_r
+rsprod_h
+foragesuitgrpid
+wlgrain
+wlgrass
+wlherbaceous
+
+Windbreak Suitability (Obsolete)
+Low
+RV
+High
+Forage Suitability Group ID
+Grain Habitat
+Grass Habitat
+Herbaceous Habitat
+
+Choice
+Integer
+Integer
+Integer
+String
+Choice
+Choice
+Choice
+
+Varchar
+Int
+Int
+Int
+Varchar
+Varchar
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+
+1/11/2012
+
+Units of
+Size Precision Minimum Maximum Measure
+
+0
+0
+
+degrees c
+degrees c
+degrees c
+mm
+mm
+mm
+mm
+mm
+mm
+days
+
+365 days
+365 days
+
+254
+254
+
+capability_class
+capability_subclass
+1
+
+99
+
+254
+254
+
+capability_class
+capability_subclass
+1
+0
+
+99
+100
+
+254
+
+conservation_tree_shrub_gro
+up
+windbreak_suitability_group
+
+254
+0
+0
+0
+11
+254
+254
+254
+
+Domain Name
+
+20000 lbs/acre/yr
+20000 lbs/acre/yr
+20000 lbs/acre/yr
+wildlife_rating
+wildlife_rating
+wildlife_rating
+
+Page 32
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: component
+Table Label:
+Component
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+63 wlshrub
+64 wlconiferous
+
+Shrub Habitat
+Conifer Habitat
+
+Choice
+Choice
+
+Varchar
+Varchar
+
+No
+No
+
+254
+254
+
+wildlife_rating
+wildlife_rating
+
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+
+wlhardwood
+wlwetplant
+wlshallowwat
+wlrangeland
+wlopenland
+wlwoodland
+wlwetland
+soilslippot
+frostact
+initsub_l
+initsub_r
+
+Hardwood Habitat
+Wetland Habitat
+Water Habitat
+Rangeland Wildlife
+Openland Wildlife
+Woodland Wildlife
+Wetland Wildlife
+Soil Slip Pot
+Frost Action
+Low
+RV
+
+Choice
+Choice
+Choice
+Choice
+Choice
+Choice
+Choice
+Choice
+Choice
+Integer
+Integer
+
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+Smallint
+Smallint
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+254
+254
+254
+254
+254
+254
+254
+254
+254
+
+wildlife_rating
+wildlife_rating
+wildlife_rating
+wildlife_rating
+wildlife_rating
+wildlife_rating
+wildlife_rating
+soil_slippage_potential
+potential_frost_action
+
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+
+initsub_h
+totalsub_l
+totalsub_r
+totalsub_h
+hydgrp
+corcon
+corsteel
+taxclname
+taxorder
+taxsuborder
+taxgrtgroup
+
+High
+Low
+RV
+High
+Hydrologic Group
+Corrosion Concrete
+Corrosion Steel
+Taxonomic Class
+Order
+Suborder
+Great Group
+
+Integer
+Integer
+Integer
+Integer
+Choice
+Choice
+Choice
+String
+Choice
+Choice
+Choice
+
+Smallint
+Smallint
+Smallint
+Smallint
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+254
+254
+254
+120
+254
+254
+254
+
+hydrologic_group
+corrosion_concrete
+corrosion_uncoated_steel
+
+87 taxsubgrp
+88 taxpartsize
+
+Subgroup
+Particle Size
+
+Choice
+Choice
+
+Varchar
+Varchar
+
+No
+No
+
+254
+254
+
+89 taxpartsizemod
+
+Particle Size Mod
+
+Choice
+
+Varchar
+
+No
+
+254
+
+90 taxceactcl
+
+CEC Activity Cl
+
+Choice
+
+Varchar
+
+No
+
+254
+
+91 taxreaction
+
+Reaction
+
+Choice
+
+Varchar
+
+No
+
+254
+
+taxonomic_subgroup
+taxonomic_family_particle_si
+ze
+taxonomic_family_part_size_
+mod
+taxonomic_family_c_e_act_cl
+ass
+taxonomic_family_reaction
+
+1/11/2012
+
+0
+0
+
+999 cm
+999 cm
+
+0
+0
+0
+0
+
+999
+999
+999
+999
+
+cm
+cm
+cm
+cm
+
+taxonomic_order
+taxonomic_suborder
+taxonomic_great_group
+
+Page 33
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: component
+Table Label:
+Component
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+92 taxtempcl
+
+Temp Class
+
+Choice
+
+Varchar
+
+No
+
+254
+
+93 taxmoistscl
+
+Moist Subclass
+
+Choice
+
+Varchar
+
+No
+
+254
+254
+254
+
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+
+taxtempregime
+soiltaxedition
+castorieindex
+flecolcomnum
+flhe
+flphe
+flsoilleachpot
+flsoirunoffpot
+fltemik2use
+fltriumph2use
+
+Temp Regime
+Keys to Taxonomy Edition Used
+CA Storie Index
+FL Ecol Comm #
+FL HE
+FL PHE
+FL Leach Pot
+FL Runoff Pot
+FL Temik
+FL Triumph
+
+Choice
+Choice
+Integer
+String
+Boolean
+Boolean
+Choice
+Choice
+Boolean
+Boolean
+
+Varchar
+Varchar
+Smallint
+Varchar
+Char
+Char
+Varchar
+Varchar
+Char
+Char
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+104
+105
+106
+107
+108
+109
+
+indraingrp
+innitrateleachi
+misoimgmtgrp
+vasoimgtgrp
+mukey
+cokey
+
+IN Drainage Grp
+IN NO3 Leach Index
+MI Soil Mgmt Grp
+VA Soil Mgmt Grp
+Mapunit Key
+Component Key
+
+String
+Integer
+Choice
+Choice
+String
+String
+
+Varchar
+Smallint
+Varchar
+Varchar
+Varchar
+Varchar
+
+No
+No
+No
+No
+Yes
+Yes
+
+Domain Name
+taxonomic_family_temp_clas
+s
+taxonomic_moisture_subclas
+s
+taxonomic_temp_regime
+soil_taxonomy_edition
+
+0
+
+100
+
+5
+3
+3
+254
+254
+3
+3
+
+fl_soil_leaching_potential
+fl_soil_runoff_potential
+
+3
+0
+254
+254
+30
+30
+
+99
+mi_soil_management_group
+va_soil_management_group
+
+The Component table lists the map unit components identified in the referenced map unit, and selected properties of each component. If the Component % is greater than zero (low=65, RV=75,
+high=90) for a component, that component exists in every delineation of that mapunit. If the Component % includes zero (low=0, RV=50, high=90), the component may exist in some delineations, but
+not in others.
+
+1/11/2012
+
+Page 34
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: copm
+Table Label:
+Component Parent Material
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 pmorder
+2 pmmodifier
+
+Vertical Order
+Textural Modifier
+
+Integer
+Choice
+
+Smallint
+Varchar
+
+No
+No
+
+254
+
+parent_material_modifier
+
+3
+4
+5
+6
+
+General Modifier
+Kind
+Origin
+Component Parent Material
+Group Key
+Component Parent Material Key
+
+String
+Choice
+Choice
+String
+
+Varchar
+Varchar
+Varchar
+Varchar
+
+No
+No
+No
+Yes
+
+60
+254
+254
+30
+
+parent_material_kind
+parent_material_origin
+
+String
+
+Varchar
+
+Yes
+
+30
+
+pmgenmod
+pmkind
+pmorigin
+copmgrpkey
+
+7 copmkey
+
+Domain Name
+
+1
+
+The Component Parent Material table lists the individual parent material(s) for the referenced map unit component. In some cases where soils developed in multiple materials in a vertical sequence,
+that sequence will be noted. In other cases multiple entries with no vertical sequence noted indicates the soil may have formed in one of the materials listed.
+
+1/11/2012
+
+Page 35
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: copmgrp
+Table Label:
+Component Parent Material Group
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 pmgroupname
+2 rvindicator
+
+Group Name
+RV?
+
+String
+Boolean
+
+Varchar
+Char
+
+No
+Yes
+
+252
+3
+
+3 cokey
+4 copmgrpkey
+
+Component Key
+Component Parent Material
+Group Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+Domain Name
+
+The Component Parent Material Group table lists the concatenated string of parent material(s) in which the referenced map unit component formed based on entries in the Component Parent Material
+table. For example, a component formed in one parent material, such as loess, or one vertical sequence of parent materials, such as loamy glacial drift over silty residuum weathered from shale, has
+one row in this table. A component formed in one parent material in some locations, but another parent material (or sequence of parent materials) in other locations has two rows in this table, one for
+each parent material (or sequence of parent materials). One row is identified as the representative parent material.
+
+1/11/2012
+
+Page 36
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: copwindbreak
+Table Label:
+Component Potential Windbreak
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 wndbrkht_l
+2 wndbrkht_r
+
+Low
+RV
+
+Float
+Float
+
+Real
+Real
+
+No
+No
+
+3
+4
+5
+6
+7
+8
+
+High
+Plant Symbol
+Scientific Name
+Common Name
+Component Key
+Component Potential Windbreak
+Key
+
+Float
+String
+String
+String
+String
+String
+
+Real
+Varchar
+Varchar
+Varchar
+Varchar
+Varchar
+
+No
+Yes
+No
+No
+Yes
+Yes
+
+wndbrkht_h
+plantsym
+plantsciname
+plantcomname
+cokey
+copwindbreakkey
+
+Units of
+Size Precision Minimum Maximum Measure
+1
+1
+
+0.1
+0.1
+
+35 meters
+35 meters
+
+1
+
+0.1
+
+Domain Name
+
+35 meters
+
+8
+127
+60
+30
+30
+
+The Component Potential Windbreak table lists the windbreak plant species commonly recommended for the referenced map unit component. A windbreak plant listed in this table may be used alone
+or in combination with other plants.
+
+1/11/2012
+
+Page 37
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: corestrictions
+Table Label:
+Component Restrictions
+
+Column
+Seq Physical Name
+1 reskind
+2 reshard
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+
+resdept_l
+resdept_r
+resdept_h
+resdepb_l
+resdepb_r
+resdepb_h
+resthk_l
+resthk_r
+resthk_h
+cokey
+corestrictkey
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+Kind
+Hardness
+
+Choice
+Choice
+
+Varchar
+Varchar
+
+No
+No
+
+254
+254
+
+restriction_kind
+rupture_resist_block_cem
+
+Low
+RV
+High
+Low
+RV
+High
+Low
+RV
+High
+Component Key
+Component Restrictions Key
+
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+Integer
+String
+String
+
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+Yes
+Yes
+
+0
+0
+0
+0
+0
+0
+0
+0
+0
+
+9999
+9999
+9999
+9999
+9999
+9999
+999
+999
+999
+
+cm
+cm
+cm
+cm
+cm
+cm
+cm
+cm
+cm
+
+30
+30
+
+The Component Restrictions table lists the root restrictive feature(s) or layer(s) for the referenced map unit component. If the thickness of the restrictive layer is greater than zero (low=5, RV=8,
+high=10), the restrictive layer exists in all delineations of the map unit where the component occurs. If the thickness of the restrictive layer includes zero (low=0, RV=2, high=5), the restrictive layer may
+exist in some delineations, but not in others. This table will be empty if the component does not have restrictive features, but could have several rows if several restrictive features occur in the soil.
+
+1/11/2012
+
+Page 38
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cosoilmoist
+Table Label:
+Component Soil Moisture
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 soimoistdept_l
+2 soimoistdept_r
+
+Low
+RV
+
+Integer
+Integer
+
+Smallint
+Smallint
+
+No
+No
+
+0
+0
+
+9999 cm
+9999 cm
+
+3
+4
+5
+6
+7
+8
+9
+
+High
+Low
+RV
+High
+Moisture Status
+Component Month Key
+Component Soil Moisture Key
+
+Integer
+Integer
+Integer
+Integer
+Choice
+String
+String
+
+Smallint
+Smallint
+Smallint
+Smallint
+Varchar
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+Yes
+Yes
+
+0
+0
+0
+0
+
+9999
+9999
+9999
+9999
+
+soimoistdept_h
+soimoistdepb_l
+soimoistdepb_r
+soimoistdepb_h
+soimoiststat
+comonthkey
+cosoilmoistkey
+
+Units of
+Size Precision Minimum Maximum Measure
+
+254
+30
+30
+
+Domain Name
+
+cm
+cm
+cm
+cm
+soil_moisture_status
+
+The Component Soil Moisture table describes the typical soil moisture profile for the referenced map unit component during the month referenced in the Component Month table. The soil moisture
+profiles for each month, taken as a group of twelve months, describe the representative situation for the component throughout the year.
+
+1/11/2012
+
+Page 39
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cosoiltemp
+Table Label:
+Component Soil Temperature
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 soitempmm
+2 soitempdept_l
+
+Monthly Temp
+Low
+
+Integer
+Integer
+
+Smallint
+Smallint
+
+No
+No
+
+3
+4
+5
+6
+7
+8
+9
+
+RV
+High
+Low
+RV
+High
+Component Month Key
+Component Soil Temperature Key
+
+Integer
+Integer
+Integer
+Integer
+Integer
+String
+String
+
+Smallint
+Smallint
+Smallint
+Smallint
+Smallint
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+Yes
+Yes
+
+soitempdept_r
+soitempdept_h
+soitempdepb_l
+soitempdepb_r
+soitempdepb_h
+comonthkey
+cosoiltempkey
+
+Units of
+Size Precision Minimum Maximum Measure
+-25
+0
+0
+0
+0
+0
+0
+
+Domain Name
+
+50 degrees c
+9999 cm
+9999
+9999
+9999
+9999
+9999
+
+cm
+cm
+cm
+cm
+cm
+
+30
+30
+
+The Component Soil Temperature table describes the typical soil temperature profile for the referenced map unit component during the month referenced in the Component Month table. The soil
+temperature profiles for each month, taken as a group of twelve months, describe the representative situation for the component throughout the year.
+
+1/11/2012
+
+Page 40
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cosurffrags
+Table Label:
+Component Surface Fragments
+
+Column
+Seq Physical Name
+1 sfragcov_l
+2 sfragcov_r
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+
+sfragcov_h
+distrocks_l
+distrocks_r
+distrocks_h
+sfragkind
+sfragsize_l
+sfragsize_r
+sfragsize_h
+sfragshp
+sfraground
+sfraghard
+
+14 cokey
+15 cosurffragskey
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Low
+RV
+
+Float
+Float
+
+Real
+Real
+
+No
+No
+
+2
+2
+
+0
+0
+
+100 percent
+100 percent
+
+High
+Low
+RV
+High
+Kind
+Low
+RV
+High
+Shape
+Roundness
+Hardness
+
+Float
+Float
+Float
+Float
+Choice
+Integer
+Integer
+Integer
+Choice
+Choice
+Choice
+
+Real
+Real
+Real
+Real
+Varchar
+Smallint
+Smallint
+Smallint
+Varchar
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+2
+2
+2
+2
+
+0
+0
+0
+0
+
+100
+50
+50
+50
+
+254
+254
+254
+
+Component Key
+Component Surface Fragments
+Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+Domain Name
+
+percent
+meters
+meters
+meters
+
+254
+
+fragment_kind
+2
+2
+2
+
+3000 mm
+3000 mm
+3000 mm
+fragment_shape
+fragment_roundness
+rupture_resist_block_cem
+
+The Component Surface Fragments table lists the organic or mineral fragments that generally occur on the surface of the referenced map unit component. If the cover percent is greater than zero
+(low=0.1, RV=1, high=3) for a row in this table, the fragment is in every delineation of the map unit where the referenced component occurs. If the Cover % includes zero (low=0, RV=0.01, high=1) for a
+row in this table, the fragment may exist in some delineations and not in others.
+
+1/11/2012
+
+Page 41
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cosurfmorphgc
+Table Label:
+Component Three Dimensional Surface Morphometry
+
+Column
+Seq Physical Name
+1 geomposmntn
+2 geomposhill
+3 geompostrce
+4 geomposflats
+5 cogeomdkey
+6 cosurfmorgckey
+
+Column Label
+Geomorphic Component Mountains
+Geomorphic Component - Hills
+Geomorphic Component Terraces
+Geomorphic Component - Flats
+Component Geomorphic
+Description Key
+Component Surface
+Morphometry - Geomorphic
+Component Key
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+Choice
+
+Varchar
+
+No
+
+254
+
+geomor_pos_mountain
+
+Choice
+
+Varchar
+
+No
+
+254
+
+geomor_pos_hill
+
+Choice
+
+Varchar
+
+No
+
+254
+
+geomor_pos_terrace
+
+Choice
+String
+
+Varchar
+Varchar
+
+No
+Yes
+
+254
+30
+
+geomor_pos_flat
+
+String
+
+Varchar
+
+Yes
+
+30
+
+The Component Three Dimensional Surface Morphometry table lists the typical geomorphic position (s) of the referenced map unit component, in three dimension terms. The geomorphic position(s)
+listed in this table apply to the geomorphic feature referenced in the Component Geomorphic Description table.
+
+1/11/2012
+
+Page 42
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cosurfmorphhpp
+Table Label:
+Component Two Dimensional Surface Morphometry
+
+Column
+Seq Physical Name
+1 hillslopeprof
+2 cogeomdkey
+3 cosurfmorhppkey
+
+Column Label
+Hillslope Profile
+Component Geomorphic
+Description Key
+Component Surface
+Morphometry - Hillslope Profile
+Position
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Choice
+String
+
+Varchar
+Varchar
+
+No
+Yes
+
+254
+30
+
+String
+
+Varchar
+
+Yes
+
+30
+
+Domain Name
+hillslope_profile
+
+The Component Two Dimensional Surface Morphometry table lists the geomorphic position(s) of the referenced map unit component, in two dimensional hillslope profile terms. The geomorphic
+position(s) listed in this table apply to the geomorphic feature referenced in the Component Geomorphic Description table.
+
+1/11/2012
+
+Page 43
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cosurfmorphmr
+Table Label:
+Component Microrelief Surface Morphometry
+
+Column
+Seq Physical Name
+1 geomicrorelief
+2 cogeomdkey
+3 cosurfmormrkey
+
+Column Label
+Microrelief Kind
+Component Geomorphic
+Description Key
+Component Surface
+Morphometry - Micro Relief Key
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Choice
+String
+
+Varchar
+Varchar
+
+No
+Yes
+
+254
+30
+
+String
+
+Varchar
+
+Yes
+
+30
+
+Domain Name
+micro_relief_kind
+
+The Component Microrelief Surface Morphometry table lists microrelief features associated with the referenced geomorphic (microfeature) feature shown in the Component Geomorphic Description
+table.
+
+1/11/2012
+
+Page 44
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cosurfmorphss
+Table Label:
+Component Slope Shape Surface Morphometry
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+1 shapeacross
+2 shapedown
+
+Slope Shape Across
+Slope Shape Up/Down
+
+Choice
+Choice
+
+Varchar
+Varchar
+
+No
+No
+
+254
+254
+
+slope_shape
+slope_shape
+
+3 cogeomdkey
+
+Component Geomorphic
+Description Key
+Component Surface
+Morphometry - Slope Shape Key
+
+String
+
+Varchar
+
+Yes
+
+30
+
+String
+
+Varchar
+
+Yes
+
+30
+
+4 cosurfmorsskey
+
+The Component Slope Shape Surface Morphometry table lists the geomorphic shape(s) of the referenced map unit component, in slope shape terms. The slope shape terms listed in this table apply to
+the referenced geomorphic feature shown in the Component Geomorphic Description table.
+
+1/11/2012
+
+Page 45
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cotaxfmmin
+Table Label:
+Component Taxonomic Family Mineralogy
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 taxminalogy
+2 cokey
+
+Mineralogy
+Component Key
+
+Choice
+String
+
+Varchar
+Varchar
+
+No
+Yes
+
+254
+30
+
+3 cotaxfmminkey
+
+Component Taxonomic Family
+Mineralogy Key
+
+String
+
+Varchar
+
+Yes
+
+30
+
+Domain Name
+taxonomic_family_mineralogy
+
+The Component Taxonomic Family Mineralogy table lists the mineralogy characteristics, as defined in Soil Taxonomy, that apply to the referenced map unit component.
+
+1/11/2012
+
+Page 46
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cotaxmoistcl
+Table Label:
+Component Taxonomic Moisture Class
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 taxmoistcl
+2 cokey
+
+Moisture Class
+Component Key
+
+Choice
+String
+
+Varchar
+Varchar
+
+No
+Yes
+
+254
+30
+
+3 cotaxmckey
+
+Component Taxonomic Family
+Moisture Class Key
+
+String
+
+Varchar
+
+Yes
+
+30
+
+Domain Name
+taxonomic_moisture_class
+
+The Component Taxonomic Moisture Class table provides clear identification of the intended taxonomic moisture class, as defined in Soil Taxonomy, that apply to the referenced map unit component,
+even though moisture class is implied at a higher taxonomic level. The class or classes listed in this table describe the representative situation for the component.
+
+1/11/2012
+
+Page 47
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cotext
+Table Label:
+Component Text
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+1 recdate
+2 comptextkind
+
+Date
+Kind
+
+Date/Time
+Choice
+
+Datetime
+Varchar
+
+No
+No
+
+254
+
+component_text_kind
+
+3 textcat
+4 textsubcat
+5 text
+
+Category
+Subcategory
+Text
+
+Varchar
+No
+Varchar
+No
+Varchar(max) No
+
+20
+20
+
+6 cokey
+7 cotextkey
+
+Component Key
+Component Text Key
+
+String
+String
+Narrative
+Text
+String
+String
+
+Varchar
+Varchar
+
+30
+30
+
+Yes
+Yes
+
+The Component Text table contains notes and narrative descriptions for the referenced map unit component. In many cases, the table will be empty for a particular component.
+
+1/11/2012
+
+Page 48
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cotreestomng
+Table Label:
+Component Trees To Manage
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 plantsym
+2 plantsciname
+
+Plant Symbol
+Scientific Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+No
+
+8
+127
+
+3 plantcomname
+4 cokey
+5 cotreestomngkey
+
+Common Name
+Component Key
+Component Trees to Manage Key
+
+String
+String
+String
+
+Varchar
+Varchar
+Varchar
+
+No
+Yes
+Yes
+
+60
+30
+30
+
+Domain Name
+
+The Component Trees To Manage table lists the trees commonly recommended for managing on the referenced map unit component.
+
+1/11/2012
+
+Page 49
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: cotxfmother
+Table Label:
+Component Taxonomic Family Other Criteria
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 taxfamother
+2 cokey
+
+Family Other
+Component Key
+
+Choice
+String
+
+Varchar
+Varchar
+
+No
+Yes
+
+254
+30
+
+3 cotaxfokey
+
+Component Taxonomic Family
+Other Key
+
+String
+
+Varchar
+
+Yes
+
+30
+
+Domain Name
+taxonomic_family_other
+
+The Component Taxonomic Family Other Criteria table lists the other taxonomic characteristics, such as classes of coatings or permanent cracks, as defined in Soil Taxonomy, that apply to the
+referenced map unit component. The characteristics listed in this table describe the representative situation for the component.
+
+1/11/2012
+
+Page 50
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: distinterpmd
+Table Label:
+Distribution Interp Metadata
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+1 rulename
+2 ruledesign
+
+Rule Name
+Rule Design
+
+String
+Choice
+
+Varchar
+Varchar
+
+No
+Yes
+
+60
+254
+
+rule_design
+
+3 ruledesc
+
+Description
+
+Varchar(max) No
+
+4 dataafuse
+5 mrecentrulecwlu
+
+Ready to use?
+Most Recent Rule Component
+When Last Updated
+Rule Key
+Distribution Metadata Key
+Distribution Interpretation
+Metadata Key
+
+Narrative
+Text
+Boolean
+Date/Time
+
+Char
+Datetime
+
+No
+No
+
+3
+
+String
+String
+String
+
+Varchar
+Varchar
+Varchar
+
+Yes
+Yes
+Yes
+
+30
+30
+30
+
+6 rulekey
+7 distmdkey
+8 distinterpmdkey
+
+The Distribution Interp Metadata table records the set of NASIS fuzzy logic interpretations which were generated for the map unit components included in a set of distribution data.
+
+1/11/2012
+
+Page 51
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: distlegendmd
+Table Label:
+Distribution Legend Metadata
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 areatypename
+2 areasymbol
+
+Area Type Name
+Area Symbol
+
+String
+String
+
+Varchar
+Varchar
+
+No
+No
+
+45
+20
+
+3
+4
+5
+6
+7
+8
+
+Area Name
+Survey Status
+Correlation Date
+Export Certification Status
+Export Certification Date
+Export Metadata
+
+String
+Choice
+Date/Time
+Choice
+Date/Time
+Narrative
+Text
+String
+String
+String
+
+Varchar
+Varchar
+Datetime
+Varchar
+Datetime
+Varchar(max)
+
+No
+No
+No
+No
+No
+No
+
+135
+254
+
+soil_survey_area_status
+
+254
+
+export_certification_status
+
+Varchar
+Varchar
+Varchar
+
+Yes
+Yes
+Yes
+
+30
+30
+30
+
+areaname
+ssastatus
+cordate
+exportcertstatus
+exportcertdate
+exportmetadata
+
+9 lkey
+10 distmdkey
+11 distlegendmdkey
+
+Legend Key
+Distribution Metadata Key
+Distribution Legend Metadata Key
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+The Distribution Legend Metadata table records information about the legends or soil survey areas selected for inclusion in a set of distributed data. The presence of a legend in this table does not
+imply that all of the available data for that legend was included in the set of data that was distributed. Only certain map units and components for that legend may have been selected. The record of
+the criteria used for selecting map units and components may be found in the Distribution Metadata table.
+
+1/11/2012
+
+Page 52
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: distmd
+Table Label:
+Distribution Metadata
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+1 distgendate
+2 diststatus
+
+Distribution Generation Date
+Distribution Status
+
+Date/Time
+Choice
+
+Datetime
+Varchar
+
+No
+Yes
+
+254
+
+distribution_status
+
+3 interpmaxreasons
+4 distmdkey
+
+Interpretation Maximum Reasons
+Distribution Metadata Key
+
+Integer
+String
+
+Smallint
+Varchar
+
+No
+Yes
+
+0
+30
+
+The Distribution Metadata table records information associated with the selection of a set of data for distribution to some entity or information system external to NASIS. A set of distribution data may
+include only selected map units from a legend or legends, and only selected components of those map units. This table records the criteria used for selecting map units and components for inclusion in
+the set of distributed data. Other recorded information includes the name of the NASIS user who initiated a distribution request, and the times when that request was made, and when that request was
+ultimately processed.
+
+1/11/2012
+
+Page 53
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: featdesc
+Table Label:
+Feature Description
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 areasymbol
+2 spatialversion
+
+Area Symbol
+Spatial Version
+
+String
+Integer
+
+Varchar
+Int
+
+Yes
+Yes
+
+20
+
+3 featsym
+4 featname
+5 featdesc
+
+Feature Symbol
+Feature Name
+Feature Description
+
+Varchar
+Yes
+Varchar
+Yes
+Varchar(max) Yes
+
+3
+80
+
+6 featkey
+
+Feature Key
+
+String
+String
+Narrative
+Text
+String
+
+Varchar
+
+30
+
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+This table records the description of all spot features that occur in a soil survey area.
+
+1/11/2012
+
+Page 54
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: featline
+Table Label:
+Feature Line
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 areasymbol
+2 spatialversion
+
+Area Symbol
+Spatial Version
+
+String
+Integer
+
+Varchar
+Int
+
+Yes
+Yes
+
+20
+
+3 featsym
+4 featkey
+
+Feature Symbol
+Feature Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+3
+30
+
+Domain Name
+
+This table records all of the spot features of a soil survey area that are represented as one or more lines. This table is not like other tabular data tables that are delivered as ASCII delimited files. How
+the information is delivered depends on the spatial format that was requested at the time the corresponding soil survey area was exported. Spatial information is typically delivered in GIS vendor
+specific format, and more than one output file may be produced when the information for this spatial entity is exported. Consequently, no spatially oriented columns are shown, because the name and
+number of columns necessary to portray spatial characteristics vary depending on spatial format.
+This table is documented in order to show attributes that will always be available when working with the corresponding spatial entity in a GIS. These attributes have two purposes. One purpose is to
+identify each instance of the corresponding spatial entity. The other purpose is to identify each instance of the corresponding tabular entity. The tabular entity corresponding to a spot feature line is
+represented by a record in the Feature Description table.
+
+1/11/2012
+
+Page 55
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: featpoint
+Table Label:
+Feature Point
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 areasymbol
+2 spatialversion
+
+Area Symbol
+Spatial Version
+
+String
+Integer
+
+Varchar
+Int
+
+Yes
+Yes
+
+20
+
+3 featsym
+4 featkey
+
+Feature Symbol
+Feature Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+3
+30
+
+Domain Name
+
+This table records all of the spot features of a soil survey area that are represented as one or more points. This table is not like other tabular data tables that are delivered as ASCII delimited files. How
+the information is delivered depends on the spatial format that was requested at the time the corresponding soil survey area was exported. Spatial information is typically delivered in GIS vendor
+specific format, and more than one output file may be produced when the information for this spatial entity is exported. Consequently, no spatially oriented columns are shown, because the name and
+number of columns necessary to portray spatial characteristics vary depending on spatial format.
+This table is documented in order to show attributes that will always be available when working with the corresponding spatial entity in a GIS. These attributes have two purposes. One purpose is to
+identify each instance of the corresponding spatial entity. The other purpose is to identify each instance of the corresponding tabular entity. The tabular entity corresponding to a spot feature point is
+represented by a record in the Feature Description table.
+
+1/11/2012
+
+Page 56
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: laoverlap
+Table Label:
+Legend Area Overlap
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 areatypename
+2 areasymbol
+
+Area Type Name
+Area Symbol
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+45
+20
+
+3
+4
+5
+6
+
+Area Name
+Overlap Acres
+Legend Key
+Legend Area Overlap Key
+
+String
+Integer
+String
+String
+
+Varchar
+Int
+Varchar
+Varchar
+
+No
+No
+Yes
+Yes
+
+135
+
+areaname
+areaovacres
+lkey
+lareaovkey
+
+Units of
+Size Precision Minimum Maximum Measure
+
+0
+
+Domain Name
+
+acres
+
+30
+30
+
+The Legend Area Overlap table lists the geographic areas that are coincident with the soil survey area identified in the Legend table. For example, a survey area that covers two counties would have
+two rows in this table, one for each county. Other types of geographic areas listed might include state, MLRA, rainfall (R) factor area, climate (C) factor area, etc.
+
+1/11/2012
+
+Page 57
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: legend
+Table Label:
+Legend
+
+Column
+Seq Physical Name
+1 areatypename
+2 areasymbol
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+
+areaname
+areaacres
+mlraoffice
+legenddesc
+ssastatus
+mouagncyresp
+projectscale
+cordate
+ssurgoarchived
+legendsuituse
+legendcertstat
+
+14 lkey
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Area Type Name
+Area Symbol
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+45
+20
+
+Area Name
+Area Acres
+MLRA Office
+Legend Description
+Survey Status
+MOU Agency Responsible
+Project Scale
+Correlation Date
+SSURGO Archived
+Geographic Applicability
+Legend Certification Status
+
+String
+Integer
+Choice
+String
+Choice
+Choice
+Integer
+Date/Time
+Date/Time
+Choice
+Choice
+
+Varchar
+Int
+Varchar
+Varchar
+Varchar
+Varchar
+Int
+Datetime
+Datetime
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+135
+
+Legend Key
+
+String
+
+Varchar
+
+Yes
+
+0
+
+Domain Name
+
+acres
+
+254
+60
+254
+254
+
+mlra_office
+soil_survey_area_status
+mou_agency_responsible
+
+254
+254
+
+legend_suitability_for_use
+legend_certification_status
+
+30
+
+The Legend table identifies the soil survey area that the legend is related to, and related information about that legend.
+
+1/11/2012
+
+Page 58
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: legendtext
+Table Label:
+Legend Text
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+1 recdate
+2 legendtextkind
+
+Date
+Kind
+
+Date/Time
+Choice
+
+Datetime
+Varchar
+
+No
+No
+
+254
+
+legend_text_kind
+
+3 textcat
+4 textsubcat
+5 text
+
+Category
+Subcategory
+Text
+
+Varchar
+No
+Varchar
+No
+Varchar(max) No
+
+20
+20
+
+6 lkey
+7 legtextkey
+
+Legend Key
+Legend Text Key
+
+String
+String
+Narrative
+Text
+String
+String
+
+Varchar
+Varchar
+
+30
+30
+
+Yes
+Yes
+
+The Legend Text table contains notes and narrative descriptions related to the referenced legend. Legend text is optional. In many cases, this table is empty.
+
+1/11/2012
+
+Page 59
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mapunit
+Table Label:
+Mapunit
+
+Column
+Seq Physical Name
+1 musym
+2 muname
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Mapunit Symbol
+Mapunit Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+No
+
+6
+175
+
+Domain Name
+
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+
+mukind
+mustatus
+muacres
+mapunitlfw_l
+mapunitlfw_r
+mapunitlfw_h
+mapunitpfa_l
+mapunitpfa_r
+mapunitpfa_h
+farmlndcl
+muhelcl
+
+Kind
+Status
+Total Acres
+Low
+RV
+High
+Low
+RV
+High
+Farm Class
+HEL
+
+Choice
+Choice
+Integer
+Integer
+Integer
+Integer
+Float
+Float
+Float
+Choice
+Choice
+
+Varchar
+Varchar
+Int
+Smallint
+Smallint
+Smallint
+Real
+Real
+Real
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+No
+
+254
+254
+
+mapunit_kind
+mapunit_status
+
+254
+254
+
+farmland_classification
+mapunit_hel_class
+
+14
+15
+16
+17
+18
+19
+
+muwathelcl
+muwndhelcl
+interpfocus
+invesintens
+iacornsr
+nhiforsoigrp
+
+HEL Water
+HEL Wind
+Interpretive Focus
+Order of Mapping
+IA CSR
+NH Forest Soil Grp
+
+Choice
+Choice
+String
+Choice
+Integer
+Choice
+
+Varchar
+Varchar
+Varchar
+Varchar
+Smallint
+Varchar
+
+No
+No
+No
+No
+No
+No
+
+254
+254
+30
+254
+
+mapunit_hel_class
+mapunit_hel_class
+
+20 nhspiagr
+21 vtsepticsyscl
+
+NH SPI Agr
+VT Septic System
+
+Float
+Choice
+
+Float
+Varchar
+
+No
+No
+
+254
+
+22 mucertstat
+23 lkey
+
+Map Unit Certification Status
+Legend Key
+
+Choice
+String
+
+Varchar
+Varchar
+
+No
+Yes
+
+254
+30
+
+24 mukey
+
+Mapunit Key
+
+String
+
+Varchar
+
+Yes
+
+30
+
+0
+
+1
+1
+1
+
+0.1
+0.1
+0.1
+
+acres
+meters
+meters
+meters
+10 acres
+10 acres
+10 acres
+
+investigation_intensity
+5
+
+100
+
+254
+
+nh_important_forest_soil_gro
+up
+1
+
+0
+
+100
+vt_septic_system_class_200
+7
+mapunit_certification_status
+
+The Mapunit table identifies the map units included in the referenced legend. Data related the map unit as a whole are also given.
+
+1/11/2012
+
+Page 60
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mdstatdomdet
+Table Label:
+Domain Detail Static Metadata
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 domainname
+2 choicesequence
+
+Domain Name
+Choice Sequence
+
+String
+Integer
+
+Varchar
+Smallint
+
+Yes
+Yes
+
+40
+
+3 choice
+4 choicedesc
+
+Choice
+Choice Description
+
+Varchar
+Yes
+Varchar(max) No
+
+254
+
+5 choiceobsolete
+
+Obsolete Choice?
+
+String
+Narrative
+Text
+Boolean
+
+Char
+
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+3
+
+The Domain Detail Static Metadata table records the individual domain members for all domains associated with the tabular data set. Each record in this table represents one member of a particular
+domain.
+
+1/11/2012
+
+Page 61
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mdstatdommas
+Table Label:
+Domain Master Static Metadata
+
+Column
+Seq Physical Name
+1 domainname
+2 domainmaxlen
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Domain Name
+Domain Maximum Length
+
+String
+Integer
+
+Varchar
+Smallint
+
+Yes
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+40
+1
+
+254
+
+The Domain Master Static Metadata table records the metadata that pertains to a domain as a whole, for all domains associated with the tabular data set. A domain is a fixed set of choices to which a
+column's value is restricted. Each column in the Table Column Static Metadata table whose logical data type is "choice", has a corresponding domain. Each record in this table represents a particular
+domain. A particular domain may serve as the domain for more than one column. Information about the members that make up a particular domain is found in the Domain Detail Static Metadata table.
+
+1/11/2012
+
+Page 62
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mdstatidxdet
+Table Label:
+Index Detail Static Metadata
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 tabphyname
+2 idxphyname
+
+Table Physical Name
+Index Physical Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+3 idxcolsequence
+4 colphyname
+
+Index Column Sequence
+Column Physical Name
+
+Integer
+String
+
+Smallint
+Varchar
+
+Yes
+Yes
+
+30
+
+Domain Name
+
+The Index Detail Static Metadata table records what columns of a table make up a particular index. Each record in this table represents one column of a particular index.
+
+1/11/2012
+
+Page 63
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mdstatidxmas
+Table Label:
+Index Master Static Metadata
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 tabphyname
+2 idxphyname
+
+Table Physical Name
+Index Physical Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+3 uniqueindex
+
+Unique Index?
+
+Boolean
+
+Char
+
+Yes
+
+3
+
+Domain Name
+
+The Index Master Static Metadata table records the metadata that pertains to an index, as a whole, for all indexes defined for the tabular data set. Each record in this table represents one index for a
+particular table. An index is based on one or more columns from a particular table. Information about the columns that make up an index is found in the Index Detail Static Metadata table.
+
+1/11/2012
+
+Page 64
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mdstatrshipdet
+Table Label:
+Relationship Detail Static Metadata
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 ltabphyname
+2 rtabphyname
+
+Left Table Physical Name
+Right Table Physical Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+3 relationshipname
+4 ltabcolphyname
+5 rtabcolphyname
+
+Relationship Name
+Left Table Column Physical Name
+Right Table Column Physical
+Name
+
+String
+String
+String
+
+Varchar
+Varchar
+Varchar
+
+Yes
+Yes
+Yes
+
+30
+30
+30
+
+Domain Name
+
+The Relationship Detail Static Metadata table records the pairs of join columns that define a particular relationship. Each record in this table represents one pair of join columns for a particular
+relationship.
+
+1/11/2012
+
+Page 65
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mdstatrshipmas
+Table Label:
+Relationship Master Static Metadata
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 ltabphyname
+2 rtabphyname
+
+Left Table Physical Name
+Right Table Physical Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+3 relationshipname
+4 cardinality
+5 mandatory
+
+Relationship Name
+Cardinality
+Mandatory?
+
+String
+Choice
+Boolean
+
+Varchar
+Varchar
+Char
+
+Yes
+Yes
+Yes
+
+30
+254
+3
+
+Domain Name
+
+cardinality
+
+The Relationship Master Static Metadata table records the metadata that pertains to a relationship, as a whole, for all relationships defined for the tabular data set. Each record in this table represents
+one particular relationship between two related tables. A relationship involves one or more pairs of join columns, and more than one relationship may exist between the same two tables. Information
+about the join columns involved in a relationship is found in the Relationship Detail Static Metadata table.
+
+1/11/2012
+
+Page 66
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mdstattabcols
+Table Label:
+Table Column Static Metadata
+
+Column
+Seq Physical Name
+1 tabphyname
+2 colsequence
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+
+colphyname
+collogname
+collabel
+logicaldatatype
+notnull
+fieldsize
+precision
+minimum
+maximum
+uom
+domainname
+
+14 coldesc
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Table Physical Name
+Column Sequence
+
+String
+Integer
+
+Varchar
+Smallint
+
+Yes
+Yes
+
+30
+
+Column Physical Name
+Column Logical Name
+Column Label
+Logical Data Type
+Not Null?
+Field Size
+Precision
+Minimum
+Maximum
+Unit of Measure
+Domain Name
+
+String
+String
+String
+Choice
+Boolean
+Integer
+Integer
+Float
+Float
+String
+String
+
+Varchar
+Varchar
+Varchar
+Varchar
+Char
+Smallint
+Smallint
+Float
+Float
+Varchar
+Varchar
+
+Yes
+Yes
+Yes
+Yes
+Yes
+No
+No
+No
+No
+No
+No
+
+30
+30
+80
+254
+3
+
+Column Description
+
+Narrative
+Text
+
+Varchar(max) Yes
+
+Domain Name
+
+logical_data_type_ssurgo
+
+2
+2
+60
+40
+
+The Table Column Static Metadata table records the metadata for all columns of all tables that make up the tabular data set. Each record in this table represents one column of a particular table.
+
+1/11/2012
+
+Page 67
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mdstattabs
+Table Label:
+Table Static Metadata
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 tabphyname
+2 tablogname
+
+Table Physical Name
+Table Logical Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+3 tablabel
+4 tabdesc
+
+Table Label
+Table Description
+
+Varchar
+Yes
+Varchar(max) Yes
+
+80
+
+5 iefilename
+
+Import/Export File Name
+
+String
+Narrative
+Text
+String
+
+Varchar
+
+30
+
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+The Table Static Metadata table records metadata about the tables that make up the tabular data set. Each record in this table represents one table.
+
+1/11/2012
+
+Page 68
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: month
+Table Label:
+Month
+
+Column
+Seq Physical Name
+1 monthseq
+2 monthname
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Month Sequence
+Month Name
+
+Integer
+String
+
+Smallint
+Varchar
+
+Yes
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+1
+9
+
+Domain Name
+
+12
+flooding_ponding_month
+
+This is a lookup table for months of the year.
+
+1/11/2012
+
+Page 69
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: muaggatt
+Table Label:
+Mapunit Aggregated Attribute
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 musym
+2 muname
+
+Mapunit Symbol
+Mapunit Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+No
+
+6
+175
+
+3 mustatus
+4 slopegraddcp
+
+Choice
+Float
+
+Varchar
+Real
+
+No
+No
+
+254
+
+Float
+
+Real
+
+No
+
+Integer
+Integer
+
+Smallint
+Smallint
+
+No
+No
+
+cm
+cm
+
+Integer
+
+Smallint
+
+No
+
+cm
+
+Choice
+
+Varchar
+
+No
+
+254
+
+Domain Name
+
+10 flodfreqmax
+
+Status
+Slope Gradient - Dominant
+Component
+Slope Gradient - Weighted
+Average
+Bedrock Depth - Minimum
+Water Table Depth - Annual Minimum
+Water Table Depth - April - June Minimum
+Flooding Frequency - Dominant
+Condition
+Flooding Frequency - Maximum
+
+Choice
+
+Varchar
+
+No
+
+254
+
+flooding_frequency_class
+
+11 pondfreqprs
+
+Ponding Frequency - Presence
+
+Choice
+
+Varchar
+
+No
+
+254
+
+ponding_frequency_map_leg
+end
+
+12 aws025wta
+
+Available Water Storage 0-25
+cm - Weighted Average
+Available Water Storage 0-50
+cm - Weighted Average
+Available Water Storage 0-100
+cm - Weighted Average
+Available Water Storage 0-150
+cm - Weighted Average
+Drainage Class - Dominant
+Condition
+Drainage Class - Wettest
+Hydrologic Group - Dominant
+Conditions
+Irrigated Capability Class Dominant Condition
+Irrigated Capability Class Dominant Condition Aggregate
+Percent
+Non-Irrigated Capability Class Dominant Condition
+
+Float
+
+Real
+
+No
+
+2
+
+cm
+
+Float
+
+Real
+
+No
+
+2
+
+cm
+
+Float
+
+Real
+
+No
+
+2
+
+cm
+
+Float
+
+Real
+
+No
+
+2
+
+cm
+
+Choice
+
+Varchar
+
+No
+
+254
+
+drainage_class
+
+Choice
+Choice
+
+Varchar
+Varchar
+
+No
+No
+
+254
+254
+
+drainage_class
+hydrologic_group
+
+Choice
+
+Varchar
+
+No
+
+254
+
+capability_class
+
+Integer
+
+Smallint
+
+No
+
+Choice
+
+Varchar
+
+No
+
+5 slopegradwta
+6 brockdepmin
+7 wtdepannmin
+8 wtdepaprjunmin
+9 flodfreqdcd
+
+13 aws050wta
+14 aws0100wta
+15 aws0150wta
+16 drclassdcd
+17 drclasswettest
+18 hydgrpdcd
+19 iccdcd
+20 iccdcdpct
+
+21 niccdcd
+
+1/11/2012
+
+mapunit_status
+1
+
+percent
+
+1
+
+percent
+
+flooding_frequency_class
+
+0
+
+254
+
+100
+
+capability_class
+
+Page 70
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: muaggatt
+Table Label:
+Mapunit Aggregated Attribute
+
+Column
+Seq Physical Name
+22 niccdcdpct
+
+23 engdwobdcd
+24 engdwbdcd
+25 engdwbll
+26 engdwbml
+27 engstafdcd
+28 engstafll
+29 engstafml
+30 engsldcd
+31 engsldcp
+32 englrsdcd
+33 engcmssdcd
+34 engcmssmp
+35 urbrecptdcd
+36 urbrecptwta
+37 forpehrtdcp
+
+38 hydclprs
+
+Column Label
+Non-Irrigated Capability Class Dominant Condition Aggregate
+Percent
+ENG - Dwellings W/O
+Basements - Dominant Condition
+ENG - Dwellings with
+Basements - Dominant Condition
+ENG - Dwellings with
+Basements - Least Limiting
+ENG - Dwellings with
+Basements - Most Limiting
+ENG - Septic Tank Absorption
+Fields - Dominant Condition
+ENG - Septic Tank Absorption
+Fields - Least Limiting
+ENG - Septic Tank Absorption
+Fields - Most Limiting
+ENG - Sewage Lagoons Dominant Condition
+ENG - Sewage Lagoons Dominant Component
+ENG - Local Roads and Streets Dominant Condition
+ENG - Construction Materials;
+Sand Source - Dominant Condition
+ENG - Construction Materials;
+Sand Source - Most Probable
+URB/REC - Paths and Trails Dominant Condition
+URB/REC - Paths and Trails Weighted Average
+FOR - Potential Erosion Hazard
+(Road/Trail) - Dominant
+Component
+Hydric Classification - Presence
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Integer
+
+Smallint
+
+No
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+String
+
+Varchar
+
+No
+
+254
+
+Float
+
+Real
+
+No
+
+String
+
+Varchar
+
+No
+
+254
+
+Choice
+
+Varchar
+
+No
+
+254
+
+1/11/2012
+
+Units of
+Size Precision Minimum Maximum Measure
+0
+
+Domain Name
+
+100
+
+2
+
+hydric_classification_map_le
+gend
+
+Page 71
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: muaggatt
+Table Label:
+Mapunit Aggregated Attribute
+
+Column
+Seq Physical Name
+39 awmmfpwwta
+
+40 mukey
+
+Column Label
+AWM - Manure and Food
+Processing Waste - Weighted
+Average
+Mapunit Key
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Float
+
+Real
+
+No
+
+String
+
+Varchar
+
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+2
+
+30
+
+The Mapunit Aggregated Attribute table records a variety of soil attributes and interpretations that have been aggregated from the component level to a single value at the map unit level. They have
+been aggregated by one or more appropriate means in order to express a consolidated value or interpretation for the map unit as a whole.
+
+1/11/2012
+
+Page 72
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: muaoverlap
+Table Label:
+Mapunit Area Overlap
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 areaovacres
+2 lareaovkey
+
+Overlap Acres
+Legend Area Overlap Key
+
+Integer
+String
+
+Int
+Varchar
+
+No
+Yes
+
+30
+
+3 mukey
+4 muareaovkey
+
+Mapunit Key
+Mapunit Area Overlap Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+30
+30
+
+0
+
+Domain Name
+
+acres
+
+The Mapunit Area Overlap table lists the map units that exist in the overlap between the entire soil survey area and the referenced geographic area in the Legend Area Overlap table.
+
+1/11/2012
+
+Page 73
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mucropyld
+Table Label:
+Mapunit Crop Yield
+
+Column
+Seq Physical Name
+1 cropname
+2 yldunits
+3
+4
+5
+6
+7
+8
+9
+10
+
+nonirryield_l
+nonirryield_r
+nonirryield_h
+irryield_l
+irryield_r
+irryield_h
+mukey
+mucrpyldkey
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+Crop Name
+Units
+
+Choice
+Choice
+
+Varchar
+Varchar
+
+No
+No
+
+254
+254
+
+crop_name
+crop_yield_units
+
+Low
+RV
+High
+Low
+RV
+High
+Mapunit Key
+Mapunit Crop Yield Key
+
+Float
+Float
+Float
+Float
+Float
+Float
+String
+String
+
+Real
+Real
+Real
+Real
+Real
+Real
+Varchar
+Varchar
+
+No
+No
+No
+No
+No
+No
+Yes
+Yes
+
+2
+2
+2
+2
+2
+2
+
+0
+0
+0
+0
+0
+0
+
+9999.99
+9999.99
+9999.99
+9999.99
+9999.99
+9999.99
+
+30
+30
+
+The Mapunit Crop Yield table lists commonly grown crops and their expected yields for the referenced map unit as a whole. Yields for individual map unit components are given in the Component Crop
+Yield table.
+
+1/11/2012
+
+Page 74
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: muline
+Table Label:
+Mapunit Line
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 areasymbol
+2 spatialversion
+
+Area Symbol
+Spatial Version
+
+String
+Integer
+
+Varchar
+Int
+
+Yes
+Yes
+
+20
+
+3 musym
+4 mukey
+
+Mapunit Symbol
+Mapunit Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+6
+30
+
+Domain Name
+
+This table records all of the soil map units of a soil survey area that are represented as one or more lines. This table is not like other tabular data tables that are delivered as ASCII delimited files. How
+the information is delivered depends on the spatial format that was requested at the time the corresponding soil survey area was exported. Spatial information is typically delivered in GIS vendor
+specific format, and more than one output file may be produced when the information for this spatial entity is exported. Consequently, no spatially oriented columns are shown, because the name and
+number of columns necessary to portray spatial characteristics vary depending on spatial format.
+This table is documented in order to show attributes that will always be available when working with the corresponding spatial entity in a GIS. These attributes have two purposes. One purpose is to
+identify each instance of the corresponding spatial entity. The other purpose is to identify each instance of the corresponding tabular entity. The tabular entity corresponding to a map unit line is
+represented by a record in the Map Unit table.
+
+1/11/2012
+
+Page 75
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mupoint
+Table Label:
+Mapunit Point
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 areasymbol
+2 spatialversion
+
+Area Symbol
+Spatial Version
+
+String
+Integer
+
+Varchar
+Int
+
+Yes
+Yes
+
+20
+
+3 musym
+4 mukey
+
+Mapunit Symbol
+Mapunit Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+6
+30
+
+Domain Name
+
+This table records all of the soil map units of a soil survey area that are represented as one or more points. This table is not like other tabular data tables that are delivered as ASCII delimited files.
+How the information is delivered depends on the spatial format that was requested at the time the corresponding soil survey area was exported. Spatial information is typically delivered in GIS vendor
+specific format, and more than one output file may be produced when the information for this spatial entity is exported. Consequently, no spatially oriented columns are shown, because the name and
+number of columns necessary to portray spatial characteristics vary depending on spatial format.
+This table is documented in order to show attributes that will always be available when working with the corresponding spatial entity in a GIS. These attributes have two purposes. One purpose is to
+identify each instance of the corresponding spatial entity. The other purpose is to identify each instance of the corresponding tabular entity. The tabular entity corresponding to a map unit point is
+represented by a record in the Map Unit table.
+
+1/11/2012
+
+Page 76
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mupolygon
+Table Label:
+Mapunit Polygon
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 areasymbol
+2 spatialversion
+
+Area Symbol
+Spatial Version
+
+String
+Integer
+
+Varchar
+Int
+
+Yes
+Yes
+
+20
+
+3 musym
+4 mukey
+
+Mapunit Symbol
+Mapunit Key
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+No
+
+6
+30
+
+Domain Name
+
+This table records all of the soil map units of a soil survey area that are represented as one or more polygons. This table is not like other tabular data tables that are delivered as ASCII delimited files.
+How the information is delivered depends on the spatial format that was requested at the time the corresponding soil survey area was exported. Spatial information is typically delivered in GIS vendor
+specific format, and more than one output file may be produced when the information for this spatial entity is exported. Consequently, no spatially oriented columns are shown, because the name and
+number of columns necessary to portray spatial characteristics vary depending on spatial format.
+This table is documented in order to show attributes that will always be available when working with the corresponding spatial entity in a GIS. These attributes have two purposes. One purpose is to
+identify each instance of the corresponding spatial entity. The other purpose is to identify each instance of the corresponding tabular entity. The tabular entity corresponding to a map unit polygon is
+represented by a record in the Map Unit table.
+
+1/11/2012
+
+Page 77
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: mutext
+Table Label:
+Mapunit Text
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+1 recdate
+2 mapunittextkind
+
+Date
+Kind
+
+Date/Time
+Choice
+
+Datetime
+Varchar
+
+No
+No
+
+254
+
+mapunit_text_kind
+
+3 textcat
+4 textsubcat
+5 text
+
+Category
+Subcategory
+Text
+
+Varchar
+No
+Varchar
+No
+Varchar(max) No
+
+20
+20
+
+6 mukey
+7 mutextkey
+
+Mapunit Key
+Mapunit Text Key
+
+String
+String
+Narrative
+Text
+String
+String
+
+Varchar
+Varchar
+
+30
+30
+
+Yes
+Yes
+
+The Mapunit Text table contains notes and narrative descriptions related to the referenced map unit.
+
+1/11/2012
+
+Page 78
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: sacatalog
+Table Label:
+Survey Area Catalog
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 areasymbol
+2 areaname
+
+Area Symbol
+Area Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+20
+135
+
+3
+4
+5
+6
+7
+8
+9
+
+Yes
+Yes
+Yes
+Yes
+Yes
+No
+No
+
+11 sacatalogkey
+
+Survey Area Catalog Key
+
+Integer
+Date/Time
+Integer
+Date/Time
+Date/Time
+Choice
+Narrative
+Text
+Narrative
+Text
+String
+
+Int
+Datetime
+Int
+Datetime
+Datetime
+Varchar
+Varchar(max)
+
+10 fgdcmetadata
+
+Survey Area Version
+Survey Area Version Established
+Tabular Version
+Tabular Version Established
+Tabular NASIS Export Date
+Tabular Certification Status
+Tabular Certification Status
+Description
+FGDC Metadata
+
+saversion
+saverest
+tabularversion
+tabularverest
+tabnasisexportdate
+tabcertstatus
+tabcertstatusdesc
+
+254
+
+Domain Name
+
+export_certification_status
+
+Varchar(max) Yes
+Varchar
+
+Yes
+
+30
+
+This table records the primary dynamic cetadata associated with a soil survey area. This includes such things as survey area version, tabular data version, etc. The remaining dynamic metadata, which
+soil interpretations were generated for the corresponding soil survey area, is recorded in the Survey Area Interpretation table.
+
+1/11/2012
+
+Page 79
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: sainterp
+Table Label:
+Survey Area Interpretation
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 areasymbol
+2 interpname
+
+Area Symbol
+Interpretation Name
+
+String
+String
+
+Varchar
+Varchar
+
+Yes
+Yes
+
+20
+60
+
+3 interptype
+4 interpdesc
+
+Interpretation Type
+Interpretation Description
+
+Varchar
+Yes
+Varchar(max) No
+
+254
+
+5
+6
+7
+8
+9
+
+Interpretation Design Date
+Interpretation Generation Date
+Interpretation Maximum Reasons
+Survey Area Catalog Key
+Survey Area Interpretation Key
+
+Choice
+Narrative
+Text
+Date/Time
+Date/Time
+Integer
+String
+String
+
+interpdesigndate
+interpgendate
+interpmaxreasons
+sacatalogkey
+sainterpkey
+
+Datetime
+Datetime
+Smallint
+Varchar
+Varchar
+
+Yes
+Yes
+No
+Yes
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+rule_design
+
+0
+30
+30
+
+This table records information about the soil interpretations that were generated for a soil survey area.
+
+1/11/2012
+
+Page 80
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: sapolygon
+Table Label:
+Survey Area Polygon
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+1 areasymbol
+2 spatialversion
+
+Area Symbol
+Spatial Version
+
+String
+Integer
+
+Varchar
+Int
+
+Yes
+Yes
+
+20
+
+3 lkey
+
+Legend Key
+
+String
+
+Varchar
+
+Yes
+
+30
+
+Domain Name
+
+This table records the set of polygons that make up a soil survey area boundary. The table is not like other tabular data tables that are delivered as ASCII delimited files. How the information in this
+table is delivered depends of the spatial format that was requested at the time the corresponding soil survey area data was exported. Spatial information is typically delivered in GIS vendor specific
+format, and more than one output file may be produced when the information for this spatial entity is exported. Consequently, no spatially oriented columns are shown, because the name and number
+of columns necessary to portray spatial characteristics vary depending on spatial format.
+This table is documented in order to show attributes that will always be available when working with the corresponding spatial entity in a GIS. These attributes have two purposes. One purpose is to
+identify each instance of the corresponding spatial entity. The other purpose is to identify each instance of the corresponding tabular entity. The tabular entity corresponding to the survey area
+boundary is represented by a record in the Legend table.
+
+1/11/2012
+
+Page 81
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: sdvalgorithm
+Table Label:
+SDV Algorithm
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 algorithmsequence
+2 algorithmname
+
+Algorithm Sequence
+Algorithm Name
+
+Integer
+String
+
+Smallint
+Varchar
+
+Yes
+Yes
+
+3 algorithminitials
+4 algorithmdescription
+
+Algorithm Initials
+Algorithm Description
+
+String
+Narrative
+Text
+
+Varchar
+Yes
+Varchar(max) Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+
+50
+
+Domain Name
+
+algorithm
+
+3
+
+This lookup table records the valid algorithms for aggregating soil property values or soil interpretation results to the map unit level.
+
+1/11/2012
+
+Page 82
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: sdvattribute
+Table Label:
+SDV Attribute
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 attributekey
+2 attributename
+
+Attribute Key
+Attribute Name
+
+Integer
+String
+
+Int
+Varchar
+
+Yes
+Yes
+
+60
+
+3 attributetablename
+4 attributecolumnname
+5 attributelogicaldatatype
+
+Attribute Table Name
+Attribute Column Name
+Attribute Logical Data Type
+
+String
+String
+String
+
+Varchar
+Varchar
+Varchar
+
+Yes
+Yes
+Yes
+
+30
+30
+20
+
+6 attributefieldsize
+7 attributeprecision
+8 attributedescription
+
+Attribute Field Size
+Attribute Precision
+Attribute Description
+
+Integer
+Integer
+Narrative
+Text
+String
+String
+
+Smallint
+No
+Smallint
+No
+Varchar(max) Yes
+
+9 attributeuom
+10 attributeuomabbrev
+11 attributetype
+12
+13
+14
+15
+16
+17
+
+nasisrulename
+ruledesign
+notratedphrase
+mapunitlevelattribflag
+complevelattribflag
+cmonthlevelattribflag
+
+18
+19
+20
+21
+
+horzlevelattribflag
+tiebreakdomainname
+tiebreakruleoptionflag
+tiebreaklowlabel
+
+22
+23
+24
+25
+26
+27
+
+tiebreakhighlabel
+tiebreakrule
+resultcolumnname
+sqlwhereclause
+primaryconcolname
+pcclogicaldatatype
+
+28 primaryconstraintlabel
+
+Attribute Units of Measure
+Attribute Units of Measure
+Abbreviation
+Attribute Type
+NASIS Rule Name
+Rule Design
+Not Rated Phrase
+Map Unit Level Attribute Flag
+Component Level Attribute Flag
+Component Month Level Attribute
+Flag
+Horizon Level Attribute Flag
+Tie Break Domain Name
+Tie Break Rule Option Flag
+Tie Break Low Label
+Tie Break High Label
+Tie Break Rule
+Result Column Name
+SQL Where Clause
+Primary Constraint Column Name
+Primary Constraint Column
+Logical Data Type
+Primary Constraint Label
+
+Varchar
+Varchar
+
+No
+No
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+1
+
+sdv_attribute_logical_data_ty
+pe
+1
+1
+
+255
+6
+
+60
+30
+
+String
+
+Varchar
+
+Yes
+
+20
+
+String
+Integer
+String
+Boolean
+Boolean
+Boolean
+
+Varchar
+Smallint
+Varchar
+Smallint
+Smallint
+Smallint
+
+No
+No
+No
+Yes
+Yes
+Yes
+
+60
+
+Boolean
+String
+Boolean
+String
+
+Smallint
+Varchar
+Smallint
+Varchar
+
+Yes
+No
+Yes
+No
+
+String
+Integer
+String
+String
+String
+String
+
+Varchar
+Smallint
+Varchar
+Varchar
+Varchar
+Varchar
+
+No
+Yes
+Yes
+No
+No
+No
+
+10
+255
+30
+20
+
+String
+
+Varchar
+
+No
+
+20
+
+1/11/2012
+
+attributetype
+rule_design
+
+254
+
+40
+20
+20
+tiebreakrule
+
+sdv_attribute_logical_data_ty
+pe
+
+Page 83
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: sdvattribute
+Table Label:
+SDV Attribute
+
+Column
+Seq Physical Name
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+29 secondaryconcolname
+
+String
+
+Varchar
+
+No
+
+30
+
+30
+
+String
+
+Varchar
+
+No
+
+20
+
+String
+
+Varchar
+
+No
+
+20
+
+Boolean
+String
+Float
+Float
+String
+Boolean
+String
+String
+
+Smallint
+Varchar
+Real
+Real
+Varchar
+Smallint
+Varchar
+Varchar
+
+Yes
+No
+No
+No
+No
+Yes
+No
+No
+
+Fetch All Components Flag
+Boolean
+Interpret Nulls as Zero Option Flag Boolean
+
+Smallint
+Smallint
+
+Yes
+Yes
+
+31
+32
+33
+34
+35
+36
+37
+38
+39
+
+Column Label
+
+Secondary Constraint Column
+Name
+scclogicaldatatype
+Secondary Constraint Column
+Logical Data Type
+secondaryconstraintlabe Secondary Constraint Label
+l
+dqmodeoptionflag
+Depth Qualifier Mode Option Flag
+depthqualifiermode
+Depth Qualifier Mode
+layerdepthtotop
+Layer Depth to Top
+layerdepthtobottom
+Layer Depth to Bottom
+layerdepthuom
+Layer Depth UOM
+monthrangeoptionflag
+Month Range Option Flag
+beginningmonth
+Beginning Month
+endingmonth
+Ending Month
+
+40 fetchallcompsflag
+41 interpnullsaszerooptionfl
+ag
+42 interpnullsaszeroflag
+43 nullratingreplacementval
+ue
+44 basicmodeflag
+45 maplegendkey
+46 maplegendclasses
+47 maplegendxml
+
+Interpret Nulls as Zero Flag
+Null Rating Replacement Value
+
+Boolean
+String
+
+Smallint
+Varchar
+
+Yes
+No
+
+Basic Mode Flag
+Map Legend Key
+Map Legend Classes
+Map Legend XML
+
+Smallint
+Int
+Smallint
+Varchar(max)
+
+NASIS Site ID
+
+Int
+
+Last Updated
+Algorithm Name
+Component Percent Cutoff
+Ready to Distribute
+
+Date/Time
+String
+Integer
+Boolean
+
+Datetime
+Varchar
+Smallint
+Smallint
+
+Yes
+Yes
+No
+Yes
+
+depthqualmode
+1
+1
+
+0
+0
+
+9999
+9999
+
+20
+
+depthuom
+
+9
+9
+
+flooding_ponding_month
+flooding_ponding_month
+
+Yes
+
+49
+50
+51
+52
+
+Domain Name
+
+sdv_attribute_logical_data_ty
+pe
+
+20
+
+Yes
+Yes
+No
+Yes
+
+48 nasissiteid
+
+Boolean
+Integer
+Integer
+Narrative
+Text
+Integer
+
+Units of
+Size Precision Minimum Maximum Measure
+
+wlupdated
+algorithmname
+componentpercentcutoff
+readytodistribute
+
+1/11/2012
+
+254
+
+1
+2
+
+100
+
+0
+
+100
+
+50
+
+algorithm
+
+Page 84
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: sdvattribute
+Table Label:
+SDV Attribute
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+Each record in this table corresponds to either an intrinsic soil property or a soil interpretation that is available in the Soil Data Viewer application. A record in this table is also referred to as an "SDV
+rule". A rule provides most of the information necessary for the Soil Data Viewer application to be able to create a thematic map for the corresponding soil attribute. Some additional information
+needed in order to be able to create a thematic map may be collected at run time.
+
+1/11/2012
+
+Page 85
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: sdvfolder
+Table Label:
+SDV Folder
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 foldersequence
+2 foldername
+
+Folder Sequence
+Folder Name
+
+Integer
+String
+
+Smallint
+Varchar
+
+Yes
+Yes
+
+3 folderdescription
+
+Folder Description
+
+Varchar(max) Yes
+
+4 folderkey
+5 parentfolderkey
+6 wlupdated
+
+Folder Key
+Parent Folder Key
+Last Updated
+
+Narrative
+Text
+Integer
+Integer
+Date/Time
+
+Int
+Int
+Datetime
+
+Yes
+No
+Yes
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Domain Name
+
+1
+80
+
+1
+
+The records in this table represent the folders and subfolders by which soil attributes (SDV rules) are grouped and displayed in the Soil Data Viewer application. One record in this table may be related
+to another record in this table, i.e. a subfolder must identify its corresponding parent folder.
+
+1/11/2012
+
+Page 86
+
+Text13:
+
+SSURGO 2.2.5
+Tables and Columns
+
+Text13:
+
+Table Physical Name: sdvfolderattribute
+Table Label:
+SDV Folder Attribute
+
+Column
+Seq Physical Name
+
+Column Label
+
+Logical
+Data Type
+
+Physical
+Data Type
+
+Not Null?
+
+1 folderkey
+2 attributekey
+
+Folder Key
+Attribute Key
+
+Integer
+Integer
+
+Int
+Int
+
+Units of
+Size Precision Minimum Maximum Measure
+
+Yes
+Yes
+
+Domain Name
+
+1
+1
+
+This associative table resolves the many to many relationship between Soil Data Viewer folders and soil attributes (SDV rules).
+
+1/11/2012
+
+Page 87
+
+
