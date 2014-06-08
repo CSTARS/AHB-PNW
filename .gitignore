@@ -2,6 +2,7 @@
 .DS_Store
 *.swp
 *.swo
+*~
 
 web/visualization/ModelApp/phonegap/3pg-model/platforms/android
 

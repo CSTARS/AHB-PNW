@@ -396,7 +396,8 @@ m3PGFunc.coppice.pfs_via_VI = function (stemG,wsVI,laVI,SLA) {
     }
     var VI = Math.pow( (stemG / wsVI.stems_per_stump / wsVI.constant),(1 / wsVI.power) );
 //    log(VI+" = Math.pow( ("+stemG+" / "+wsVI.stems_per_stump+" / "+wsVI.constant+"),(1 / "+wsVI.power+") )");
-    var la = laVI.constant * Math.pow(VI,laVI.power);
+    // Add up for all stems
+    var la = laVI.constant * Math.pow(VI,laVI.power) * wsVI.stems_per_stump;
 //    log( la+" = "+laVI.constant+" * Math.pow("+VI,laVI.power+")");
     var wf = 1000 * (la / SLA);  // Foilage Weight in g;
 //    log(wf+" = 1000 * ("+la+" / "+SLA+")");  // Foilage Weight in g;
