@@ -1,7 +1,8 @@
 var INIT_MAP_OPTIONS = {
-	centerX: -121,
-	centerY: 35,
-	zoom: 5
+	centerX: -125,
+	centerY: 42,
+	zoom: 6,
+	scrollwheel: false
 }
 
 var KML_GRID_URL = "";
@@ -13,6 +14,8 @@ ahb.map = (function() {
 	
 	var chartMarker = null;
 	var fusionLayer = null;
+	var eventLayer;
+	var eventListeners = [];
 	
 	function init() {
 		// use the new maps look and feel
@@ -52,7 +55,13 @@ ahb.map = (function() {
 	}
 	
 	function _updateLayer() {
+		for( var i = 0; i < eventListeners.length; i++ ) {
+			google.maps.event.removeListener(eventListeners[i]);
+		}
+		eventListeners = [];
 		if( fusionLayer != null ) fusionLayer.setMap(null);
+
+
 		
 		if( ahb.type == 'weather' ) {
 			fusionLayer = new google.maps.FusionTablesLayer({
@@ -70,6 +79,8 @@ ahb.map = (function() {
 			      }],
 				  suppressInfoWindows : true
 				});
+			
+			eventLayer = gmap;
 		} else {
 			fusionLayer = new google.maps.FusionTablesLayer({
 				  query: {
@@ -78,12 +89,13 @@ ahb.map = (function() {
 				  },
 				  suppressInfoWindows : true
 			 });
+			eventLayer = fusionLayer;
 		}
 		
 		fusionLayer.opacity = .8;
 		fusionLayer.setMap(gmap);
-		
-		google.maps.event.addListener(fusionLayer, 'click', function(e) {
+
+		var onClick = function(e) {
 			if( chartMarker != null ) chartMarker.setMap(null);
 						
 			var id = "";
@@ -95,7 +107,15 @@ ahb.map = (function() {
 			});
 			
 			$(window).trigger('query-map-event', [e.latLng, id]);
-		});
+		}
+
+		
+		eventListeners.push(google.maps.event.addListener(eventLayer, 'click', onClick));
+		if( ahb.type == 'weather' ) {
+			eventListeners.push(google.maps.event.addListener(fusionLayer, 'click', onClick));
+		}
+
+
 		
 		
 	}
@@ -118,7 +138,7 @@ ahb.map = (function() {
 		
 		var w = map.parent().width();
 		map.width(w);
-		w = w / 2;
+		w = w / 2.5;
 		map.height(w);
 		
 		google.maps.event.trigger(gmap, "resize");
