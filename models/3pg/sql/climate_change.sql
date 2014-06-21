@@ -1,23 +1,22 @@
 create table growthmodel as
-with pl as (
- select (type,"StockingDensity","SeedlingMass",
- "seedlingTree","coppicedTree","pS","pF","pR")::m3pgjs.plantation_t 
- as pt
-from m3pgjs_fields.plantation
-),
+with
 swd as (
  select p,scenario,date,
-       w.weather[index:index+235] as weather
-from generate_series(2000,2060,2) as plant(y)
+       w.weather[index:index+12*5*3] as weather
+from generate_series(2000,2060,10) as plant(y)
 join pixel_weather_dates on ((y||'-03-15')::date=date),
-pixel_weather w join m3pgjs_fields.pixel p using (pid)
+pixel_weather w join m3pgjs.pixel p using (pid)
+),
+m as (
+ select m3pgjs.example_management(example_dates(min(date),max(date))) from 
+ swd
 )
 select
 (p).pid,scenario,(pt).type,swd.date,
 ir as irrigation,f as fertility,
-m3pgjs.grow(pt,(p).soil,swd.weather,m3pgjs_fields.manage(ir,f)) as ps
-from pl,swd,
-(VALUES (0,0.8),(1,0.8)) as m(ir,f);
+m3pgjs.grow(pt,(p).soil,swd.weather,m3pgjs.manage(ir,f)) as ps
+from plantation,swd,
+(VALUES (0,0.7),(1,0.8)) as m(ir,f);
 
 create temp view gm_as_table as
 with a as (
