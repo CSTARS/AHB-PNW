@@ -13,6 +13,7 @@ module.exports = function (grunt) {
     // load all grunt tasks
     require('load-grunt-tasks')(grunt);
     grunt.loadNpmTasks('grunt-phonegap');
+    grunt.loadNpmTasks('grunt-appcache');
 
     grunt.initConfig({
         // configurable paths
@@ -66,6 +67,17 @@ module.exports = function (grunt) {
                 base: [
                         '.tmp',
                         '<%= yeoman.app %>'
+                    ],
+                hostname: '0.0.0.0'
+              }
+            },
+            buildserver: {
+              options: {
+                keepalive: true,
+                port: 9002,
+                base: [
+                        '.tmp',
+                        '<%= yeoman.dist %>'
                     ],
                 hostname: '0.0.0.0'
               }
@@ -278,6 +290,7 @@ module.exports = function (grunt) {
                     src: [
                         '*.{ico,png,txt}',
                         '.htaccess',
+                        'cache/*',
                         'images/{,*/}*.{webp,gif}',
                         'styles/fonts/{,*/}*.*',
                         'bower_components/sass-bootstrap/fonts/*.*',
@@ -362,6 +375,37 @@ module.exports = function (grunt) {
               verbose: true
             }
         },
+        appcache: {
+            options: {
+              basePath: 'dist'
+            },
+            all: {
+              dest: 'dist/manifest.appcache',
+              cache: {
+                patterns : [
+                    'dist/scripts/*',
+                    'dist/styles/*',
+                    'dist/images/*',
+                    'dist/*.png',
+                    'dist/cache/*'
+                ],
+                literals : [
+                    'app.html',
+                    'bower_components/requirejs/require.js',
+                    'bower_components/font-awesome/css/font-awesome.min.css',
+                    'bower_components/font-awesome/font/fontawesome-webfont.svg?v=3.2.1',
+                    'bower_components/font-awesome/font/fontawesome-webfont.ttf?v=3.2.1',
+                    'bower_components/font-awesome/font/fontawesome-webfont.woff?v=3.2.1',
+                ]
+              },
+              network : [
+                'https://www.google.com/jsapi',
+                'https://www.google.com/',
+                'https://apis.google.com/',
+                '*'
+              ]
+            }
+        }
     });
 
     grunt.registerTask('server', function (target) {
@@ -373,6 +417,7 @@ module.exports = function (grunt) {
             'clean:server',
             'concurrent:server',
             'autoprefixer',
+            'appcache:all',
             'connect:server'
             //'connect:livereload',
             //'watch'
@@ -400,11 +445,18 @@ module.exports = function (grunt) {
         'copy:dist',
         'rev',
         'usemin',
-        'copy:phonegap',
-        'phonegap:build',
+        'appcache:all'
+
+        //,'copy:phonegap',
+        //'phonegap:build',
         // if this is your first time building, you will need to run 
         // build again or icons will not show :/
-        'copy:phonegapIcons'
+        //'copy:phonegapIcons'
+    ]);
+
+    grunt.registerTask('buildserver', [
+        'build',
+        'connect:buildserver'
     ]);
 
     grunt.registerTask('default', [

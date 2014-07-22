@@ -955,6 +955,7 @@ define(["require","Oauth","gdriveRT"],function(require) {
 	}
 
 	function runModelRt() {
+		if( offlineMode ) return;
 		ga('send', 'event', 'ui', 'interaction', 'run-model-remote', 1);
 		gdriveRT.runModelRt();
 	}

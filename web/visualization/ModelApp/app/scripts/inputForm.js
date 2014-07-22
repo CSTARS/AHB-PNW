@@ -1,4 +1,4 @@
-define(['require'],function(require){
+define(['require','offline'],function(require,offline){
     var app = null;
     var gdrive = null;
     var charts = null;
@@ -220,42 +220,67 @@ define(['require'],function(require){
 			
 			// wait for the modal to init
 			setTimeout(function(){
+				if( offlineMode ) return;
+				
 				map = new google.maps.Map($("#gmap")[0], {
 					center : new google.maps.LatLng(35, -121),
 					zoom: 5,
 					mapTypeId : google.maps.MapTypeId.ROADMAP
 				});
 				
-				var fusionLayer = new google.maps.FusionTablesLayer({
+				var defaultStyle = {
+		        	polygonOptions: {
+		        		strokeColor   : "#0000FF",
+		        		strokeOpacity : 0.5,
+		        		fillColor     : '#FEFEFE',
+		        		fillOpacity   : 0.2
+		        	},
+				};
+
+
+				var defaultOptions = {
 					  query: {
 					    select: 'boundary',
 					    from: '1hV9vQG3Sc0JLPduFpWJztfLK-ex6ccyMg_ptE_s'
 					  },
-					  styles: [{
-				         polygonOptions: {
-				           strokeColor   : "#0000FF",
-				           strokeOpacity : 0.5,
-				           fillColor     : '#FEFEFE',
-				           fillOpacity   : 0.2
-				         }
-				      }],
+					  styles: [defaultStyle],
 					  suppressInfoWindows : true
-				});
+				};
+
+				var fusionLayer = new google.maps.FusionTablesLayer(defaultOptions);
 				fusionLayer.opacity = .8;
 				fusionLayer.setMap(map);
 				
 				google.maps.event.addListener(map, 'click', function(e) {
+					if( $('#locate-cache-mode').is(':checked') ) {
+						alert('You must click on a geometry to cache');
+						return;
+					}
+
 					_queryWeatherData(e.latLng.lng(), e.latLng.lat(), function() {
 		                app.runModel();
 		            });
 					$("#select-weather-modal").modal('hide');
 				});
 				google.maps.event.addListener(fusionLayer, 'click', function(e) {
+					if( $('#locate-cache-mode').is(':checked') ) {
+						offline.cacheTile(e, fusionLayer, defaultOptions, defaultStyle);
+						return;
+					}
+
 					_queryWeatherData(e.latLng.lng(), e.latLng.lat(), function() {
 		                app.runModel();
 		            });
 					$("#select-weather-modal").modal('hide');
 				});
+
+				// setup input for clearing cache
+		        $('#clear-cached-tiles').on('click', function(){
+		            offline.clearCache();
+		            offline.renderCachedTilesOnMap(fusionLayer, defaultOptions, defaultStyle);
+		        });
+
+				offline.renderCachedTilesOnMap(fusionLayer, defaultOptions, defaultStyle);
 				
 			},500);
 		} else {

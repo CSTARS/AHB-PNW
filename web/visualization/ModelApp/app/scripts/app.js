@@ -1,5 +1,5 @@
 /*global define */
-define(["gdrive","charts","inputForm","export"], function (gdrive, charts, inputForm, exporter) {
+define(["gdrive","charts","inputForm","export","offline"], function (gdrive, charts, inputForm, exporter,offline) {
 
      var runCallback = null;
      var _3pgModel = null;
@@ -656,7 +656,7 @@ define(["gdrive","charts","inputForm","export"], function (gdrive, charts, input
         }
 
         // make sure we can see the export btn
-        $("#show-export-csv").show();
+        if( !offlineMode ) $("#show-export-csv").show();
     }
 
 
