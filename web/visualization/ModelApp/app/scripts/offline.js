@@ -242,14 +242,14 @@ define([],function() {
 
 	function _loadFromCache() {
         $.ajax({
-          url: '/cache/jsapi',
+          url: 'cache/jsapi',
           dataType: "script",
           cache : true,
           success: function(){
-            $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', '/cache/chart.css') );
-            $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', '/cache/annotatedtimeline.css') );
+            $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', 'cache/chart.css') );
+            $('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', 'cache/annotatedtimeline.css') );
             $.ajax({
-              url: '/cache/chart.js',
+              url: 'cache/chart.js',
               dataType: "script",
               cache : true,
               success: function(){
