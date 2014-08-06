@@ -10,7 +10,7 @@
 # for rasters
 #psql service=${service} -f ${pgdir}/rtpostgis.sql
 
-service:=postgis-data
+service:=ahb
 
 # Projection information.  This is id in the spatial_ref_sys table.
 srid:=97260
@@ -25,8 +25,10 @@ snap:=1
 # sometimes have an additional 9 prepended.
 #
 #add-spatialref:srid-url:=http://spatialreference.org/ref/sr-org/${srid}/postgis/
-#add-spatialref:
-#	wget -nv -O - ${srid-url} | ${PG}
+add-spatialref:srid-url:=http://spatialreference.org/ref/sr-org
+add-spatialref:
+	q=`echo ${srid} | sed 's/^.//'`; \
+	wget -nv -O - ${srid-url}/$$q/postgis/ | ${PG}
 
 # states.  Some datasets are ameniable to be limited to a small number
 # of states.  Here use the two letter desingation.  If unset, probably

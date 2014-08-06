@@ -25,7 +25,6 @@ bound_id,name,exp,east,south,west,north
 1,afri,97260,1,-393216,-720896,524288,589824
 \.
 
-
 --select AddRasterColumn('prism','bounds','boundary',b.srid,'{1BB}',
 --false,true,'{0}',4096,-4096, integer (b.east-b.west)/, 
 --integer blocksize_y, bounds.bb);
@@ -67,7 +66,7 @@ insert into pixels (name,size,x,y,east,north,boundary)
 select name,size,x,y,
 st_x(st_centroid(boundary)) as east,st_y(st_centroid(boundary)) as north,
 boundary
-from pixel_bounds;
+from pixel_bounds where size=8192;
 
 create index pixels_boundary_gist on pixels using gist(boundary);
 
@@ -77,3 +76,9 @@ select * from pixels where size=8192;
 create or replace view afri.afri_pbound as 
        select st_setsrid(st_extent(boundary),97260) as geom 
        from pixels;
+
+
+create or replace function public.default_rast (OUT raster) as 
+$$ 
+select rast from afri.raster_templates where size=8192; 
+$$ LANGUAGE SQL;
