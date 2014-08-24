@@ -5,6 +5,7 @@
 var pg = require('pg');
 var fs = require('fs');
 var tty = require('tty');
+var async = require('async');
 
 var config = {
 	username : "",
@@ -45,7 +46,8 @@ var placemark =
 
 var pgQueryString = 'select pid,ps[array_length(ps,1)]."{{type}}",st_asKML(boundary) from m3pgjs.nonIrrigatedGrowthmodel join afri.pixels using(pid)';
 
-var pgIndexQueryString = 'select pid,ps[{{index}}]."{{type}}",d[{{index}}],st_asKML(boundary) from m3pgjs.growthmodel join afri.pixels using(pid)';
+//var pgIndexQueryString = 'select pid,ps[{{index}}]."{{type}}",d[{{index}}],st_asKML(boundary) from m3pgjs.growthmodel join afri.pixels using(pid)';
+var pgIndexQueryString = 'select pid,ps[{{index}}]."{{type}}",d[{{index}}] from m3pgjs.growthmodel WHERE pid IN ';
 var pgDatesQueryString = 'select d from m3pgjs.growthmodel limit 1';
 
 var listQueryString = 'select ps[array_length(ps,1)].* from m3pgjs.growthmodel limit 1';
@@ -163,7 +165,11 @@ function runDateQueries(client) {
 		return;
 	}
 
-	getDateData(indexes, 0, client, "");
+	//getDateData(indexes, 0, client, "");
+    getPixels(client, function(){
+        getDateSpanData(indexes, client, "");
+    });
+    
 }
 
 function addMonthSpan(date, index) {
@@ -172,6 +178,7 @@ function addMonthSpan(date, index) {
 	}
 }
 
+/*
 function getDateData(indexes, cIndex, client, kml) {
 	console.log("Processing date ("+validDates[indexes[cIndex]]+"): "+(cIndex+1)+" of "+indexes.length);
 
@@ -190,6 +197,73 @@ function getDateData(indexes, cIndex, client, kml) {
 			getDateData(indexes, cIndex, client, kml);
 		}
 	});
+}*/
+
+
+function getDateSpanData(indexes, client, kml) {
+
+    async.eachSeries(indexes,
+        function(date, callback){
+            console.log("Processing date ("+validDates[indexes[date]]+"): "+(date+1)+" of "+indexes.length);
+
+            getDateData(date, client, function(rows){
+                kml += createKml(rows, date, true);
+                callback();
+            });
+        },
+        function(err){
+            fs.writeFileSync(__dirname+"/"+type+".kml",header+kml+footer);
+        }
+    );
+}
+
+function getDateData(date, client, callback) {
+    // make calls in groups
+    var groups = [];
+    var g = [];
+    for( var i = 0; i < pointArray.length; i++ ) {
+        g.push(pointArray[i].pid);
+        if( g.length == 200 ) {
+            groups.push(g.join(','));
+        }
+    }
+    if( g.length > 0 ) groups.push(g.join(','));
+
+    var rows = [];
+    async.eachSeries(groups,
+        function(group, callback){
+            var cString = pgIndexQueryString.replace("{{type}}",type).replace(/{{index}}/g,date)+' ('+group+')';
+            client.query(cString, function(err, result) {
+                if(err) return console.log({error:true, message:'error running pg query: '+cString, errObj: err});
+
+                rows = result.rows;
+                for( var i = 0; i < result.rows.length; i++ ) {
+                    result.rows[i].boundary = points[result.rows[i].pid].boundary;
+                    rows.push(result.rows[i]);
+                }
+            });
+        },
+        function(err) {
+            callback(rows);
+        }
+    );
+}
+
+
+var points = {};
+var pointArray = [];
+function getPixels(client, callback) {
+    console.log('gathering pixel information');
+
+    var query = 'select pid, st_asKML(boundary) from afri.pixels where size = 8192;';
+    client.query(query, function(err, result) {
+        if(err) return console.log({error:true, message:'error running pg query: '+query, errObj: err});
+
+        pointArray = result.rows;
+        for( var i = 0; i < pointArray.length; i++ ) {
+            points[pointArray[i].pid] = pointArray[i].kml;
+        }
+    });
 }
 
 
