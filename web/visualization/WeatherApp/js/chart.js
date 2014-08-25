@@ -111,7 +111,11 @@ ahb.chart = (function() {
       			3: {type: "line", targetAxisIndex:0},
       			4: {type: "line", targetAxisIndex:0},
       			4: {type: "line", targetAxisIndex:0}
-      	  	}
+      	  	},
+      	  	animation:{
+      		  duration: 1000,
+      		  easing: 'out'
+      	 	},
       	  	// TODO: get this working
       	  	//,explorer: {
       	  	//	axis: 'horizontal'
@@ -188,6 +192,8 @@ ahb.chart = (function() {
 	    $('#outer-chart-panel').show();
 
 		if( ahb.type == 'weather' ) {
+			$('#chart-panel-loading').show();
+
 			$('#bottom-charts').css("visibility", "visible");
 			$('#outer-weather-chart-panel').show();
 			$('#outer-soil-chart-panel').show();
@@ -247,6 +253,8 @@ ahb.chart = (function() {
 	function _onIrTypeChange() {
 		if( cll == null ) return;
 
+		$('#chart-panel-loading').show();
+
 		cUrl.poplar = vizSourceUrl+'?view=pointTo3pg('+cll.lng()+','+cll.lat()+',8192,\''+ahb.irType+'\')';
 
 		var query = new google.visualization.Query(cUrl.poplar);
@@ -283,6 +291,7 @@ ahb.chart = (function() {
 	
 	function handleQueryResponse(type, response) {
 		datatable[type] = null;
+		$('#chart-panel-loading').hide();
 		
 	    if (response.isError()) {
 	      alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());

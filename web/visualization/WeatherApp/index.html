@@ -196,30 +196,42 @@
     </div>
 
     <div id="map-outer" style="margin: 10px 50px">
-        <div id="map" class="outer-map-panel" style="height:400px;width:400px"></div>
+        <div id="map" class="outer-map-panel" style="height:400px"></div>
         <div style="text-align:center;padding:3px;color:#888;font-style:italic">Click a grid to see 3PG Model Yields or Price data.</div>
     </div>
 
 
-    <div id="outer-chart-panel" style="display:none">
-        <h1><i class="icon-terminal"></i> Data</h1>
-        <div id="chart-panel" class="chart-panel" style="margin-bottom:10px;height:400px"></div>
-        <div id="download-panel" style="height:75px" class="well"></div>
-    </div>
-
-    <div id="outer-weather-chart-panel" style="display:none">
-        <h1><i class="icon-tint"></i> Weather</h1>
-        <div id="weather-chart-panel" class="chart-panel" style="margin-bottom:10px;height:400px"></div>
-        <div id="weather-download-panel" style="height:75px" class="well"></div>
-    </div>
-
-    <div id="outer-soil-chart-panel" style="display:none;margin-bottom:25px">
-        <h1><i class="icon-beaker"></i> Soil</h1>
-        <div class="chart-panel" style="margin-bottom:10px">
-            <h4 style="text-align:center">Soil</h4>
-            <div id="soil-chart-panel"></div>
+    <div id="outer-chart-panel" style="display:none;margin-bottom:50px">
+        <div class="panel panel-default">
+          <div class="panel-heading"><h2 style="margin:0"><i class="icon-terminal"></i> Data</h2></div>
+          <div class="panel-body" style="position: relative">
+            <div id="chart-panel" class="chart-panel" style="margin-bottom:10px;height:400px"></div>
+            <div id="chart-panel-loading" style="display:none">
+              <div>Loading...</div>
+            </div>
+          </div>
+          <div id="download-panel" style="height:60px" class="panel-footer"></div>
         </div>
-        <div id="soil-download-panel" style="height:75px" class="well"></div>
+    </div>
+
+    <div id="outer-weather-chart-panel" style="display:none;margin-bottom:50px">
+      <div class="panel panel-default">
+          <div class="panel-heading"><h2 style="margin:0"><i class="icon-tint"></i> Weather</h2></div>
+          <div class="panel-body">
+            <div id="weather-chart-panel" class="chart-panel" style="margin-bottom:10px;height:400px"></div>
+          </div>
+          <div id="weather-download-panel" style="height:60px" class="panel-footer"></div>
+      </div>
+    </div>
+
+    <div id="outer-soil-chart-panel" style="display:none;margin-bottom:50px">
+      <div class="panel panel-default">
+          <div class="panel-heading"><h2 style="margin:0"><i class="icon-beaker"></i> Soil</div>
+          <div class="panel-body">
+            <div id="soil-chart-panel"></div>
+          </div>
+          <div id="soil-download-panel" style="height:60px" class="panel-footer"></div>
+      </div>
     </div>
 
 </div>
