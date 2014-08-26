@@ -142,15 +142,14 @@ require(['jquery', 'bootstrap','app','gdrive', 'offline', 'owlCarousel','flashbl
                             gdrive.init(function(){
                                 var file = app.qs("file");
                                 if( file ) {
-                                    initLoading();
-                                    gdrive.load(file);
+                                    gdrive.load(file, initLoading);
                                 }
                                 // see if we are loading for google drive
                                 var state = app.qs("state");
                                 if( state ) {
                                     state = JSON.parse(state);
                                     initLoading();
-                                    gdrive.load(state.ids[0]);
+                                    gdrive.load(state.ids[0], initLoading);
                                 }
                             });
                         }

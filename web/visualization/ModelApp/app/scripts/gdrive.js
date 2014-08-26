@@ -662,23 +662,41 @@ define(["require","Oauth","gdriveRT"],function(require) {
 	 * Load a model based on passed id.  This function is really only for loading model on start, when a file id
 	 * has been passed in the url either from google drive or from the ?file=id url.
 	 ***/
-	function load(id) {
+	var loginModalInit = false;
+	function load(id, loadFn) {
 		// if we don't have an access token, we need to sign in first
 		// TODO: if this is a public file, there is no reason to sign in... solution?
 		if( !token ) {
-			// sign the user in (force oauth popup)
-			signIn(function(token) {
-				// set the user information in top left
-				_setUserInfo();
 
-				getFileMetadata(id, function(metadata){
-					getFile(id, metadata.downloadUrl, function(file) {
-						_onInitFileLoaded(metadata,file);
+			if( !loginModalInit ) {
+				$('#google-modal-login').on('click', function(){
+					// sign the user in (force oauth popup)
+					signIn(function(token) {
+						$('#login-modal').modal('hide');
+
+						// set the user information in top left
+						_setUserInfo();
+
+						if( loadFn ) loadFn();
+
+						getFileMetadata(id, function(metadata){
+							getFile(id, metadata.downloadUrl, function(file) {
+								_onInitFileLoaded(metadata,file);
+							});
+						});
+						
 					});
 				});
-				
-			});
+
+				$('#login-modal').modal();
+				loginModalInit = true;
+			} else {
+				$('#login-modal').modal('show');
+			}
+			
 		} else {
+			if( loadFn ) loadFn();
+
 			getFileMetadata(id, function(metadata){
 				getFile(id, metadata.downloadUrl, function(file) {
 					_onInitFileLoaded(metadata,file);
