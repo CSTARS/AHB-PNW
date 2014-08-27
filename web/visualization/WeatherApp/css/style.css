@@ -29,3 +29,24 @@ h1 {
     border-radius: 4px;
     box-shadow: 0 0 3px #888;
 }
+
+#chart-panel-loading {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0,0,0,.5);
+    text-align: center;
+    box-shadow: 0 0 15px inset;
+}
+
+#chart-panel-loading > div {
+    margin: 100px auto;
+    display: inline-block;
+    padding: 30px;
+    background-color: rgba(255,255,255,.9);
+    border-radius: 6px;
+    font-size: 32px;
+    box-shadow: 0 0 15px #333;
+}

@@ -100,7 +100,7 @@ require.config({
     }
 });
 
-require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel','flashblock-detector', 'weatherFileReader'], function ($, bootstrap, app, gdrive) {
+require(['jquery', 'bootstrap','app','gdrive', 'offline', 'owlCarousel','flashblock-detector', 'weatherFileReader'], function ($, bootstrap, app, gdrive, offline) {
 
     window.hideInitLoading = null;
     function initLoading() {
@@ -119,7 +119,11 @@ require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel','flashblock-detecto
         }
     }
 
+    onChartsLoadedFired = false;
     function onChartsLoaded() {
+        if( onChartsLoadedFired ) return;
+        onChartsLoadedFired = true;
+
 			$("#status").html("3pg model");
 			
 			var version = app.qs("version");
@@ -132,20 +136,23 @@ require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel','flashblock-detecto
 				$("#status").html("3pg data");
 			    $("body").html("").load("app.html", function(){
 					app.init(function(){
-						gdrive.init(function(){
-							var file = app.qs("file");
-							if( file ) {
-                                initLoading();
-                                gdrive.load(file);
-							}
-							// see if we are loading for google drive
-							var state = app.qs("state");
-							if( state ) {
-								state = JSON.parse(state);
-                                initLoading();
-								gdrive.load(state.ids[0]);
-							}
-						});
+                        if( offlineMode ) {
+                            offline.render();
+                        } else {
+                            gdrive.init(function(){
+                                var file = app.qs("file");
+                                if( file ) {
+                                    gdrive.load(file, initLoading);
+                                }
+                                // see if we are loading for google drive
+                                var state = app.qs("state");
+                                if( state ) {
+                                    state = JSON.parse(state);
+                                    initLoading();
+                                    gdrive.load(state.ids[0], initLoading);
+                                }
+                            });
+                        }
 					});
 				});
 		    });
@@ -176,5 +183,7 @@ require(['jquery', 'bootstrap','app','gdrive', 'owlCarousel','flashblock-detecto
 	window.log = function(msg) {
 		if( app.debug ) console.log(msg);
 	};
+
+    if( offlineMode ) offline.init();
 
 });
