@@ -2,38 +2,38 @@ drop schema prism cascade;
 create schema prism;
 set search_path=prism,public;
 
-CREATE TABLE us (
-       rid serial PRIMARY KEY,
-       year integer,
-       month integer,
-       unique(year,month)
-);
+-- CREATE TABLE us (
+--        rid serial PRIMARY KEY,
+--        year integer,
+--        month integer,
+--        unique(year,month)
+-- );
 
-SELECT AddRasterColumn('prism','us','tmax',4322, ARRAY['32BSI'], 
-       false, false, ARRAY[-9999.0], 0.041666666670000, -0.041666666670000, 
-       null, null, null);
+-- SELECT AddRasterColumn('prism','us','tmax',4322, ARRAY['32BSI'], 
+--        false, false, ARRAY[-9999.0], 0.041666666670000, -0.041666666670000, 
+--        null, null, null);
 
-SELECT AddRasterColumn('prism','us','tmin',4322, ARRAY['32BSI'], 
-       false, false, ARRAY[-9999.0], 0.041666666670000, -0.041666666670000, 
-       null, null, null);
+-- SELECT AddRasterColumn('prism','us','tmin',4322, ARRAY['32BSI'], 
+--        false, false, ARRAY[-9999.0], 0.041666666670000, -0.041666666670000, 
+--        null, null, null);
 
-SELECT AddRasterColumn('prism','us','ppt',4322, ARRAY['32BSI'], 
-       false, false, ARRAY[-9999.0], 0.041666666670000, -0.041666666670000, 
-       null, null, null);
+-- SELECT AddRasterColumn('prism','us','ppt',4322, ARRAY['32BSI'], 
+--        false, false, ARRAY[-9999.0], 0.041666666670000, -0.041666666670000, 
+--        null, null, null);
 
-SELECT AddRasterColumn('prism','us','tdmean',4322, ARRAY['32BSI'], 
-       false, false, ARRAY[-9999.0], 0.041666666670000, -0.041666666670000, 
-       null, null, null);
+-- SELECT AddRasterColumn('prism','us','tdmean',4322, ARRAY['32BSI'], 
+--        false, false, ARRAY[-9999.0], 0.041666666670000, -0.041666666670000, 
+--        null, null, null);
 
--- Make static data, but need a default raster.
-CREATE TABLE static (
- rid serial PRIMARY KEY,
- layer text unique
-);
+-- -- Make static data, but need a default raster.
+-- CREATE TABLE static (
+--  rid serial PRIMARY KEY,
+--  layer text unique
+-- );
 
-select AddRasterColumn('prism','static','rast',srid, ARRAY['32BSI'], 
-       false, false, ARRAY[-9999.0], scalex,scaley, null, null, null)
-from (select (st_metadata(default_rast())).*) as r;
+-- select AddRasterColumn('prism','static','rast',srid, ARRAY['32BSI'], 
+--        false, false, ARRAY[-9999.0], scalex,scaley, null, null, null)
+-- from (select (st_metadata(default_rast())).*) as r;
 
 
 create table climate (
@@ -49,10 +49,10 @@ create table climate (
 
 INSERT INTO climate (year,month,tmin,tmax,ppt,tdmean) 
 values(0,0,
-ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BSI'),
-ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BSI'),
-ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BSI'),
-ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BSI')
+ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BF'),
+ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BF'),
+ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BF'),
+ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BF')
 );
 
 update climate set 
@@ -78,10 +78,10 @@ create table avg (
 
 INSERT INTO avg (startyr,stopyr,month,tmin,tmax,ppt,tdmean) 
 values(0,0,0,
-ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BSI'),
-ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BSI'),
-ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BSI'),
-ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BSI')
+ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BF'),
+ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BF'),
+ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BF'),
+ST_AddBand(ST_MakeEmptyRaster(default_rast()),'32BF')
 );
 
 update avg set 
@@ -94,23 +94,16 @@ select addrasterconstraints('avg',p) from
 (select unnest(ARRAY['tmin','tmax','ppt','tdmean']) as p) as a;
 
 
-create or replace function us_to_template(us raster,template raster,sample_type text='Cubic',OUT new raster) 
+--select into new ST_MapAlgebraExpr(
+-- ST_Resample(us,template,sample_type),template,'[rast1]*100::integer');
+create or replace function prism.us_to_template
+(us raster,template raster,sample_type text='Cubic',OUT new raster) 
 AS $$
 BEGIN
-select into new ST_MapAlgebraExpr(ST_Resample(us,template,sample_type),
-template,'[rast1]');
+select into new st_clip(
+ st_transform(us,template,sample_type),st_envelope(template));
 END;
 $$ LANGUAGE PLPGSQL;
-
-
-create function create_avg(OUT boolean) 
-as $$
-select * from compute_2avg();
-select * from compute_4avg(4);
-select * from compute_4avg(8);
-select * from compute_4avg(16);
-select true;
-$$ LANGUAGE SQL;
 
 
 create function compute_2avg(OUT count integer)
@@ -118,11 +111,10 @@ as $$
 BEGIN
 insert into avg (startyr,stopyr,month,tmin,tmax,ppt,tdmean) 
 select r1.year as startyr,r2.year as stopyr,r1.month,
-ST_MapAlgebraExpr(r1.tmin,r2.tmin,'(([rast1]+[rast2])/2.0)::integer') as tmin,
-ST_MapAlgebraExpr(r1.tmax,r2.tmax,'(([rast1]+[rast2])/2.0)::integer') as tmax,
-ST_MapAlgebraExpr(r1.ppt,r2.ppt,'(([rast1]+[rast2])/2.0)::integer') as ppt,
-ST_MapAlgebraExpr(r1.tdmean,r2.tdmean,'(([rast1]+[rast2])/2.0)::integer') 
-  as tdmean
+ST_MapAlgebra(r1.tmin,r2.tmin,'(([rast1]+[rast2])/2.0)') as tmin,
+ST_MapAlgebra(r1.tmax,r2.tmax,'(([rast1]+[rast2])/2.0)') as tmax,
+ST_MapAlgebra(r1.ppt,r2.ppt,'(([rast1]+[rast2])/2.0)') as ppt,
+ST_MapAlgebra(r1.tdmean,r2.tdmean,'(([rast1]+[rast2])/2.0)') as tdmean
 from climate r1 join climate r2 on (r1.year=r2.year-1 and r1.month=r2.month);
 select into count count(*) from avg;
 END;
@@ -144,3 +136,13 @@ and 1+r2.stopyr-r1.startyr=diff);
 select into count count(*) from avg where 1+stopyr-startyr=diff;
 END;
 $$ LANGUAGE plpgsql;
+
+create function create_avg(OUT boolean) 
+as $$
+select * from compute_2avg();
+select * from compute_4avg(4);
+select * from compute_4avg(8);
+select * from compute_4avg(16);
+select true;
+$$ LANGUAGE SQL;
+
