@@ -11,3 +11,11 @@ web/visualization/ModelApp/.tmp
 web/visualization/ModelApp/.sass-cache
 web/visualization/ModelApp/phonegap_build
 web/visualization/ModelApp/phonegap/3pg-model/www/dist
+
+database/prism/prism.nacse.org
+database/prism/db
+
+database/statsgo/db/
+database/statsgo/gsmsoil_us.zip
+database/statsgo/gsmsoil_us/
+

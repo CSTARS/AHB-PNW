@@ -22,13 +22,14 @@ tab:=gsmsoil_us/tabular
 db:: db/statsgo db/statsgo.map_unit_poly db/statsgo.map_unit db/statsgo.mapunit db/statsgo.comp db/statsgo.muaggatt db/statsgo.chorizon 
 
 db/statsgo:
+	[[ -d db ]] || mkdir db
 	${PG} -f statsgo.sql
 	touch $@
 
 db/statsgo.map_unit_poly: shp:=gsmsoil_us/spatial/gsmsoilmu_a_us.shp
 db/statsgo.map_unit_poly: db/statsgo
-	[[ -f ${shp} ]] || unzip -j ${zip};
-	${shp2pgsql} -d -r 4269 -g boundary -s ${srid} -I -S ${shp} statsgo.map_unit_poly | sed -e 's/, ${srid}));$$/::geometry, ${srid}));/' | ${PG} > /dev/null;
+	[[ -f ${shp} ]] || unzip ${zip};
+	${shp2pgsql} -d -g boundary -s 4269:${srid} -I -S ${shp} statsgo.map_unit_poly | sed -e 's/, ${srid}));$$/::geometry, ${srid}));/' | ${PG} > /dev/null;
 	touch $@
 
 db/statsgo.map_unit: db/statsgo.map_unit_poly
