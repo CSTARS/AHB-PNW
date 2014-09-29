@@ -16,6 +16,7 @@ sampleType:=Cubic
 db:db/prism
 
 db/prism:
+	[[ -d db ]] || mkdir db
 	${PG} -f prism.sql
 	touch $@
 

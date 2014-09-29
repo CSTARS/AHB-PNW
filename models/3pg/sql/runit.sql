@@ -37,11 +37,15 @@ select :'stop'::timestamp-:'start'::timestamp as elapsed;
 
 drop table if exists harvests cascade;
 create table harvests as 
-with a as (
+with 
+g as (
+ select * from growthmodel limit 1
+),
+a as (
  select generate_subscripts(ps,1) as i,
  unnest(d) as d,
  (unnest(ps))."coppiceCount"
- from growthmodel
+ from g
 ), 
 i as (
 select distinct min(i) over (partition by "coppiceCount") as n,
@@ -65,7 +69,7 @@ from f
 order by date,pid,type;
 
 
-create table harvest_avg as 
+create table harvest_avg_sensitivity as 
 with a as (
  select pid,date,
  min(irrigated_yield)::decimal(6,2) as min_irrigated_yield,
@@ -78,29 +82,25 @@ with a as (
  stddev_samp(nonirrigated_yield)::decimal(6,2) as stddev_nonirrigated_yield,
  avg(irrigation)::decimal(6,2) as avg_irrigation,
  stddev_samp(irrigation)::decimal(6,2) as stddev_irrigation 
- from harvests
+ from harvests_sensitivity
  where type in (
- 'gr-fischer2013',
- 'srwc-pont-beaupre-best',
- 'srwc-pont-fritzi-best',
- 'srwc-pont-hart12coppice',
- 'srwc-pont-raspalje',
- 'srwc-pont-raspalje-best',
- 'srwc-pont-robusta-best'
-) 
- group by pid,date
-),
-t as (
- select a.pid,
- string_agg(h1.type,',') as max_irrigated_type,
+ 'gr-fischer2013','srwc-pont-beaupre-best','srwc-pont-fritzi-best',
+ 'srwc-pont-hart12coppice','srwc-pont-raspalje','srwc-pont-raspalje-best',
+ 'srwc-pont-robusta-best') 
+ group by pid,date),
+x as (
+ select a.pid,a.date,
+ string_agg(h1.type,',') as max_irrigated_type
+from a 
+join harvests_sensitivity h1 on (a.pid=h1.pid and a.date=h1.date and a.max_irrigated_yield=h1.irrigated_yield)
+group by a.pid,a.date),
+n as (
+ select a.pid,a.date,
  string_agg(h2.type,',') as max_nonirrigated_type 
 from a 
-join harvests h1 on (a.pid=h1.pid and a.max_irrigated_yield=h1.irrigated_yield)
-join harvests h2 on (a.pid=h2.pid 
- and h2.nonirrigated_yield=a.max_nonirrigated_yield) 
-group by a.pid
-)
-select * from a join t using (pid);
+join harvests_sensitivity h2 on (a.pid=h2.pid and a.date=h2.date and h2.nonirrigated_yield=a.max_nonirrigated_yield) 
+group by a.pid,a.date)
+select * from a join x using (pid,date) join n using (pid,date);
 
 --update average_growth set yield=irrigated_yield,irrigated=true 
 --where irrigated_yield/nonirrigated_yield > 1.3;
@@ -302,3 +302,5 @@ u.trans as unirrigated_et,i.ppt
 from i join u using (pid,type,"coppiceCount") 
 order by pid,type,"coppiceCount";
 
+--\COPY (with a as (select pid,(sum(min_irrigated_yield*w)/sum(w))::decimal(6,2) as min_irrigated_yield,(sum(max_irrigated_yield*w)/sum(w))::decimal(6,2) as max_irrigated_yield,(sum(avg_irrigated_yield*w)/sum(w))::decimal(6,2) as avg_irrigated_yield,(sum(stddev_irrigated_yield*w)/sum(w))::decimal(6,2) as stddev_irrigated_yield,(sum(min_nonirrigated_yield*w)/sum(w))::decimal(6,2) as min_nonirrigated_yield,(sum(max_nonirrigated_yield*w)/sum(w))::decimal(6,2) as max_nonirrigated_yield,(sum(avg_nonirrigated_yield*w)/sum(w))::decimal(6,2) as avg_nonirrigated_yield,(sum(stddev_nonirrigated_yield*w)/sum(w))::decimal(6,2) as stddev_nonirrigated_yield,(sum(avg_irrigation*w)/sum(w))::decimal(6,2) as avg_irrigation,(sum(stddev_irrigation*w)/sum(w))::decimal(6,2) as stddev_irrigation from harvest_avg_sensitivity join (VALUES ('2014-09-01'::date,2),('2017-09-01'::date,3),('2020-09-01'::date,3),('2023-09-01'::date,3)) as w(date,w) using (date) group by pid), b as (select *,avg_irrigated_yield::integer as irr,avg_nonirrigated_yield::integer as nonirr from a ) select nonirr,avg(min_irrigated_yield)::decimal(6,2) as min, avg(max_irrigated_yield)::decimal(6,2) as max,avg(stddev_irrigated_yield)::decimal(6,2) as stddev,avg(avg_irrigation)::decimal(6,2) as avg_irr,avg(stddev_irrigation)::decimal(6,2) as stddev_irr,count(*) from b group by nonirr order by nonirr) to ~/nonirr_hist.csv with csv header
+--\COPY (with a as (select pid,(sum(min_irrigated_yield*w)/sum(w))::decimal(6,2) as min_irrigated_yield,(sum(max_irrigated_yield*w)/sum(w))::decimal(6,2) as max_irrigated_yield,(sum(avg_irrigated_yield*w)/sum(w))::decimal(6,2) as avg_irrigated_yield,(sum(stddev_irrigated_yield*w)/sum(w))::decimal(6,2) as stddev_irrigated_yield,(sum(min_nonirrigated_yield*w)/sum(w))::decimal(6,2) as min_nonirrigated_yield,(sum(max_nonirrigated_yield*w)/sum(w))::decimal(6,2) as max_nonirrigated_yield,(sum(avg_nonirrigated_yield*w)/sum(w))::decimal(6,2) as avg_nonirrigated_yield,(sum(stddev_nonirrigated_yield*w)/sum(w))::decimal(6,2) as stddev_nonirrigated_yield,(sum(avg_irrigation*w)/sum(w))::decimal(6,2) as avg_irrigation,(sum(stddev_irrigation*w)/sum(w))::decimal(6,2) as stddev_irrigation from harvest_avg_sensitivity join (VALUES ('2014-09-01'::date,2),('2017-09-01'::date,3),('2020-09-01'::date,3),('2023-09-01'::date,3)) as w(date,w) using (date) group by pid), b as (select *,avg_irrigated_yield::integer as irr from a ) select irr,avg(min_irrigated_yield)::decimal(6,2) as min, avg(max_irrigated_yield)::decimal(6,2) as max,avg(stddev_irrigated_yield)::decimal(6,2) as stddev,avg(avg_irrigation)::decimal(6,2) as avg_irr,avg(stddev_irrigation)::decimal(6,2) as stddev_irr,count(*) from b group by irr order by irr) to ~/irr_hist.csv with csv header
