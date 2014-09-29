@@ -892,9 +892,14 @@ define(["require","Oauth","gdriveRT"],function(require) {
 		// create our multipart POST request
 		var multipartRequestBody = delimiter
 				+ 'Content-Type: application/json\r\n\r\n'
-				+ JSON.stringify(metadata) + delimiter + 'Content-Type: '
+				+ JSON.stringify(metadata);
+
+		if( json.length > 0 ) {
+			multipartRequestBody += delimiter + 'Content-Type: '
 				+ mimeType + '\r\n' + 'Content-Transfer-Encoding: base64\r\n'
-				+ '\r\n' + base64Data + close_delim;
+				+ '\r\n' + base64Data;
+		} 
+		multipartRequestBody += close_delim;
 
 	   	// setup POST request
 	   	// if the options.conver=true flag is set, google attempts to convert the file to
