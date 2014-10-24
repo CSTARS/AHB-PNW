@@ -13,8 +13,16 @@
   <link rel="stylesheet" href="styles/main.css">
   <link rel="stylesheet" href="styles/deep.css">
   <!-- endbuild-->
-
+  
+  <!-- build:js scripts/platform.js -->
   <script src="bower_components/platform/platform.js"></script>
+  <!-- endbuild-->
+
+  <!-- build:js scripts/app.js -->
+  <script src="scripts/app.js"></script>
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <!-- endbuild-->
+  
   <!-- build:vulcanized ./elements.html -->
   <link rel="import" href="elements.html">
   <!-- endbuild-->
@@ -35,10 +43,7 @@
 
   <ahb-farm-budget-app></ahb-farm-budget-app>
 
-  <!-- build:js scripts/app.js -->
-  <script src="scripts/app.js"></script>
-  <script src="../bower_components/jquery/dist/jquery.js"></script>
-  <!-- endbuild-->
+  
 </body>
 
 </html>
