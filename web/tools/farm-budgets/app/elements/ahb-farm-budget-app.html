@@ -21,24 +21,24 @@
               <span class="hidden-xs"><ahb-icon icon="fa-map-marker"></ahb-icon>&nbsp;Location</span>
               <span class="visible-xs"><ahb-icon icon="fa-map-marker"></ahb-icon></span>
             </a>
-            <a right-nav href="{{hack}}#inputs" selected?="{{loc == 'inputs'}}">
-              <span class="hidden-xs"><ahb-icon icon="fa-check-square-o"></ahb-icon>&nbsp;Inputs</span>
-              <span class="visible-xs"><ahb-icon icon="fa-check-square-o"></ahb-icon></span>
+            <a right-nav href="{{hack}}#crop" selected?="{{loc == 'crop'}}">
+              <span class="hidden-xs"><ahb-icon icon="fa-leaf"></ahb-icon>&nbsp;Crop</span>
+              <span class="visible-xs"><ahb-icon icon="fa-leaf"></ahb-icon></span>
             </a>
-            <a right-nav href="{{hack}}#results" selected?="{{loc == 'results'}}">
-              <span class="hidden-xs"><ahb-icon icon="fa-usd"></ahb-icon>&nbsp;Results</span>
+            <a right-nav href="{{hack}}#budget" selected?="{{loc == 'budget'}}">
+              <span class="hidden-xs"><ahb-icon icon="fa-usd"></ahb-icon>&nbsp;Budget</span>
               <span class="visible-xs"><ahb-icon icon="fa-usd"></ahb-icon></span>
             </a>
 
             <core-animated-pages id="pages" content transitions="slide-from-right" >
               <div class="page">
-                <ahb-page-location id="location"></ahb-page-location>
+                <ahb-page-location id="location" location="{{location}}"></ahb-page-location>
               </div> 
               <div class="page">
-                inputs
+                <ahb-page-crop location="{{location}}"></ahb-page-crop>
               </div>
               <div class="page">
-                results
+                <ahb-page-budget location="{{location}}"></ahb-page-budget>
               </div>
             </core-animated-pages>
         </ahb-app-layout>
@@ -49,7 +49,7 @@
         Polymer('ahb-farm-budget-app', {
             PAGES : {
               MAP : 0,
-              INPUTS : 1,
+              CROP : 1,
               RESULTS : 2
             },
             loc : '',
@@ -76,10 +76,10 @@
                 setTimeout(function(){
                   this.$.location.resize();
                 }.bind(this), 250);
-              } else if ( this.loc == 'inputs' ) {
-                this.selectedPage = this.PAGES.INPUTS;
+              } else if ( this.loc == 'crop' ) {
+                this.selectedPage = this.PAGES.CROP;
                 this.$.pages.selected = this.selectedPage;
-              } else if ( this.loc == 'results' ) {
+              } else if ( this.loc == 'budget' ) {
                 this.selectedPage = this.PAGES.RESULTS;
                 this.$.pages.selected = this.selectedPage;
               }

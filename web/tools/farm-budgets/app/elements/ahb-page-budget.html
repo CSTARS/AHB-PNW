@@ -1,0 +1,38 @@
+<polymer-element name="ahb-page-budget">
+    <template>
+
+        <div style="padding:10px">
+            <template repeat="{{itemSchema in schema}}">
+                <h2>{{itemSchema.name}}</h2>
+                <table class="table" style="margin-left:15px">
+                    <tr template repeat="{{budgetItem in itemSchema.schema}}">
+                        <td>{{budgetItem.item}}</td>
+                        <td>
+                            <input type="number" class="form-control" style="width:150px;display:inline-block" value="{{budgetItem.value}}" /> <span style="vertical-align:middle">{{budgetItem.unit}}</span>
+                        </td>
+                        <td></td>
+                    </tr>
+                </table>
+            </template>
+        </div>
+
+    </template>
+    <script>
+        Polymer('ahb-page-budget', {
+            schema : [],
+
+            ready : function() {
+                for( var key in BUDGET_SCHEMA ) {
+                    for( var i = 0; i < BUDGET_SCHEMA[key].length; i++ ) {
+                        BUDGET_SCHEMA[key][i].value = 0;
+                    }
+
+                    this.schema.push({
+                        name : key,
+                        schema : BUDGET_SCHEMA[key]
+                    });
+                }
+            }
+        });
+    </script>
+</polymer-element>
