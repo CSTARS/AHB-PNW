@@ -1,37 +1,125 @@
 <polymer-element name="ahb-page-budget">
     <template>
+        <style>
+            ahb-icon {
+                cursor: pointer;
+                display: inline-block;
 
+                transition: all 300ms linear;
+                -moz-transition: all 300ms linear;
+                -webkit-transition: all 300ms linear;
+                -ms-transition: all 300ms linear;
+
+                transform: rotate(0deg);
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+            }
+            ahb-icon[opened] {
+                transform: rotate(90deg);
+                -webkit-transform: rotate(90deg);
+                -moz-transform: rotate(90deg);
+                -ms-transform: rotate(90deg);
+            }
+            .total {
+                border-top: 1px solid #ccc;
+                text-align: right;
+                padding-top: 10px;
+            }
+        </style>
         <div style="padding:10px">
             <template repeat="{{itemSchema in schema}}">
-                <h2>{{itemSchema.name}}</h2>
-                <table class="table" style="margin-left:15px">
-                    <tr template repeat="{{budgetItem in itemSchema.schema}}">
-                        <td>{{budgetItem.item}}</td>
-                        <td>
-                            <input type="number" class="form-control" style="width:150px;display:inline-block" value="{{budgetItem.value}}" /> <span style="vertical-align:middle">{{budgetItem.unit}}</span>
-                        </td>
-                        <td></td>
-                    </tr>
-                </table>
+                <h2>
+                    <div layout horizontal>
+                        <div flex>
+                            <ahb-icon 
+                                icon="fa-arrow-right" 
+                                opened?="{{opened[itemSchema.name]}}" 
+                                name="{{itemSchema.name}}" 
+                                on-tap="{{toggle}}">
+                            </ahb-icon> 
+                            &nbsp;{{itemSchema.name}}
+                        </div>
+                        <div>
+                            ${{itemSchema.total}}
+                        </div>
+                    </div>
+                </h2>
+
+                <core-collapse opened="{{opened[itemSchema.name]}}">
+                    <table class="table" style="margin-left:15px">
+                        <tr>
+                            <th>Item</th>
+                            <th># Units</th>
+                            <th>Unit Cost</th>
+                            <th>Options</th>
+                        </tr>
+                        <tr template repeat="{{budgetItem in itemSchema.schema}}">
+                            <td>{{budgetItem.item}}</td>
+                            <td>
+                                <input 
+                                    category="{{itemSchema.name}}"
+                                    name="{{budgetItem.item}}"
+                                    type="number" 
+                                    class="form-control" 
+                                    style="width:150px;display:inline-block" 
+                                    value="{{budgetItem.value}}" 
+                                    on-change="{{updateTotals}}" /> 
+                            </td>
+                            <td>
+                                <ahb-icon icon="{{times}}"></ahb-icon>&nbsp;$1<span hidden?="{{budgetItem.unit == ''}}">&nbsp;/&nbsp;</span><span style="vertical-align:middle">{{budgetItem.unit}}</span>
+                            <td>
+                                <input type="checkbox" /> Ignore
+                            </td>
+                        </tr>
+                    </table>
+                <core-collapse opened="opened[{{itemSchema.name}}]">
             </template>
+            <h2 class="total">
+                ${{total}}
+            </h2>
         </div>
 
     </template>
     <script>
         Polymer('ahb-page-budget', {
             schema : [],
+            opened : {},
+            total : 0,
 
             ready : function() {
                 for( var key in BUDGET_SCHEMA ) {
+                    this.opened[key] = false;
+
                     for( var i = 0; i < BUDGET_SCHEMA[key].length; i++ ) {
-                        BUDGET_SCHEMA[key][i].value = 0;
+                        BUDGET_SCHEMA[key][i].value = (100 / BUDGET_SCHEMA[key].length).toFixed(2);
                     }
 
                     this.schema.push({
+                        total : 0,
                         name : key,
                         schema : BUDGET_SCHEMA[key]
                     });
                 }
+                this.updateTotals();
+            },
+
+            updateTotals : function() {
+                this.total = 0;
+                for( var i = 0; i < this.schema.length; i++ ) {
+                    this.schema[i].total = 0;
+                    for( var j = 0; j < this.schema[i].schema.length; j++ ) {
+                        this.schema[i].total += parseFloat(this.schema[i].schema[j].value);
+                    }
+                    this.total += this.schema[i].total;
+                }
+                this.total = this.total.toFixed(2);
+            },
+
+            toggle : function(e) {
+                var name = e.currentTarget.getAttribute('name');
+                this.opened[name] = !this.opened[name];
+                console.log(this.opened)
             }
         });
     </script>
