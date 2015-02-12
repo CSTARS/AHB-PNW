@@ -495,6 +495,10 @@ define(["gdrive","charts","inputForm","export","offline"], function (gdrive, cha
 
                 // clean up date format
                 var date = key;
+                var parts = date.split('-');
+                if( parts.length < 2 ) {
+                    return alert('Invalid Date Format.  Dates should be in YYYY-MM format');
+                }
                 if ( date.split('-')[1].length != 2 ) {
                     date = date.split('-');
                     date = date[0]+"-0"+date[1];
