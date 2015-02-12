@@ -494,14 +494,14 @@ define(["gdrive","charts","inputForm","export","offline"], function (gdrive, cha
             for( var key in data ) {
 
                 // clean up date format
-                var date = key;
+                var date = key.replace(/[^\d-]/,'');
                 var parts = date.split('-');
+
                 if( parts.length < 2 ) {
                     return alert('Invalid Date Format.  Dates should be in YYYY-MM format');
                 }
-                if ( date.split('-')[1].length != 2 ) {
-                    date = date.split('-');
-                    date = date[0]+"-0"+date[1];
+                if ( parts[1].length != 2 ) {
+                    date = parts[0]+"-0"+parts[1];
                 }
 
                 window.custom_weather[date] = data[key];
